@@ -214,7 +214,7 @@ $cats->getCategoriaBD ();
 		}
 	}
 
-	if (empty($categoria) || $regMem->getValor('metodo')=='POST') {
+	if ($regError->getError() || ($regMem->getValor('accion')!='Añadir' && $regMem->getValor('metodo')=='POST')) {
 		?>
 		<!-- MOSTRAMOS ENLACE A AÑADIR -->
 		<p class="separacion centrado"><a href="<?=$_SERVER['SCRIPT_NAME']?>">Añadir categoria</a></p>
