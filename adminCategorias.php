@@ -3,19 +3,38 @@ require_once 'conectar_bd.php';
 require_once 'Categorias2.php'; // Nueva
 require_once 'Categorias.php'; // Borrando
 require_once 'Registro.php';
+require_once 'Colecciones.php';
+require_once 'Controlador.php';
 
 $PDO = new PDOConfig ();
 
-$cats = new ListasCategorias ($PDO);
+
 
 // Incializamos los registros
 $regMem = RegistroMemoria::instancia();
 $regError = RegistroErrores::instancia();
 $regFeedback = RegistroFeedback::instancia();
 
+// El controlador de registros almacena un array con acceso a los registros que le añadamos, este
+// controlador se pasa a las colecciones al crearlo para que puedan mandar mensajes a la aplicación
+$controlador = new Controlador;
+$controlador -> setRegistro ('feedback', $regFeedback);
+$controlador -> setRegistro ('errores', $regError);
+$controlador -> setPDO($PDO);
+
+$cats = new Categorias($controlador);
+
+
+//$cats = new ListasCategorias ($PDO);
+
+
+
+
+
+
 // Intentamos recuperar la categoria
 if ($regMem->getValor('id')){
-	$categoria=$cats->getCategoriaBD ($regMem->getValor('id'))->getCategoriaById($regMem->getValor('id'));
+	$categoria=$cats->getItemBD($regMem->getValor('id'))->getItemById($regMem->getValor('id'));
 }
 
 // Titulo por defecto de la página
@@ -37,7 +56,7 @@ switch ($regMem->getValor('accion')){
 				'nombre'=>$regMem->getValor('nombre'), 
 				'parent_id' => $regMem->getValor('parent_id'), 
 				'descripcion' => $regMem->getValor('descripcion'));
-			$cats->addCategoriaBD ( new Categoria ( $valores));
+			$cats->addItemBD ( new Categoria ( $valores));
 			$regFeedback->addFeedback("Se ha añadido la categoría <b>{$regMem->getValor('nombre')}</b> con éxito.");
 		} else {
 			$regError->setError('general', 'El nombre no puede estar vacío');
@@ -49,7 +68,7 @@ switch ($regMem->getValor('accion')){
 
 		// Si el método es POST es que hemos enviado la confiramación
 		if ($regMem->getValor('metodo')=='POST' && $categoria) {
-			$cats->delCategoriaBD($regMem->getValor('id'));
+			$cats->delItemBD($regMem->getValor('id'));
 			$regFeedback->addFeedback("Se ha eliminado la categoria <b>{$categoria->getPropiedad('nombre')}</b> con éxito.");
 		} else if ($regMem->getValor('metodo')=='GET' && $categoria) {
 			$regMem->setValor('nombre', $categoria->getPropiedad('nombre'));
@@ -69,9 +88,9 @@ switch ($regMem->getValor('accion')){
 				'nombre'=>$regMem->getValor('nombre'),
 				'parent_id' => $regMem->getValor('parent_id'),
 				'descripcion' => $regMem->getValor('descripcion'),
-				'activo' => (boolean)($regMem->getValor('activo'))
+				'activa' => (boolean)($regMem->getValor('activa'))
 			);
-			$cats->setCategoriaBD ( new Categoria ( $valores));
+			$cats->setItemBD ( new Categoria ( $valores));
 			$regFeedback->addFeedback("Se ha modificado la categoría <b>{$regMem->getValor('nombre')}</b> con éxito.");
 		} else if (!$categoria) {
 			$regError->setError('general', 'No existe ninguna categoría con esa <b>id</b>.');
@@ -80,7 +99,8 @@ switch ($regMem->getValor('accion')){
 	}
 
 // Cargamos la lista de categorias
-$cats->getCategoriaBD ();
+$cats->getItemBD();
+
 
 
 ?>
@@ -126,7 +146,8 @@ $cats->getCategoriaBD ();
 			<select name="parent_id">
 				<option value="" selected="selected">&lt;General&gt;</option>
 				<?php
-				$a = $cats->getChildCategoriasById(0);
+				$a = $cats->getChildItemsById(0);
+				print_r($a);
 				foreach ($a as $cat ) {
 					echo "<option value=\"{$cat->getPropiedad('id')}\">{$cat->getPropiedad('nombre')}</option>";
 				}
@@ -169,7 +190,7 @@ $cats->getCategoriaBD ();
 				<select name="parent_id">
 					<option value="">&lt;General&gt;</option>
 					<?php
-					$a = $cats->getChildCategoriasById(0);
+					$a = $cats->getChildItemsById(0);
 					
 					foreach ($a as $cat ) {
 						
@@ -186,9 +207,9 @@ $cats->getCategoriaBD ();
 					?>
 				</select>
 				<label>Activa:</label>
-				<input type="checkbox" name="activo"
+				<input type="checkbox" name="activa"
 				<?php
-					if ($categoria->getPropiedad('activo')) {
+					if ($categoria->getPropiedad('activa')) {
 						echo " CHECKED ";
 					}
 				?>
@@ -214,7 +235,8 @@ $cats->getCategoriaBD ();
 		}
 	}
 
-	if ($regError->getError() || ($regMem->getValor('accion')!='Añadir' && $regMem->getValor('metodo')=='POST')) {
+	if ($regMem->getValor('accion')!='Añadir' && ($regError->getError() || $regMem->getValor('metodo')=='POST')) {
+	//if (($regError->getError() && $regMem->getValor('accion')!='Añadir') || ($regMem->getValor('accion')!='Añadir' && $regMem->getValor('metodo')=='POST')) {
 		?>
 		<!-- MOSTRAMOS ENLACE A AÑADIR -->
 		<p class="separacion centrado"><a href="<?=$_SERVER['SCRIPT_NAME']?>">Añadir categoria</a></p>

@@ -1,6 +1,6 @@
 		<?php
 		// Dibujar arbol
-		$a = $cats->getChildCategoriasById(0);
+		$a = $cats->getChildItemsById(0);
 		$columnas = 3;
 		$contador = 0;
 		$contador_max = ceil($cats->getTotal()/$columnas);
@@ -20,7 +20,7 @@
 
 
 				// 	Buscamos sus hijos
-					$children = $cats->getChildCategoriasById($cat->getPropiedad('id'));
+					$children = $cats->getChildItemsById($cat->getPropiedad('id'));
 				
 				foreach ($children as $child) {
 					if ($contador==0) {
@@ -58,7 +58,7 @@
 
 
 				// 		Buscamos sus hijos
-				$children = $cats->getChildCategoriasById($cat->getId());
+				$children = $cats->getChildItemsById($cat->getId());
 				echo 'subcategorias='.count($children);
 				foreach ($children as $child) {
 					echo "<li><a href=\"adminCategorias.php?accion=Editar&id={$child->getId()}\" title=\"Editar: {$child->getNombre()}\">{$child->getNombre()}</a>";
