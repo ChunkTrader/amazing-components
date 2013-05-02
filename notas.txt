@@ -1,0 +1,22 @@
+FAVICON: 16x16m 256 colores, .gif o .png para que soporte transparencias, hay que convertirla en .ico usando algún programa o en este sitio: http://www.favicon.cc/
+	- Coloca el icono en el directorio raiz del dominio /
+	- Para poder usar distintos en distintas páginas hay que especificarlo con (la ruta debe ser absoluta o relativa a la raiz del dominio):
+		<link rel="shortcut icon" type="image/x-icon" href="http://localhost/practicas/amazing-components/favicon.ico" />
+		o
+		<link rel="icon" type="image/ico" href="http://localhost/practicas/amazing-components/images/favicons/favicon.ico" />
+
+
+PERMISOS
+- editProducto (productos, categorias)
+- editPublicidad (slideshow, banner, ofertas)
+
+	- Producto inactivo (descatalogado) y con existencias >0 --> POSIBLE SECCIÓN OUTLET
+
+
+
+POSIBLES MEJORAS
+	- Administracion de fabricantes, por falta de tiempo no hay formulario, hay que añadirlos directamente a la base de datos.
+
+	- Añadir control de errores y pedir confirmaciones antes de efectuar cambios en imagenes.
+	
+	- Pasar parametros a los métodos como arrays, por ejemplo listas de ids de productos, imagenes, etc.
