@@ -1,25 +1,25 @@
+<div id="sidebar">
 <?php
-$cats = new ListasCategorias ($PDO);
-$cats->getCategoriaBD (  );
-$a = $cats->getCategoriaById ();
+if (!$cats->getTotal()) {
+	$cats->getItemBD();
+}
 
-$seleccionada = empty($_GET['cat'])? null : $_GET['cat'];
+$a = $cats->getItemById();
 
 foreach ( $a as $cat ) {
-	// Principal: categoria null:
-	if ($cat->getParentId () == null) {
-		echo "<ul><li><a href=\"#\">{$cat->getNombre ()}</a>";
+	if (!$cat->getPropiedad('parent_id')) {
+		echo "<ul><li><a href=\"#\">{$cat->getPropiedad('nombre')}</a>";
 		// Buscamos sus hijos si hay alguna categoria seleccionada
-		if ($cat->getId()==$seleccionada) {
-			$children = $cats->getChildCategoriasById ( $cat->getId () );
+		if ($cat->getPropiedad('id')==$regMem->getValor('cat')) {
+			$children = $cats->getChildItemsById($cat->getPropiedad('id'));
 			echo '<ul>';
 			foreach ( $children as $child ) {
-				echo "<li><a href=\"#\" title=\"{$child->getNombre ()}\">{$child->getNombre ()}</a></li>";
+				echo "<li><a href=\"#\" title=\"{$child->getPropiedad('nombre')}\">{$child->getPropiedad('nombre')}</a></li>";
 			}
 			echo '</ul>';
 		}
 		echo '</li></ul>';
 	}
 }
-
 ?>
+</div>

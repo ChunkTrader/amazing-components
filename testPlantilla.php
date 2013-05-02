@@ -1,10 +1,30 @@
 <?php
-require_once 'Categorias.php';
-require_once 'Productos.php';
-require_once 'Imagenes.php';
+
+
+require_once 'configuracion.php';
 require_once 'conectar_bd.php';
+require_once 'Categorias.php';
+require_once 'Registro.php';
+require_once 'Colecciones.php';
+require_once 'Controlador.php';
 
 $PDO = new PDOConfig ();
+
+// Incializamos los registros
+$regMem = RegistroMemoria::instancia();
+$regError = RegistroErrores::instancia();
+$regFeedback = RegistroFeedback::instancia();
+
+// El controlador de registros almacena un array con acceso a los registros que le añadamos, este
+// controlador se pasa a las colecciones al crearlo para que puedan mandar mensajes a la aplicación
+// (Sin usar por el momento)
+
+$controlador = new Controlador();
+$controlador -> setRegistro ('feedback', $regFeedback);
+$controlador -> setRegistro ('errores', $regError);
+$controlador -> setPDO($PDO);
+
+$cats = new Categorias($controlador);
 
 function quitarEspacios($string){
 		$old_pattern = array("/[^a-zA-Z0-9]/", "/_+/", "/_$/");
@@ -12,12 +32,15 @@ function quitarEspacios($string){
 		return preg_replace($old_pattern, $new_pattern , $string);
 }
 
+// Esta plantilla solo se usa para la página de bienvenida.
+$regMem->setValor('titulo', 'Bienvenido');
 
-?><!DOCTYPE html>
+?>
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Amazing Components - Bienvenido</title>
+<title><?=EMPRESA . ' - ' . $regMem->getValor('titulo')?></title>
 <link rel="shortcut icon" type="image/x-icon"
 	href="http://localhost/practicas/amazing-components/favicon.ico" />
 

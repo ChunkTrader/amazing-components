@@ -1,9 +1,11 @@
-<ul>
-	<li>Administrar productos
-		<ul>
-			<li><a href="newCategorias.php">Categorias</li>			
-			<li><a href="newProductos.php">Productos</li>			
-		</ul>
-	</li>
+<div id="sidebar">
+	<ul>
+		<li>Administrar productos
+			<ul>
+				<li><a href="adminCategorias.php">Categorias</a></li>			
+				<li><a href="adminProductos.php">Productos</a></li>			
+			</ul>
+		</li>
 
-</ul>
+	</ul>
+</div>

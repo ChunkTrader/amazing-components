@@ -1,14 +1,12 @@
 <?php
+require_once 'configuracion.php';
 require_once 'conectar_bd.php';
-require_once 'Categorias2.php'; // Nueva
-require_once 'Categorias.php'; // Borrando
+require_once 'Categorias.php';
 require_once 'Registro.php';
 require_once 'Colecciones.php';
 require_once 'Controlador.php';
 
 $PDO = new PDOConfig ();
-
-
 
 // Incializamos los registros
 $regMem = RegistroMemoria::instancia();
@@ -17,20 +15,12 @@ $regFeedback = RegistroFeedback::instancia();
 
 // El controlador de registros almacena un array con acceso a los registros que le añadamos, este
 // controlador se pasa a las colecciones al crearlo para que puedan mandar mensajes a la aplicación
-$controlador = new Controlador;
+$controlador = new Controlador();
 $controlador -> setRegistro ('feedback', $regFeedback);
 $controlador -> setRegistro ('errores', $regError);
 $controlador -> setPDO($PDO);
 
 $cats = new Categorias($controlador);
-
-
-//$cats = new ListasCategorias ($PDO);
-
-
-
-
-
 
 // Intentamos recuperar la categoria
 if ($regMem->getValor('id')){
@@ -67,9 +57,14 @@ switch ($regMem->getValor('accion')){
 		$regMem->setValor('titulo', 'Eliminar Categoría');
 
 		// Si el método es POST es que hemos enviado la confiramación
-		if ($regMem->getValor('metodo')=='POST' && $categoria) {
-			$cats->delItemBD($regMem->getValor('id'));
-			$regFeedback->addFeedback("Se ha eliminado la categoria <b>{$categoria->getPropiedad('nombre')}</b> con éxito.");
+		if ($regMem->getValor('metodo')=='POST' && $categoria) {				
+				$cats->getItemBD();
+				if ($cats->getChildItemsById($categoria->getPropiedad('id'))) {
+					$regError->setError('general' , "No puede eliminarse <b>{$categoria->getPropiedad('nombre')}</b> porque tiene categorias descendientes.");
+				} else {
+					$cats->delItemBD($regMem->getValor('id'));
+					$regFeedback->addFeedback("Se ha eliminado la categoria <b>{$categoria->getPropiedad('nombre')}</b> con éxito.");
+				}
 		} else if ($regMem->getValor('metodo')=='GET' && $categoria) {
 			$regMem->setValor('nombre', $categoria->getPropiedad('nombre'));
 		} else {
@@ -101,18 +96,20 @@ switch ($regMem->getValor('accion')){
 // Cargamos la lista de categorias
 $cats->getItemBD();
 
-
-
+include 'cabecera.php';
 ?>
-<head>
-<link href="css/main.css" rel="stylesheet" type="text/css" title="main" />
-<link href="css/admin-site.css" rel="stylesheet" type="text/css" />
-<title><?=$regMem->getValor('titulo')?></title>
-</head>
-<body>
+
+<div id="main">
+
+<?php
+include 'top-menu.php';
+include 'main-menu.php';
+include 'sidebar-administrar.php';
+?>
+
 <div id="main-content">
-		<h2><?=$regMem->getValor('titulo')?></h2>
-		<div class="separacion">
+	<h2><?=$regMem->getValor('titulo')?></h2>
+	<div class="separacion">
 		<?php
 		if ($regError->getError()) {
 			$a = $regError->getError();
@@ -129,8 +126,8 @@ $cats->getItemBD();
 		}
 		?>
 	</div>
+
 	<div class="separacion">
-		
 		<?php 
 		// Si no hemos recibido ninguna acción o la acción es añadir
 		// mostramos el formulario para añadir categorias
@@ -161,79 +158,79 @@ $cats->getItemBD();
 		</form>
 	
 	<?php
-	} else if (!$categoria) {
+		} else if (!$categoria) {
 
-		// Si no hemos recibido la categoría es que hay un error y no continuamos con las demás
-		// posibilidades.
+			// Si no hemos recibido la categoría es que hay un error y no continuamos con las demás
+			// posibilidades.
 
-	} else if ($regMem->getValor('accion') == 'Eliminar' && $regMem->getValor('metodo') == 'GET') {
-		?>
-	
-		<!-- FORMULARIO PARA CONFIRMAR ELIMINACIÓN  -->
-		<form action="<?=$_SERVER['SCRIPT_NAME'] ?>" method=post>
-			<p class="centrado">¿Estas seguro de que deseas eliminar la categoría <b><?=$regMem->getValor('nombre')?></b>?</p>
-			<input type="hidden" name="id" value="<?=$regMem->getValor('id')?>" />
-			<p class="separacion centrado">
-				<input type="submit" value="Eliminar" name="accion"/>
-				<input type="submit" value="Cancelar" name="accion" />
-			</p>
-		</form>
-		<?php		
-	} else if ($regMem->getValor('accion') == 'Editar') {
-		if ($regMem->getValor('metodo')=='GET') {
+		} else if ($regMem->getValor('accion') == 'Eliminar' && $regMem->getValor('metodo') == 'GET') {
 			?>
-			<!-- FORMULARIO PARA EDITAR CATEGORIAS -->
+		
+			<!-- FORMULARIO PARA CONFIRMAR ELIMINACIÓN  -->
 			<form action="<?=$_SERVER['SCRIPT_NAME'] ?>" method=post>
-				<label>Nombre: </label>
-				<input type="text" name="nombre" value="<?=$categoria->getPropiedad('nombre')?>"/>
-				<label>Parent Cat: </label>
-				<select name="parent_id">
-					<option value="">&lt;General&gt;</option>
-					<?php
-					$a = $cats->getChildItemsById(0);
-					
-					foreach ($a as $cat ) {
-						
-						if ($cat->getPropiedad('id')==$categoria->getPropiedad('id')) {
-							continue;
-						}
-
-						echo "<option value=\"{$cat->getPropiedad('id')}\"";
-						if ($cat->getPropiedad('id') == $categoria->getPropiedad('parent_id')) {
-							echo " selected ";
-						}
-						echo ">{$cat->getPropiedad('nombre')}</option>";
-					}
-					?>
-				</select>
-				<label>Activa:</label>
-				<input type="checkbox" name="activa"
-				<?php
-					if ($categoria->getPropiedad('activa')) {
-						echo " CHECKED ";
-					}
-				?>
-				/>
-				<label>Descripcion:</label>
-				<input type="text" class="long" maxlength="80" name="descripcion" value="<?=$categoria->getPropiedad('descripcion')?>" />
-				<input type="hidden" value="<?=$categoria->getPropiedad('id')?>" name="id"/>
+				<p class="centrado">¿Estas seguro de que deseas eliminar la categoría <b><?=$regMem->getValor('nombre')?></b>?</p>
+				<input type="hidden" name="id" value="<?=$regMem->getValor('id')?>" />
 				<p class="separacion centrado">
-					<input type="submit" value="Editar" name="accion"/>
+					<input type="submit" value="Eliminar" name="accion"/>
 					<input type="submit" value="Cancelar" name="accion" />
 				</p>
 			</form>
+			<?php		
+		} else if ($regMem->getValor('accion') == 'Editar') {
+			if ($regMem->getValor('metodo')=='GET') {
+				?>
+				<!-- FORMULARIO PARA EDITAR CATEGORIAS -->
+				<form action="<?=$_SERVER['SCRIPT_NAME'] ?>" method=post>
+					<label>Nombre: </label>
+					<input type="text" name="nombre" value="<?=$categoria->getPropiedad('nombre')?>"/>
+					<label>Parent Cat: </label>
+					<select name="parent_id">
+						<option value="">&lt;General&gt;</option>
+						<?php
+						$a = $cats->getChildItemsById(0);
+						
+						foreach ($a as $cat ) {
+							
+							if ($cat->getPropiedad('id')==$categoria->getPropiedad('id')) {
+								continue;
+							}
 
-			<?php
-		} else {		
-			?>
-			<!-- MOSTRAMOS ENLACE VOLVER -->
-			<p class="separacion centrado">
-				<a href="<?=$_SERVER['SCRIPT_NAME']?>?accion=Editar&id=<?=$regMem->getValor('id')?>">Volver</a>
-			</p>
-			
-			<?php
+							echo "<option value=\"{$cat->getPropiedad('id')}\"";
+							if ($cat->getPropiedad('id') == $categoria->getPropiedad('parent_id')) {
+								echo " selected ";
+							}
+							echo ">{$cat->getPropiedad('nombre')}</option>";
+						}
+						?>
+					</select>
+					<label>Activa:</label>
+					<input type="checkbox" name="activa"
+					<?php
+						if ($categoria->getPropiedad('activa')) {
+							echo " CHECKED ";
+						}
+					?>
+					/>
+					<label>Descripcion:</label>
+					<input type="text" class="long" maxlength="80" name="descripcion" value="<?=$categoria->getPropiedad('descripcion')?>" />
+					<input type="hidden" value="<?=$categoria->getPropiedad('id')?>" name="id"/>
+					<p class="separacion centrado">
+						<input type="submit" value="Editar" name="accion"/>
+						<input type="submit" value="Cancelar" name="accion" />
+					</p>
+				</form>
+
+				<?php
+			} else {		
+				?>
+				<!-- MOSTRAMOS ENLACE VOLVER -->
+				<p class="separacion centrado">
+					<a href="<?=$_SERVER['SCRIPT_NAME']?>?accion=Editar&id=<?=$regMem->getValor('id')?>">Volver</a>
+				</p>
+				
+				<?php
+			}
 		}
-	}
 
 	if ($regMem->getValor('accion')!='Añadir' && ($regError->getError() || $regMem->getValor('metodo')=='POST')) {
 	//if (($regError->getError() && $regMem->getValor('accion')!='Añadir') || ($regMem->getValor('accion')!='Añadir' && $regMem->getValor('metodo')=='POST')) {
@@ -249,9 +246,64 @@ $cats->getItemBD();
 	</div>
 	<!-- VISTA DE CATEGORIAS -->
 	<div id="categorias">
-	<?php
-	include 'listaCategorias.php';
-	?>
+			<?php
+		// Dibujar arbol
+		$a = $cats->getChildItemsById(0);
+		$columnas = 3;
+		$contador = 0;
+		$contador_max = ceil($cats->getTotal()/$columnas);
+
+		foreach ( $a as $cat ) {			
+
+		// Principal: categoria null:
+			if ($cat->getPropiedad('parent_id') == null) {
+				if ($contador==0) {
+					echo "<div class=\"categoria\">";
+				}
+				$contador+=1;
+				echo "<ul><li><a href=\"adminCategorias.php?accion=Editar&id={$cat->getPropiedad('id')}\" title=\"Editar: {$cat->getPropiedad('nombre')}\">{$cat->getPropiedad('nombre')}</a>";
+				// añadimos el icono de eliminar
+				echo "<a href=\"adminCategorias.php?accion=Eliminar&id={$cat->getPropiedad('id')}\" title=\"Eliminar: {$cat->getPropiedad('nombre')}\"><img src=\"images/icon_delete.gif\"/></a>";
+				echo "<ul>";
+
+
+				// 	Buscamos sus hijos
+					$children = $cats->getChildItemsById($cat->getPropiedad('id'));
+				
+				foreach ($children as $child) {
+					if ($contador==0) {
+						echo "<div class=\"categoria\"><ul><li><ul>";
+					}
+					$contador+=1;
+					echo "<li><a href=\"adminCategorias.php?accion=Editar&id={$child->getPropiedad('id')}\" title=\"Editar: {$child->getPropiedad('nombre')}\">{$child->getPropiedad('nombre')}</a>";
+					// añadimos el icono de eliminar
+					echo "<a href=\"adminCategorias.php?accion=Eliminar&id={$child->getPropiedad('id')}\" title=\"Eliminar: {$child->getPropiedad('nombre')}\"><img src=\"images/icon_delete.gif\"/></a>";
+					echo "</li>";
+					if ($contador>=$contador_max) {
+						echo "</ul></li></ul></div>";
+						$contador=0;
+					}
+
+				}
+				echo "</ul></li></ul>";
+
+				if ($contador>=$contador_max) {
+					echo "</div>";
+					$contador=0;
+				}
+				
+			}
+
+		}
+		//Cerramos la conexión con la base de datos
+		$PDO = null;
+		?>
 	</div>
 </div>
+
+<?php
+include 'pie.php';
+?>
+
 </body>
+</html>

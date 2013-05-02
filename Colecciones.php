@@ -15,7 +15,7 @@ abstract class Coleccion {
 	}
 
 	function getItemById($id=null) {
-		if (!$id) {
+		if (!$id) {			
 			return $this->coleccion;
 		}
 
@@ -29,8 +29,8 @@ abstract class Coleccion {
 
 	function delItem($id){
 		$item = $this->getItemById($id);
-			if (($key = array_search($item, $this->coleccion, TRUE)) !== FALSE ){
-				unset($this->coleccion[$key]);
+		if (($key = array_search($item, $this->coleccion, TRUE)) !== FALSE ){
+			unset($this->coleccion[$key]);
 		}
 	}
 
@@ -60,15 +60,13 @@ abstract class Coleccion {
 			}
 			$this->addItem(new $clase ($campos));
 		}
-
 		return $this;
-
 	}
 
 	function addItemBD(Item $item) {
 		$propiedades = $item->getPropiedad();
-		$aux1= array();
-		$aux2= array();
+		$aux1 = array();
+		$aux2 = array();
 
 		foreach ($propiedades as $propiedad => $valor) {
 			$aux1 [$propiedad]= "$propiedad";
@@ -86,7 +84,6 @@ abstract class Coleccion {
 		echo '<br>';
 		$stmt = $this->controlador->getPDO()->prepare($prepare);
 		$stmt->execute($propiedades);
-
 	}
 
 	function delItemBD($id) {
@@ -116,7 +113,6 @@ abstract class Coleccion {
 		// Temporal, en lugar de actualizar el objeto en memoria lo eliminamos y añadimos este.
 		$this->delItem($item->getPropiedad('id'));
 		$this->addItem($item);
-
 	}
 
 	function getTotal(){
@@ -150,6 +146,19 @@ class Categorias extends Coleccion{
 		}
 		return $childItems;
 	}
+
+}
+
+class Fabricantes extends Coleccion{
+	protected $tabla;
+
+	public function __construct(Controlador $controlador) {
+		$this->controlador = $controlador;
+		$this->tabla = 'Fabricantes';
+		$this->orden = 'nombre';
+		$this->miembro = 'Fabricante';
+	}
+
 
 }
 
