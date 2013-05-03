@@ -35,7 +35,7 @@ class Productos extends Coleccion{
 
 	function getItemBD(array $opciones=null) {
 		// Si tenemos una $id cargamos solo un elemento
-		if ($opciones['id']) {
+		if (isset($opciones['id'])) {
 			$prepare = 'SELECT * FROM ' . $this->tabla . ' WHERE id = :id';
 			$stmt = $this->controlador->getPDO()->prepare($prepare);
 			$stmt->execute(array(':id'=>$opciones['id']));
@@ -43,10 +43,10 @@ class Productos extends Coleccion{
 			// Vaciamos la colección antes de cargar la tabla de la base de datos
 			$this->coleccion = array();
 
-			if ($opciones['novedades']) {
+			if (isset($opciones['novedades'])) {
 				// Novedades, mostramos los últimso productos añadidos primero.
 				$prepare = 'SELECT * FROM ' . $this->tabla . ' ORDER BY fecha DESC LIMIT ' . $opciones['novedades'];
-			} else if ($opciones['outlet']) {
+			} else if (isset($opciones['outlet'])) {
 				// Outlet, mostramos los productos más antiguos primero.
 				$prepare = 'SELECT * FROM ' . $this->tabla . ' WHERE disponibilidad = \'Outlet\' ORDER BY fecha ASC LIMIT ' . $opciones['outlet'];
 			} else {

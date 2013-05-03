@@ -1,6 +1,6 @@
 <?php
 //this file will be the src for an img tag
-require 'ThumbnailImage.php';
+require 'classes/ThumbnailImage.php';
 $path = @$_GET["path"];
 $maxsize = @$_GET["size"];
 if(!isset($maxsize)){

@@ -38,7 +38,11 @@ abstract class Item {
 		return static::$lista_propiedades;
 	}
 
-
+	static function encode($string){
+		$old_pattern = array("/[^a-zA-Z0-9]/", "/_+/", "/_$/");
+		$new_pattern = array("_", "_", "");
+		return preg_replace($old_pattern, $new_pattern , $string);
+	}
 }
 
 ?>

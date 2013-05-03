@@ -124,5 +124,4 @@ function getItemBD(array $opciones=null) {
 		return htmlentities(trim($valor), ENT_QUOTES, 'ISO-8859-1');
 	}
 }
-
 ?>
