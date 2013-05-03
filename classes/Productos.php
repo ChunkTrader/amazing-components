@@ -19,6 +19,10 @@ class Productos extends Coleccion{
 
 	function addItemBD(Item $item) {
 		$item->calcDisponibilidad();
+
+		//Los productos siempre estan activos al crearlos
+		$item->setPropiedad('activo', 1);
+		
 		return parent::addItemBD($item);
 	}
 

@@ -39,9 +39,6 @@ if ($regMem->getValor('id')) {
 // Titulo por defecto de la página
 $regMem->setValor('titulo', 'Añadir Producto');
 
-
-
-
 switch ($regMem->getValor('accion')){
 	case 'Cancelar':
 		header("Location: {$_SERVER['SCRIPT_NAME']}");
@@ -50,7 +47,6 @@ switch ($regMem->getValor('accion')){
 
 	case 'Añadir':
 		$correcto = TRUE;
-
 
 		if (!$regMem->getValor('nombre')) {
 			$regError->setError('nombre', 'El <b>nombre</b> del producto es obligatorio.');
@@ -117,14 +113,10 @@ switch ($regMem->getValor('accion')){
 						$regFeedback->addFeedback('Se ha cambiado la imagen principal del producto.');
 					}		
 				}
-				
-				
 			} else {
 				$regError->setError('imagen', 'No existe ninguna imagen con esa <b>id</b>.');
 			}
 		}
-
-
 		break;
 
 	case 'Eliminar':
@@ -218,20 +210,16 @@ if (isset($producto)) {
 	$galeria->getItemBD( array ('producto_id' => $producto->getPropiedad('id')));
 }
 
-
-
-
+include 'cabecera.php';
 ?>
-<head>
-<link href="css/main.css" rel="stylesheet" type="text/css" title="main" />
-<link rel="stylesheet" href="css/jquery.fancybox.css" type="text/css" media="screen" />
-<script type="text/javascript" src="js/jquery-2.0.0.min.js"></script>
-<script type="text/javascript" src="js/jquery.fancybox.pack.js"></script>
 
+<div id="main">
 
-</head>
-<body>
-
+<?php
+include 'top-menu.php';
+include 'main-menu.php';
+include 'sidebar-administrar.php';
+?>
 
 <div id="main-content">
 	<h2><?=$regMem->getValor('titulo')?></h2>
@@ -331,138 +319,129 @@ if (isset($producto)) {
 			<input type="submit" value="Añadir" name="accion"/>
 		</p>
 	</form>
-</div>
+	</div>
 
 	<?php 
 	} else if ($regMem->getValor('accion')=='Editar' || $regMem->getValor('accion')== 'Guardar Imagen' || $regMem->getValor('accion')=='principal') {
 
-
 	?>
-	<!-- FORMULARIO PARA EDITAR PRODUCTOS -->
 	<div class="separacion" >
-		<form action="<?=$_SERVER['SCRIPT_NAME'] ?>" method="post">
-			<label>Nombre:</label>
-			<input type="text" name="nombre" value="<?=$producto->getPropiedad('nombre')?>"/>
-			<label>Categoria:</label>
-			<select name="categoria_id">
-				<?php
-				$a = $cats->getChildItemsById(0);
+
+	<!-- FORMULARIO PARA EDITAR PRODUCTOS -->
+	<form action="<?=$_SERVER['SCRIPT_NAME'] ?>" method="post">
+		<label>Nombre:</label>
+		<input type="text" name="nombre" value="<?=$producto->getPropiedad('nombre')?>"/>
+		<label>Categoria:</label>
+		<select name="categoria_id">
+			<?php
+			$a = $cats->getChildItemsById(0);
 					
-				foreach ($a as $cat ) {
-					echo "<optgroup label=\"{$cat->getPropiedad('nombre')}\">";
-					$b = $cats->getChildItemsById($cat->getPropiedad('id'));
-					foreach ($b as $catb) {
-						echo "<option value=\"{$catb->getPropiedad('id')}\"";
-
-						if ($catb->getPropiedad('id') == $producto->getPropiedad('id')) {
-							echo " selected ";
-						}
-
-						echo ">{$catb->getPropiedad('nombre')}</option>";
-					}
-							
-					echo "</optgroup>";
-				}
-				?>
-				</select>
-				<label>Precio:</label>
-				<input type="text" name="precio_venta" value="<?=$producto->getPropiedad('precio_venta')?>"/>
-
-				<label>Fabricante:</label>
-				<select name="fabricante_id">
-					<?php
-					$fabs = new Fabricantes($controlador);
-					$fabs->getItemBD();
-					$a = $fabs->getItemById();
-
-					echo "<option value=\"0\"";
-					if ($regMem->getValor('fabricante_id')==0) {
+			foreach ($a as $cat ) {
+				echo "<optgroup label=\"{$cat->getPropiedad('nombre')}\">";
+				$b = $cats->getChildItemsById($cat->getPropiedad('id'));
+				foreach ($b as $catb) {
+					echo "<option value=\"{$catb->getPropiedad('id')}\"";
+					if ($catb->getPropiedad('id') == $producto->getPropiedad('id')) {
 						echo " selected ";
 					}
-					echo ">OEM</option>";
-
-					foreach ($a as $fab) {
-						echo "<option value=\"{$fab->getPropiedad('id')}\"";
-						if ($fab->getPropiedad('id') == $producto->getPropiedad('fabricante_id')) {
-							echo " selected ";							
-						}
-						echo ">{$fab->getPropiedad('nombre')}</option>";
-					}
-
-					?>
-				</select>
-
-				<label>Existencias:</label>
-				<input type="text" name="existencias" value="<?=$producto->getPropiedad('existencias')?>"/>
-				
-				<label>Disponibilidad:</label>
-				<input type="text" disabled value="<?=$producto->getPropiedad('disponibilidad')?>"/>
-				<input type="hidden" value="<?=$producto->getPropiedad('disponibilidad')?>" name="disponibilidad"/>
-				<input type="hidden" value="<?=$producto->getPropiedad('fecha')?>" name="fecha"/>
-				<label>Fecha:</label>
-				<input type="text" disabled value="<?=$producto->getPropiedad('fecha')?>"/>
-				
-				<label>Activo:</label>
-				<input type="checkbox" name="activo"
-				<?php
-					if ($producto->getPropiedad('activo')) {
-						echo " CHECKED ";
-					}
-				?>
-				/>
-				
-				<label>Descripcion:</label>
-				<textarea name="descripcion" rows="5"><?=$producto->getPropiedad('descripcion')?></textarea>
-				<input type="hidden" value="<?=$producto->getPropiedad('id')?>" name="id"/>
-
-				<p class="centrado">
-					<input type="submit" value="Editar" name="accion"/>
-					<input type="submit" value="Cancelar" name="accion" />
-				</p>
-			</form>
-
-			<h2 class="separacion">Galeria de imagenes</h2>
-
-			<div id="Galeria">
-				<?php
-				$a = $galeria->getItemById();
-
-				$a_actual=0;
-				$a_total = count($a);
-				$size = 161; // Tamanño del Thumnail 161 : 4 por fila
-
-				foreach ($a as $key=>$imagen){
-					$a_actual += 1;
-
-					echo "<div class=\"edit_image";
-					if ($imagen->getPropiedad('principal')) {
-						echo " principal";
-					}
-					echo "\">";
-					echo "<a class=\"fancybox\" rel=\"gallery1\" href=\"images/products/{$imagen->getPropiedad('imagen')}.jpeg\" ";
-					echo "title=\"{$producto->getPropiedad('nombre')} - {$a_actual} de {$a_total}\" >";						
-					echo "<img class=\"thumb\" src=\"getthumb.php?path=images/products/{$imagen->getPropiedad('imagen')}.jpeg&size={$size}\" alt=\"{$producto->getPropiedad('nombre')} - {$a_actual} de {$a_total}\"/></a>";
-					echo "<a  class=\"borrar\" href=\"{$_SERVER['SCRIPT_NAME']}?id={$producto->getPropiedad('id')}&accion=Editar&eliminar_imagen={$imagen->getPropiedad('id')}\" title=\"Eliminar Imagen: {$a_actual} de {$a_total}\"><img src=\"images/icon_delete.gif\"/></a>";
-					if (!$imagen->getPropiedad('principal')) {
-						echo "<a  class=\"importante\" href=\"{$_SERVER['SCRIPT_NAME']}?id={$producto->getPropiedad('id')}&accion=Editar&principal={$imagen->getPropiedad('id')}\" title=\"Establecer como imagen principal del producto\"><img src=\"images/important.gif\"/></a>";
-					}
-					echo "</div>";
+					echo ">{$catb->getPropiedad('nombre')}</option>";
 				}
+				echo "</optgroup>";
+			}
+			?>
+		</select>
+		<label>Precio:</label>
+		<input type="text" name="precio_venta" value="<?=$producto->getPropiedad('precio_venta')?>"/>
 
-				?>
+		<label>Fabricante:</label>
+		<select name="fabricante_id">
+			<?php
+			$fabs = new Fabricantes($controlador);
+			$fabs->getItemBD();
+			$a = $fabs->getItemById();
+			echo "<option value=\"0\"";
+			if ($regMem->getValor('fabricante_id')==0) {
+				echo " selected ";
+			}
+			echo ">OEM</option>";
+			foreach ($a as $fab) {
+				echo "<option value=\"{$fab->getPropiedad('id')}\"";
+				if ($fab->getPropiedad('id') == $producto->getPropiedad('fabricante_id')) {
+					echo " selected ";							
+				}
+				echo ">{$fab->getPropiedad('nombre')}</option>";
+			}
+			?>
+		</select>
 
-				<form class="separacion" action="<?=$_SERVER['SCRIPT_NAME'] ?>" method="post" enctype="multipart/form-data">
-					<label>Añadir:</label>
-					<input type="hidden" name="MAX_FILE_SIZE" value="<?=MAX_FILE_SIZE?>" />
-					<input type="file" name="imagen"/>
-					<input type="hidden" value="<?=$producto->getPropiedad('id')?>" name="id" />
+		<label>Existencias:</label>
+		<input type="text" name="existencias" value="<?=$producto->getPropiedad('existencias')?>"/>
+				
+		<label>Disponibilidad:</label>
+		<input type="text" disabled value="<?=$producto->getPropiedad('disponibilidad')?>"/>
+		<input type="hidden" value="<?=$producto->getPropiedad('disponibilidad')?>" name="disponibilidad"/>
+		<input type="hidden" value="<?=$producto->getPropiedad('fecha')?>" name="fecha"/>
 
-					<p class="centrado">
-						<input type="submit" value="Guardar Imagen" name="accion"/>
-					</p>
-				</form>
-			</div>
+		<label>Fecha:</label>
+		<input type="text" disabled value="<?=$producto->getPropiedad('fecha')?>"/>
+				
+		<label>Activo:</label>
+		<input type="checkbox" name="activo"
+			<?php
+			if ($producto->getPropiedad('activo')) {
+				echo " CHECKED ";
+			}
+			?>
+		/>
+				
+		<label>Descripcion:</label>
+		<textarea name="descripcion" rows="5"><?=$producto->getPropiedad('descripcion')?></textarea>
+		<input type="hidden" value="<?=$producto->getPropiedad('id')?>" name="id"/>
 
+		<p class="centrado">
+			<input type="submit" value="Editar" name="accion"/>
+			<input type="submit" value="Cancelar" name="accion" />
+		</p>
+		</form>
+	</div>
+
+	<h2 class="separacion">Galeria de imagenes</h2>
+
+	<div id="Galeria">
+		<?php
+		$a = $galeria->getItemById();
+		$a_actual=0;
+		$a_total = count($a);
+		$size = 161; // Tamanño del Thumnail 161 : 4 por fila
+
+		foreach ($a as $key=>$imagen){
+			$a_actual += 1;
+				echo "<div class=\"edit_image";
+			if ($imagen->getPropiedad('principal')) {
+				echo " principal";
+			}
+			echo "\">";
+			echo "<a class=\"fancybox\" rel=\"gallery1\" href=\"images/products/{$imagen->getPropiedad('imagen')}.jpeg\" ";
+			echo "title=\"{$producto->getPropiedad('nombre')} - {$a_actual} de {$a_total}\" >";						
+			echo "<img class=\"thumb\" src=\"getthumb.php?path=images/products/{$imagen->getPropiedad('imagen')}.jpeg&size={$size}\" alt=\"{$producto->getPropiedad('nombre')} - {$a_actual} de {$a_total}\"/></a>";
+			echo "<a  class=\"borrar\" href=\"{$_SERVER['SCRIPT_NAME']}?id={$producto->getPropiedad('id')}&accion=Editar&eliminar_imagen={$imagen->getPropiedad('id')}\" title=\"Eliminar Imagen: {$a_actual} de {$a_total}\"><img src=\"images/icon_delete.gif\"/></a>";
+			if (!$imagen->getPropiedad('principal')) {
+				echo "<a  class=\"importante\" href=\"{$_SERVER['SCRIPT_NAME']}?id={$producto->getPropiedad('id')}&accion=Editar&principal={$imagen->getPropiedad('id')}\" title=\"Establecer como imagen principal del producto\"><img src=\"images/important.gif\"/></a>";
+			}
+			echo "</div>";
+		}
+		?>
+
+		<form class="separacion" action="<?=$_SERVER['SCRIPT_NAME'] ?>" method="post" enctype="multipart/form-data">
+			<label>Añadir:</label>
+			<input type="hidden" name="MAX_FILE_SIZE" value="<?=MAX_FILE_SIZE?>" />
+			<input type="file" name="imagen"/>
+			<input type="hidden" value="<?=$producto->getPropiedad('id')?>" name="id" />
+			<p class="centrado">
+				<input type="submit" value="Guardar Imagen" name="accion"/>
+			</p>
+		</form>
+	</div>
 
 	<?php
 	}  else if ($regMem->getValor('accion')=='Eliminar') {
@@ -490,7 +469,7 @@ if (isset($producto)) {
 	?>
 
 	<div id="categorias" >
-		<h2 class="separacion">Lista de productos por categorias</h2>
+		<h2>Lista de productos por categorias</h2>
 		<?php
 		
 		$a = $cats->getChildItemsById(0);		
@@ -557,14 +536,13 @@ if (isset($producto)) {
 					echo "</div>";
 					$contador=0;
 				}
-				
 			}
 		}
-
 		?>
+		</div>
 	</div>
 </div>
-
+</div>
 <script type="text/javascript">
 	$(document).ready(function() {
 		$(".fancybox").fancybox(
@@ -575,5 +553,9 @@ if (isset($producto)) {
 
 	});
 </script>
+<?php
+include 'pie.php';
+?>
 
 </body>
+</html>

@@ -1,10 +1,14 @@
 <?php
 require_once 'configuracion.php';
 require_once 'conectar_bd.php';
-require_once 'classes/Categorias.php';
-require_once 'classes/Registro.php';
-require_once 'classes/Colecciones.php';
+
 require_once 'classes/Controlador.php';
+require_once 'classes/Registro.php';
+
+require_once 'classes/Categorias.php';
+require_once 'classes/Productos.php';
+require_once 'classes/Fabricantes.php';
+require_once 'classes/Imagenes.php'; 
 
 $PDO = new PDOConfig ();
 
@@ -102,12 +106,10 @@ $regMem->setValor('titulo', 'Bienvenido');
 		</div>
 
 
-		<div id="sidebar">
 		<?php
 		include 'sidebar-categorias.php';
 		?>
 
-		</div>
 
 		<div id="main-content">
 			<div class="flexslider">

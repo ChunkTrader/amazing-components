@@ -7,8 +7,10 @@
 	href="http://localhost/practicas/amazing-components/favicon.ico" />
 
 <script type="text/javascript" src="js/jquery-2.0.0.min.js"></script>
+<script type="text/javascript" src="js/jquery.fancybox.pack.js"></script>
 
-<link href="css/main.css" rel="stylesheet" type="text/css" title="main" />
+<link rel="stylesheet" href="css/main.css" type="text/css" title="main" />
+<link rel="stylesheet" href="css/jquery.fancybox.css" type="text/css" media="screen" />
 
 </head>
 <body>

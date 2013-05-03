@@ -1,10 +1,12 @@
 <?php
 require_once 'configuracion.php';
 require_once 'conectar_bd.php';
-require_once 'classes/Categorias.php';
-require_once 'classes/Registro.php';
-require_once 'classes/Coleccion.php';
+
 require_once 'classes/Controlador.php';
+require_once 'classes/Registro.php';
+
+require_once 'classes/Categorias.php';
+require_once 'classes/Coleccion.php';
 
 $PDO = new PDOConfig ();
 
@@ -244,8 +246,9 @@ include 'sidebar-administrar.php';
 	</div>
 	<!-- VISTA DE CATEGORIAS -->
 	<div id="categorias">
-			<?php
-		// Dibujar arbol
+		<h2>Lista de categorias</h2>
+
+		<?php
 		$a = $cats->getChildItemsById(0);
 		$columnas = 3;
 		$contador = 0;
