@@ -569,7 +569,7 @@ if (isset($producto)) {
 	$(document).ready(function() {
 		$(".fancybox").fancybox(
 			{
-				'loop' : FALSE,
+				'loop' : false,
 			}
 		);
 
