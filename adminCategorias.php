@@ -1,10 +1,10 @@
 <?php
 require_once 'configuracion.php';
 require_once 'conectar_bd.php';
-require_once 'Categorias.php';
-require_once 'Registro.php';
-require_once 'Colecciones.php';
-require_once 'Controlador.php';
+require_once 'classes/Categorias.php';
+require_once 'classes/Registro.php';
+require_once 'classes/Coleccion.php';
+require_once 'classes/Controlador.php';
 
 $PDO = new PDOConfig ();
 
@@ -24,7 +24,7 @@ $cats = new Categorias($controlador);
 
 // Intentamos recuperar la categoria
 if ($regMem->getValor('id')){
-	$categoria=$cats->getItemBD($regMem->getValor('id'))->getItemById($regMem->getValor('id'));
+	$categoria=$cats->getItemBD(array('id'=>$regMem->getValor('id')))->getItemById($regMem->getValor('id'));
 }
 
 // Titulo por defecto de la página
@@ -39,8 +39,6 @@ switch ($regMem->getValor('accion')){
 		break;
 
 	case 'Añadir':
-		$regMem->setValor('titulo', 'Añadir Categoría');
-
 		if ($regMem->getValor('nombre')) {
 			$valores = array (
 				'nombre'=>$regMem->getValor('nombre'), 
@@ -261,9 +259,9 @@ include 'sidebar-administrar.php';
 					echo "<div class=\"categoria\">";
 				}
 				$contador+=1;
-				echo "<ul><li><a href=\"adminCategorias.php?accion=Editar&id={$cat->getPropiedad('id')}\" title=\"Editar: {$cat->getPropiedad('nombre')}\">{$cat->getPropiedad('nombre')}</a>";
+				echo "<ul><li><a href=\"{$_SERVER['SCRIPT_NAME']}?accion=Editar&id={$cat->getPropiedad('id')}\" title=\"Editar: {$cat->getPropiedad('nombre')}\">{$cat->getPropiedad('nombre')}</a>";
 				// añadimos el icono de eliminar
-				echo "<a href=\"adminCategorias.php?accion=Eliminar&id={$cat->getPropiedad('id')}\" title=\"Eliminar: {$cat->getPropiedad('nombre')}\"><img src=\"images/icon_delete.gif\"/></a>";
+				echo "<a href=\"{$_SERVER['SCRIPT_NAME']}?accion=Eliminar&id={$cat->getPropiedad('id')}\" title=\"Eliminar: {$cat->getPropiedad('nombre')}\"><img src=\"images/icon_delete.gif\"/></a>";
 				echo "<ul>";
 
 
@@ -275,9 +273,9 @@ include 'sidebar-administrar.php';
 						echo "<div class=\"categoria\"><ul><li><ul>";
 					}
 					$contador+=1;
-					echo "<li><a href=\"adminCategorias.php?accion=Editar&id={$child->getPropiedad('id')}\" title=\"Editar: {$child->getPropiedad('nombre')}\">{$child->getPropiedad('nombre')}</a>";
+					echo "<li><a href=\"{$_SERVER['SCRIPT_NAME']}?accion=Editar&id={$child->getPropiedad('id')}\" title=\"Editar: {$child->getPropiedad('nombre')}\">{$child->getPropiedad('nombre')}</a>";
 					// añadimos el icono de eliminar
-					echo "<a href=\"adminCategorias.php?accion=Eliminar&id={$child->getPropiedad('id')}\" title=\"Eliminar: {$child->getPropiedad('nombre')}\"><img src=\"images/icon_delete.gif\"/></a>";
+					echo "<a href=\"{$_SERVER['SCRIPT_NAME']}?accion=Eliminar&id={$child->getPropiedad('id')}\" title=\"Eliminar: {$child->getPropiedad('nombre')}\"><img src=\"images/icon_delete.gif\"/></a>";
 					echo "</li>";
 					if ($contador>=$contador_max) {
 						echo "</ul></li></ul></div>";
@@ -298,6 +296,7 @@ include 'sidebar-administrar.php';
 		//Cerramos la conexión con la base de datos
 		$PDO = null;
 		?>
+		</div>
 	</div>
 </div>
 

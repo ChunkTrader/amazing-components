@@ -48,8 +48,11 @@ class RegistroMemoria extends Registro {
 		parent::set($clave, $valor);
 	}
 
-	public function getValor($clave){
-		return parent::get($clave);
+	public function getValor($clave=null){
+		if ($clave) {
+			return parent::get($clave);
+		}
+		return $this->valores;
 	}
 }
 

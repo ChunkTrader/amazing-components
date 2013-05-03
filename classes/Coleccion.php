@@ -1,5 +1,5 @@
 <?php
-require_once 'Item.php';
+require_once 'classes/Item.php';
 
 abstract class Coleccion {
 	protected $coleccion = array ();
@@ -34,12 +34,13 @@ abstract class Coleccion {
 		}
 	}
 
-	function getItemBD($id=null) {
+
+function getItemBD(array $opciones=null) {
 		// Si tenemos una $id cargamos solo un elemento
-		if ($id) {
+		if ($opciones['id']) {
 			$prepare = 'SELECT * FROM ' . $this->tabla . ' WHERE id = :id';
 			$stmt = $this->controlador->getPDO()->prepare($prepare);
-			$stmt->execute(array(':id'=>$id));
+			$stmt->execute(array(':id'=>$opciones['id']));
 		} else {
 			// Vaciamos la colección antes de cargar la tabla de la base de datos
 			$this->coleccion = array();
@@ -63,6 +64,7 @@ abstract class Coleccion {
 		return $this;
 	}
 
+
 	function addItemBD(Item $item) {
 		$propiedades = $item->getPropiedad();
 		$aux1 = array();
@@ -80,8 +82,6 @@ abstract class Coleccion {
 		unset ($aux2['id']);
 
 		$prepare = 'INSERT INTO ' . $this->tabla .  ' (' . implode($aux1, ',') . ') VALUES (' . implode($aux2, ',') . ')';
-		echo $prepare;
-		echo '<br>';
 		$stmt = $this->controlador->getPDO()->prepare($prepare);
 		$stmt->execute($propiedades);
 	}
@@ -119,47 +119,10 @@ abstract class Coleccion {
 		return count($this->coleccion);
 	}
 
-	private function sanitize($valor, $tipo){
+	protected function sanitize($valor, $tipo){
 		// Por el momento no se utiliza el $tipo
 		return htmlentities(trim($valor), ENT_QUOTES, 'ISO-8859-1');
 	}
-
-
-}
-
-class Categorias extends Coleccion{
-	protected $tabla;
-
-	public function __construct(Controlador $controlador) {
-		$this->controlador = $controlador;
-		$this->tabla = 'Categorias';
-		$this->orden = 'nombre';
-		$this->miembro = 'Categoria';
-	}
-
-	function getChildItemsById($parent_id) {
-		$childItems = array ();
-		foreach ( $this->coleccion as $item ) {
-			if ($item->getPropiedad('parent_id') == $parent_id) {
-				$childItems [] = $item;
-			}
-		}
-		return $childItems;
-	}
-
-}
-
-class Fabricantes extends Coleccion{
-	protected $tabla;
-
-	public function __construct(Controlador $controlador) {
-		$this->controlador = $controlador;
-		$this->tabla = 'Fabricantes';
-		$this->orden = 'nombre';
-		$this->miembro = 'Fabricante';
-	}
-
-
 }
 
 ?>

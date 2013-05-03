@@ -1,4 +1,5 @@
 <?php
+require_once 'classes/Registro.php';
 
 abstract class Item {
 	protected $propiedades=array();
@@ -7,11 +8,17 @@ abstract class Item {
 	abstract function __construct(array $valores);
 
 	function getPropiedad($clave=null) {
+		// Late Binding, usamos static:: en lugar de self::, para referenciar al metodo
+		// de los children.
+
 		if (!$clave) {
 			return $this->propiedades;
 		} else {
-			if (array_key_exists($clave, self::$lista_propiedades)) {
-				return $this->propiedades[$clave];
+			if (array_key_exists($clave, static::getListaPropiedades())) {
+				if (!empty($this->propiedades[$clave])) {
+					return $this->propiedades[$clave];
+				}
+				
 			} else {
 				throw new Exception("{$clave} no es una propiedad válida.");
 			}
@@ -20,7 +27,7 @@ abstract class Item {
 	}
 
 	function setPropiedad($clave, $valor) {
-		if (array_key_exists($clave, $self::$lista_propiedades)) {
+		if (array_key_exists($clave, static::getListaPropiedades())) {
 			$this->propiedades[$clave] = $valor;
 		} else {
 			throw new Exception("{$clave} no es una propiedad válida.");
@@ -31,5 +38,7 @@ abstract class Item {
 		return static::$lista_propiedades;
 	}
 
+
 }
 
+?>

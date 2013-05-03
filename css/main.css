@@ -16,6 +16,15 @@ p,a,li {
 	font-size: 12px;
 }
 
+
+label {
+	height: 18px;
+}
+
+input {
+	height: 25px;
+}
+
 input[type="text"],input[type="password"], div#main-content textarea {
 	border: 1px solid #ddd;
 	border-radius: 5px;
@@ -176,20 +185,17 @@ div#conectar {
 }
 
 div#conectar label {
-	font-size: 12px;
 	font-weight: bold;
 }
 
 div#conectar input {
 	display: block;
 	width: 200px;
-	font-size: 12px;
 }
 
 div#conectar input {
 	display: block;
 	width: 200px;
-	font-size: 12px;
 }
 
 div#conectar input[type="submit"] {
@@ -198,7 +204,6 @@ div#conectar input[type="submit"] {
 }
 
 div#conectar a {
-	font-size: 10px;
 	width: 101px;
 }
 
@@ -265,14 +270,12 @@ div#main-content input, div#main-content label, div#main-content textarea{
 div#main-content input{
 	width: 220px;
 	float: left;
-	height: 15px;
 }
 
 
 div#main-content label{
 	font-weight: bold;
 	width: 112px;
-	height: 15px;
 	float: left;
 }
 
@@ -290,7 +293,6 @@ div#main-content select {
 div#main-content input[type="submit"] {
 	display: block;
 	margin: 0 auto;
-	height: 25px;
 }
 
 div#main-content p input[type="submit"] {
