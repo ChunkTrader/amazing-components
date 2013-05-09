@@ -35,7 +35,7 @@ abstract class Coleccion {
 	}
 
 
-function getItemBD(array $opciones=null) {
+	function getItemBD(array $opciones=null) {
 		// Si tenemos una $id cargamos solo un elemento
 		if ($opciones['id']) {
 			$prepare = 'SELECT * FROM ' . $this->tabla . ' WHERE id = :id';

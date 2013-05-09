@@ -140,38 +140,39 @@ $regMem->setValor('titulo', 'Bienvenido');
 			<h2 class="separacion">Novedades</h2>
 
 			<?php
-			$prods = new ListasProductos($PDO);
-			$prods->getProductoBD(null, 6);
-			$a = $prods->getProductoById();
-			$galeria = new Galeria($PDO);
-			$b = $galeria->getImagenBD(null, TRUE);
-			
+			$prods = new Productos($controlador);
+			$prods->getItemBD(array('novedades' => MAX_NOVEDADES));
+				
+			$a = $prods->getItemById();
+			$galeria = new Imagenes($controlador);
+			$galeria->getItemBD(array('principal' => TRUE));
+						
 			foreach ($a as $producto) {
-			
-			$imagen= $galeria->getImagenByProductoId($producto->getId());
 
-			if ($imagen) {
-				$b = $imagen->getImagen();
-			} else {
-				$b= 'default';
-			}
-			
-			$size = 227;
+				$imagen=$galeria->getItemByProductoFirst($producto->getPropiedad('id'));							
+				if ($imagen) {
+					$b = $imagen->getPropiedad('imagen');
 
-			$url = "getthumb.php?path=images/products/{$b}.jpeg&size={$size}";
+				} else {
+					$b = 'default';
+				}
+				
+				$size = MAIN_THUMB_SIZE;
 
-			?>
-				<div class="box">
-					<a href="#"><img
-						src="<?=$url?>"
-						title="<?=$producto->getNombre()?>" alt="<?=$producto->getNombre()?>" /></a>
-					<p><?=$producto->getPrecioVenta()?>&euro;</p>
-					<p>
-						<a href="#"><?=$producto->getNombre()?></a>
-					</p>
-					<div></div>
-					<p class="<?=quitarEspacios($producto->getDisponibilidad())?>"><?=$producto->getDisponibilidad()?></p>
-				</div>				
+				$url = "getthumb.php?path=images/products/{$b}.jpeg&size={$size}";
+
+				?>
+					<div class="box">
+						<a href="#"><img
+							src="<?=$url?>"
+							title="<?=$producto->getPropiedad('nombre')?>" alt="<?=$producto->getPropiedad('nombre')?>" /></a>
+						<p><?=$producto->getPropiedad('precio_venta')?>&euro;</p>
+						<p>
+							<a href="#"><?=$producto->getPropiedad('nombre')?></a>
+						</p>
+						<div></div>
+						<p class="<?=quitarEspacios($producto->getPropiedad('disponibilidad'))?>"><?=$producto->getPropiedad('disponibilidad')?></p>
+					</div>				
 			<?php
 			}
 
@@ -179,43 +180,43 @@ $regMem->setValor('titulo', 'Bienvenido');
 
 			<h2 class="separacion">Outlet</h2>
 			<?php
-			$prods = new ListasProductos($PDO);
-			$prods->getProductoBD(null, null, 6);
-			$a = $prods->getProductoById();
-			$galeria = new Galeria($PDO);
-			$b = $galeria->getImagenBD(null, TRUE);
-			
+			$prods = new Productos($controlador);
+			$prods->getItemBD(array('outlet' => MAX_OUTLET));
+				
+			$a = $prods->getItemById();
+			$galeria = new Imagenes($controlador);
+			$galeria->getItemBD(array('principal' => TRUE));
+						
 			foreach ($a as $producto) {
-			
-			$imagen= $galeria->getImagenByProductoId($producto->getId());
 
-			if ($imagen) {
-				$b = $imagen->getImagen();
-			} else {
-				$b= 'default';
-			}
-			
-			$size = 227;
+				$imagen=$galeria->getItemByProductoFirst($producto->getPropiedad('id'));							
+				if ($imagen) {
+					$b = $imagen->getPropiedad('imagen');
 
-			$url = "getthumb.php?path=images/products/{$b}.jpeg&size={$size}";
+				} else {
+					$b = 'default';
+				}
+				
+				$size = MAIN_THUMB_SIZE;
 
-			?>
-				<div class="box">
-					<a href="#"><img
-						src="<?=$url?>"
-						title="<?=$producto->getNombre()?>" alt="<?=$producto->getNombre()?>" /></a>
-					<p><?=$producto->getPrecioVenta()?>&euro;</p>
-					<p>
-						<a href="#"><?=$producto->getNombre()?></a>
-					</p>
-					<div></div>
-					<p class="<?=quitarEspacios($producto->getDisponibilidad())?>"><?=$producto->getDisponibilidad()?></p>
-				</div>				
+				$url = "getthumb.php?path=images/products/{$b}.jpeg&size={$size}";
+
+				?>
+					<div class="box">
+						<a href="#"><img
+							src="<?=$url?>"
+							title="<?=$producto->getPropiedad('nombre')?>" alt="<?=$producto->getPropiedad('nombre')?>" /></a>
+						<p><?=$producto->getPropiedad('precio_venta')?>&euro;</p>
+						<p>
+							<a href="#"><?=$producto->getPropiedad('nombre')?></a>
+						</p>
+						<div></div>
+						<p class="<?=quitarEspacios($producto->getPropiedad('disponibilidad'))?>"><?=$producto->getPropiedad('disponibilidad')?></p>
+					</div>				
 			<?php
 			}
 
 			?>
-
 		</div>
 	</div>
 

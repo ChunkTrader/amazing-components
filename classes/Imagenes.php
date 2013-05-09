@@ -12,6 +12,12 @@ class Imagenes extends coleccion {
 		$this->miembro = 'Imagen';
 	}
 
+	/*
+	*	Devuelve un array con las imagenes que correspondan al producto
+	*
+	* 	@param $producto_id integer ID del producto
+	*	@return array de Item o vacío
+	*/
 	function getItemByProducto($producto_id) {
 		$items = array ();
 		foreach ($this->coleccion as $key=>$item) {
@@ -22,6 +28,30 @@ class Imagenes extends coleccion {
 		return $items;
 	}
 
+	/*
+	*	Devuelve la primera imagen de la colección que corresponda con el producto
+	*
+	* 	@param $producto_id integer ID del producto
+	*	@return Item o null
+	*/
+	function getItemByProductoFirst($producto_id) {
+		$items=$this->getItemByProducto($producto_id);
+		foreach ($items as $item) {
+			if ($item) {
+				return $item;
+			}
+		}
+		return null;
+	}
+
+	/*
+	*	Carga productos en la colección desde la base de datos
+	*
+	*	@param $opciones array Si no se especifica carga todos los productos
+	*		'id'			Solo la imagen con la id
+	*		'principal'		Solo las imagenes con principal = TRUE
+	*		'producto_id'	Solo las imagenes del producto
+	*/
 	function getItemBD(array $opciones=null) {
 		if (isset($opciones['id'])) {
 			$prepare = 'SELECT * FROM ' . $this->tabla . ' WHERE id = :id';

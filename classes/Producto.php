@@ -41,6 +41,5 @@ class Producto extends Item {
 		return;
 	}
 
-
 }
 ?>
