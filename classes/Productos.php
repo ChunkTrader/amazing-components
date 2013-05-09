@@ -53,10 +53,17 @@ class Productos extends Coleccion{
 			} else if (isset($opciones['outlet'])) {
 				// Outlet, mostramos los productos más antiguos primero.
 				$prepare = 'SELECT * FROM ' . $this->tabla . ' WHERE disponibilidad = \'Outlet\' ORDER BY fecha ASC LIMIT ' . $opciones['outlet'];
+			} else if (isset($opciones['parent_id'])) {
+				$prepare = 'SELECT * FROM ' . $this->tabla . ' WHERE parent_id = ' . $opciones['parent_id'];
 			} else {
 				// Default, los mostramos según lo establecido en el constructor.
 				$prepare = 'SELECT * FROM ' . $this->tabla .' ORDER BY ' . $this->orden;	
 			}
+
+			if (isset($opciones['recordoffset'])){
+				$prepare .=  ' LIMIT ' . $opciones['recordoffset'] . ', ' . PRODUCTOS_PAGINA;
+			}
+
 			$stmt = $this->controlador->getPDO()->prepare($prepare);
 			$stmt->execute();
 		}

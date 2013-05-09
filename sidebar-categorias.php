@@ -8,18 +8,26 @@ $a = $cats->getItemById();
 
 foreach ( $a as $cat ) {
 	if (!$cat->getPropiedad('parent_id')) {
-		echo "<ul><li><a href=\"#\">{$cat->getPropiedad('nombre')}</a>";
-		// Buscamos sus hijos si hay alguna categoria seleccionada
-		if ($cat->getPropiedad('id')==$regMem->getValor('cat')) {
+		$url = 'verProductos.php?cat='.$cat->getPropiedad('id');
+		echo "<ul><li><a href=\"$url\">{$cat->getPropiedad('nombre')}</a>";
+
+		// Buscamos sus hijos si hay alguna categoria seleccionada 
+		if ($cat->getPropiedad('id')==$regMem->getValor('cat') || $cat->getPropiedad('id')==$regMem->getValor('cat_parent_id')) {
 			$children = $cats->getChildItemsById($cat->getPropiedad('id'));
 			echo '<ul>';
 			foreach ( $children as $child ) {
-				echo "<li><a href=\"#\" title=\"{$child->getPropiedad('nombre')}\">{$child->getPropiedad('nombre')}</a></li>";
+				if ($child->getPropiedad('id')==$regMem->getValor('cat')){
+					echo "<li>{$child->getPropiedad('nombre')}</li>";
+				} else {
+					$url = 'verProductos.php?cat='.$child->getPropiedad('id');
+					echo "<li><a href=\"$url\" title=\"{$child->getPropiedad('nombre')}\">{$child->getPropiedad('nombre')}</a></li>";	
+				}
 			}
 			echo '</ul>';
 		}
 		echo '</li></ul>';
 	}
 }
+
 ?>
 </div>

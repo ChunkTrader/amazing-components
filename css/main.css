@@ -141,7 +141,6 @@ div#top-menu li a:hover {
 	text-decoration: none;
 	background-color: #fff;
 }
-
 /* Main-menu CSS */
 div#main-menu {
 	width: 934px;
@@ -249,7 +248,7 @@ div#sidebar {
 	color:#000;
 }
 
-#sidebar li li a {
+#sidebar li li {
 	padding-left: 25px;
 }
 
@@ -544,9 +543,6 @@ div.categoria>ul>li {
 	color:#000;
 }
 
-#sidebar li li a {
-	padding-left: 25px;
-}
 
 div.edit_image {
 	float: left;
@@ -587,4 +583,8 @@ div#galeria div{
 
 .derecha {
 	text-align: right;
+}
+
+div#navigator {
+	text-align: center;
 }
