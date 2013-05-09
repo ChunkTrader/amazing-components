@@ -94,8 +94,11 @@ div#footer {
 	clear: both;
 	width: 934px;
 	margin: 4px 9px;
-	padding: 3px;
-	border: 1px solid #ddd;
+	overflow:hidden;
+	padding: 3px;	
+	padding-top: 25px;
+	text-align: center;
+
 }
 
 /* Header CSS */
@@ -597,4 +600,51 @@ div#navigator {
 .seleccionado {
 	color: #ddd;
 	background-color:#53a8e9;
+}
+
+#imagenes {
+	width:300px;
+	float:left;
+}
+
+#imagenes {
+	width:300px;
+	float:left;	
+}
+
+#imagenes img{
+	border-radius: 5px;
+	border: 1px solid #ddd;
+	margin: 2px;
+}
+#detalle {
+	width:400px;
+	float:right;
+}
+
+#detalle p, li{
+	font-size:18px;
+}
+
+#detalle b{
+	color:#53a8e9;
+	
+}
+
+p.descripcion>b {
+	font-size:12px;
+	font-style:italic;
+}
+
+#detalle span{
+	font-size:64px;
+	color:#53a8e9;
+	font-weight:bold;
+	margin: 30px;
+	display: block;
+}
+
+div#detalle input {
+	display:inline;
+	width:20px;
 }

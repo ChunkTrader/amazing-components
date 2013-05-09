@@ -128,7 +128,7 @@ include 'cabecera.php';
 						
 			foreach ($a as $producto) {
 
-				$imagen=$galeria->getItemByProductoFirst($producto->getPropiedad('id'));							
+				$imagen=$galeria->getItemByProductoFirst($producto->getPropiedad('id'));
 				if ($imagen) {
 					$b = $imagen->getPropiedad('imagen');
 
@@ -142,12 +142,12 @@ include 'cabecera.php';
 
 				?>
 					<div class="box">
-						<a href="#"><img
+						<a href="detalleProducto.php?id=<?=$producto->getPropiedad('id')?>"><img
 							src="<?=$url?>"
 							title="<?=$producto->getPropiedad('nombre')?>" alt="<?=$producto->getPropiedad('nombre')?>" /></a>
 						<p><?=$producto->getPropiedad('precio_venta')?>&euro;</p>
 						<p>
-							<a href="#"><?=$producto->getPropiedad('nombre')?></a>
+							<a href="detalleProducto.php?id=<?=$producto->getPropiedad('id')?>"><?=$producto->getPropiedad('nombre')?></a>
 						</p>
 						<div></div>
 						<p class="<?=quitarEspacios($producto->getPropiedad('disponibilidad'))?>"><?=$producto->getPropiedad('disponibilidad')?></p>
