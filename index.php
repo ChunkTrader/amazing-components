@@ -71,12 +71,9 @@ include 'cabecera.php';
 
 				</ul>
 			</div>
-
 			<h2>Ofertas destacadas</h2>
 
-
-			<p class="derecha"><a href="#">Ver más ofertas...</a></p>
-			<h2 class="separacion">Novedades</h2>
+			<p class="derecha"><a href="verProductos.php?ofertas=-1">Ver más ofertas &gt;&gt;</a></p>			<h2 class="separacion">Novedades</h2>
 
 			<?php
 			$prods = new Productos($controlador);
@@ -116,7 +113,7 @@ include 'cabecera.php';
 			}
 
 			?>
-			<p class="derecha"><a href="#">Ver más novedades...</a></p>
+			<p class="derecha"><a href="verProductos.php?novedades=-1">Ver más novedades &gt;&gt;</a></p>
 			<h2 class="separacion">Outlet</h2>
 			<?php
 			$prods = new Productos($controlador);
@@ -157,7 +154,7 @@ include 'cabecera.php';
 
 			?>
 			
-			<p class="separacion derecha"><a href="#">Ver más outlets...</a></p>
+			<p class="separacion derecha"><a href="verProductos.php?outlet=-1">Ver más outlets &gt;&gt;</a></p>
 			
 		</div>
 	</div>

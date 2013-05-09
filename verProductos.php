@@ -53,13 +53,16 @@ $opciones = array('recordoffset' => $recordoffset);
 
 //Obtenemos el parametro
 
-if ($regMem->getValor('novedades')) {
-	$parametro="&amp;novedades";
-	$regMem->setValor('subtitulo', 'Novedades');
 
-} else if ($regMem->getValor('outlet')){	
-	$parametro="&amp;outlet";
+if ($regMem->getValor('novedades')) {
+	$parametro="&amp;novedades=-1";
+	$regMem->setValor('subtitulo', 'Novedades');
+	$opciones += array('novedades'=>-1);
+
+} else if ($regMem->getValor('outlet')){
+	$parametro="&amp;outlet=-1";
 	$regMem->setValor('subtitulo', 'Outlet');
+	$opciones += array('outlet'=>-1);
 
 } else if ($regMem->getValor('ofertas')){
 	$parametro="&amp;ofertas";
@@ -88,13 +91,11 @@ if ($regMem->getValor('novedades')) {
 
 // Cargamos los productos segun la opción: novedades, outlet, ofertas, cat
 
-
 $prods->getItemBD($opciones);
-
 $totalrecords = $prods->getTotalBD();
-
-
 $regMem->setValor('titulo', 'Ver Productos -' . $regMem->getValor('subtitulo'));
+
+
 
 
 function quitarEspacios($string){

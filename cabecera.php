@@ -18,7 +18,7 @@
 <body>
 	<div id="header">
 		<div>
-			<a href="#"><img src="images/logo1.png" alt="Logo amazing-components.com" /></a>
+			<a href="index.php"><img src="images/logo1.png" alt="Logo amazing-components.com" /></a>
 		</div>
 		<div>
 			<a href="#"><img src="images/banners/banner.jpg" title="Banner principal" alt="banner principal" /></a>

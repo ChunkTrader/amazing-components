@@ -37,6 +37,12 @@ class Productos extends Coleccion{
 		return $items;
 	}
 
+
+	/* Todos los metodos getItemBD deberian ser refactorizados, recibir como parametro un objeto
+		con las opciones, el statement y el array del execute ya preparado, dejar getItemBD en la
+		superclase y en las clases que heredan definir metodos especificos para enviar los parametros
+		así eliminariamos todo el jaleo de if/else. Por ejemplo getOfertas(), getNovedades(), etc.
+	*/
 	function getItemBD(array $opciones=null) {
 		// Si tenemos una $id cargamos solo un elemento
 		if (isset($opciones['id'])) {
@@ -48,11 +54,23 @@ class Productos extends Coleccion{
 			$this->coleccion = array();
 
 			if (isset($opciones['novedades'])) {
-				// Novedades, mostramos los últimso productos añadidos primero.
-				$prepare = 'SELECT * FROM ' . $this->tabla . ' ORDER BY fecha DESC LIMIT ' . $opciones['novedades'];
+				// Novedades, mostramos los últimos productos añadidos primero. Si  'novedades'=-1
+				// las mostramos por páginas, si hay una cantidad es que estamos mostrando las 
+				// del index.
+				if ($opciones['novedades']!=-1) {
+					$prepare = 'SELECT * FROM ' . $this->tabla . ' ORDER BY fecha DESC LIMIT ' . $opciones['novedades'];
+				} else {
+					$prepare = 'SELECT * FROM ' . $this->tabla . ' ORDER BY fecha DESC';
+				}
+
 			} else if (isset($opciones['outlet'])) {
 				// Outlet, mostramos los productos más antiguos primero.
-				$prepare = 'SELECT * FROM ' . $this->tabla . ' WHERE disponibilidad = \'Outlet\' ORDER BY fecha ASC LIMIT ' . $opciones['outlet'];
+				if ($opciones['outlet']!=-1) {
+					$prepare = 'SELECT * FROM ' . $this->tabla . ' WHERE disponibilidad = \'Outlet\' ORDER BY fecha ASC LIMIT ' . $opciones['outlet'];
+				} else {
+					$prepare = 'SELECT * FROM ' . $this->tabla . ' WHERE disponibilidad = \'Outlet\' ORDER BY fecha ASC';
+				}
+
 			} else if (isset($opciones['parent_id'])) {
 				// OJO, en esta consulta no estamos usando la variable para la tabla porque no tenia pensado
 				// necesitar ningún JOIN.
