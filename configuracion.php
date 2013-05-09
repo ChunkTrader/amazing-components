@@ -5,5 +5,6 @@
 	define ('MAX_OFERTAS', 6);
 	define ('MAX_NOVEDADES', 6);
 	define ('MAX_OUTLET', 6);
-	define ('MAIN_THUMB_SIZE', 227);
+	define ('MAIN_THUMB_SIZE', 227); // Tamaño para 3 columnas
+	define ('PRODUCTOS_PAGINA', 12); // Ponemos una cantidad baja para testear
 ?>

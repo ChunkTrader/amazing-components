@@ -37,76 +37,15 @@ function quitarEspacios($string){
 // Esta plantilla solo se usa para la página de bienvenida.
 $regMem->setValor('titulo', 'Bienvenido');
 
+
+include 'cabecera.php';
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="ISO-8859-1">
-<title><?=EMPRESA . ' - ' . $regMem->getValor('titulo')?></title>
-<link rel="shortcut icon" type="image/x-icon"
-	href="http://localhost/practicas/amazing-components/favicon.ico" />
 
-<script type="text/javascript" src="js/jquery-2.0.0.min.js"></script>
-<script type="text/javascript" src="js/jquery.flexslider-min.js"></script>
+<div id="main">
 
-<link href="css/main.css" rel="stylesheet" type="text/css" title="main" />
-<link href="css/flexslider.css" rel="stylesheet" type="text/css" />
-
-</head>
-<body>
-
-	<div id="header">
-		<div>
-			<a href="#"><img src="images/logo1.png"
-				alt="Logo amazing-components.com" /></a>
-		</div>
-		<div>
-			<a href="#"><img src="images/banners/banner.jpg"
-				title="Banner principal" alt="banner principal" /></a>
-		</div>
-
-	</div>
-	<div id="main">
-		<div id="top-menu">
-			<ul>
-				<li><a href="#">Home</a></li>
-				<li><a href="#">Categoria 1</a></li>
-				<li><a href="#">Categoria 2</a></li>
-				<li><a href="#">Categoria 3</a></li>
-				<li><a href="#">Categoria 4</a></li>
-				<li><a href="#">Categoria 5</a></li>
-				<li><a href="#">Categoria 6</a></li>
-			</ul>
-		</div>
-
-		<div id="main-menu">
-
-			<form>
-				<input type="text" /> <input type="submit" value="Buscar" />
-			</form>
-
-			<ul>
-				<li>Conectar</li>
-				<li>12 productos (10000 &euro;)</li>
-			</ul>
-
-			<div id="conectar">
-				<form>
-					<label>Correo electronico</label> <input type="text" /> <label>Contraseña</label>
-					<input type="password"> <input type="submit" value="Conectar">
-				</form>
-				<p>
-					<a href="#">Recordar contaseña</a>
-				</p>
-				<p>
-					<a href="#">Registrarme</a>
-				</p>
-			</div>
-
-		</div>
-
-
-		<?php
+	<?php
+		include 'top-menu.php';
+		include 'main-menu.php';
 		include 'sidebar-categorias.php';
 		?>
 
@@ -136,7 +75,7 @@ $regMem->setValor('titulo', 'Bienvenido');
 			<h2>Ofertas destacadas</h2>
 
 
-
+			<p class="derecha"><a href="#">Ver más ofertas...</a></p>
 			<h2 class="separacion">Novedades</h2>
 
 			<?php
@@ -177,7 +116,7 @@ $regMem->setValor('titulo', 'Bienvenido');
 			}
 
 			?>
-
+			<p class="derecha"><a href="#">Ver más novedades...</a></p>
 			<h2 class="separacion">Outlet</h2>
 			<?php
 			$prods = new Productos($controlador);
@@ -217,6 +156,9 @@ $regMem->setValor('titulo', 'Bienvenido');
 			}
 
 			?>
+			
+			<p class="separacion derecha"><a href="#">Ver más outlets...</a></p>
+			
 		</div>
 	</div>
 

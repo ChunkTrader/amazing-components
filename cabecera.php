@@ -8,9 +8,11 @@
 
 <script type="text/javascript" src="js/jquery-2.0.0.min.js"></script>
 <script type="text/javascript" src="js/jquery.fancybox.pack.js"></script>
+<script type="text/javascript" src="js/jquery.flexslider-min.js"></script>
 
 <link rel="stylesheet" href="css/main.css" type="text/css" title="main" />
 <link rel="stylesheet" href="css/jquery.fancybox.css" type="text/css" media="screen" />
+<link href="css/flexslider.css" rel="stylesheet" type="text/css" />
 
 </head>
 <body>
