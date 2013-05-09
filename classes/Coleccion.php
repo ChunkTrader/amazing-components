@@ -7,6 +7,7 @@ abstract class Coleccion {
 	protected $tabla;
 	protected $orden;
 	protected $miembro;
+	protected $totalBD;
 
 	abstract public function __construct(Controlador $controlador);
 
@@ -119,9 +120,14 @@ abstract class Coleccion {
 		return count($this->coleccion);
 	}
 
+	function getTotalBD() {
+		return $this->totalBD;
+	}
+
 	protected function sanitize($valor, $tipo){
 		// Por el momento no se utiliza el $tipo
 		return htmlentities(trim($valor), ENT_QUOTES, 'ISO-8859-1');
 	}
+
 }
 ?>

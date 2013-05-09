@@ -54,7 +54,13 @@ class Productos extends Coleccion{
 				// Outlet, mostramos los productos más antiguos primero.
 				$prepare = 'SELECT * FROM ' . $this->tabla . ' WHERE disponibilidad = \'Outlet\' ORDER BY fecha ASC LIMIT ' . $opciones['outlet'];
 			} else if (isset($opciones['parent_id'])) {
-				$prepare = 'SELECT * FROM ' . $this->tabla . ' WHERE parent_id = ' . $opciones['parent_id'];
+				// OJO, en esta consulta no estamos usando la variable para la tabla porque no tenia pensado
+				// necesitar ningún JOIN.
+				$prepare = 'SELECT pr.* FROM productos pr INNER JOIN categorias cat ON pr.categoria_id=cat.id WHERE cat.parent_id = '.$opciones['parent_id'];
+				$countPrepare = str_replace('SELECT pr.* FROM', 'SELECT COUNT(*) FROM', $prepare);
+			} else if (isset($opciones['cat_id'])) {
+				// Mostramos todos los productos de la categoría
+				$prepare = 'SELECT * FROM ' . $this->tabla . ' WHERE categoria_id = ' . $opciones['cat_id'];
 			} else {
 				// Default, los mostramos según lo establecido en el constructor.
 				$prepare = 'SELECT * FROM ' . $this->tabla .' ORDER BY ' . $this->orden;	
@@ -66,6 +72,26 @@ class Productos extends Coleccion{
 
 			$stmt = $this->controlador->getPDO()->prepare($prepare);
 			$stmt->execute();
+
+			
+			// Si no existe ya, preparamos el contador normal
+			if (!isset($countPrepare)) {
+				$countPrepare = str_replace('SELECT * FROM', 'SELECT COUNT(*) FROM', $prepare);	
+			}
+			
+			//Modificamos la consulta para obtener el total sin limit
+			//if (isset($countPrepare) && strripos($countPrepare, 'LIMIT')){
+			if (strripos($countPrepare, 'LIMIT')){
+				$countPrepare = substr($countPrepare, 0, strripos($countPrepare, 'LIMIT'));
+				
+			}
+			
+
+			
+			$countStmt = $this->controlador->getPDO()->prepare($countPrepare);
+			$countStmt->execute();
+			$this->totalBD=$countStmt->fetch(PDO::FETCH_COLUMN);
+			
 		}
 			
 		$rows = $stmt->fetchAll();

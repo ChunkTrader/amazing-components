@@ -7,9 +7,12 @@
 }
 
 h2 {
-	font-family: Arial;
 	margin: 2px 4px;
 	padding: 0px 4px;
+}
+
+h3 {
+	text-align:center;
 }
 
 p,a,li {
@@ -587,4 +590,10 @@ div#galeria div{
 
 div#navigator {
 	text-align: center;
+	font-size: 12px;
+}
+
+.seleccionado {
+	color: #ddd;
+	background-color:#53a8e9;
 }

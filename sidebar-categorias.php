@@ -17,7 +17,7 @@ foreach ( $a as $cat ) {
 			echo '<ul>';
 			foreach ( $children as $child ) {
 				if ($child->getPropiedad('id')==$regMem->getValor('cat')){
-					echo "<li>{$child->getPropiedad('nombre')}</li>";
+					echo "<li class=\"seleccionado\">{$child->getPropiedad('nombre')}</li>";
 				} else {
 					$url = 'verProductos.php?cat='.$child->getPropiedad('id');
 					echo "<li><a href=\"$url\" title=\"{$child->getPropiedad('nombre')}\">{$child->getPropiedad('nombre')}</a></li>";	

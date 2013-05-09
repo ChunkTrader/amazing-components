@@ -12,9 +12,6 @@ require_once 'classes/Fabricantes.php';
 require_once 'classes/Imagenes.php'; 
 
 
-//max per page
-define ('PERPAGE', 5);
-//name of first parameter in query string
 
 /*get query string - name should be same as first parameter name passed to the page navigator class*/
 $offset = @$_GET['offset'];
@@ -50,28 +47,51 @@ $controlador -> setPDO($PDO);
 $cats = new Categorias($controlador);
 
 
+$prods = new Productos($controlador);
+
+$opciones = array('recordoffset' => $recordoffset);
 
 //Obtenemos el parametro
+
 if ($regMem->getValor('novedades')) {
 	$parametro="&amp;novedades";
 	$regMem->setValor('subtitulo', 'Novedades');
+
 } else if ($regMem->getValor('outlet')){	
 	$parametro="&amp;outlet";
 	$regMem->setValor('subtitulo', 'Outlet');
+
 } else if ($regMem->getValor('ofertas')){
 	$parametro="&amp;ofertas";
 	$regMem->setValor('subtitulo', 'Ofertas');
+
 } else if ($regMem->getValor('cat')){
 	$parametro="&amp;cat=" . $regMem->getValor('cat');
 	$cats->getItemBD(array('id'=>$regMem->getValor('cat')));
-	//$a = $cats->getItemBD(array('id'=>$regMem->getValor('cat')))->getItemById($regMem->getValor('cat'))->getPropiedad('nombre');
 	$a = $cats->getItemBD()->getItemById($regMem->getValor('cat'));
 	$regMem->setValor('subtitulo', $a->getPropiedad('nombre'));
 	$regMem->setValor('cat_parent_id', $a->getPropiedad('parent_id'));
+	if ($regMem->getValor('cat_parent_id')==0) {
+		// No tiene parent, mostramos todos los productos que pertenecen
+		// a sus categorias hijas.
+		$opciones +=  array('parent_id'=>$regMem->getValor('cat'));
 
+	} else {
+		// Mostramos todos los productos de la subcategoria
+		$opciones +=  array('cat_id'=>$regMem->getValor('cat'));
+
+	}
 } else {
 	$parametro ='';
 }
+
+
+// Cargamos los productos segun la opción: novedades, outlet, ofertas, cat
+
+
+$prods->getItemBD($opciones);
+
+$totalrecords = $prods->getTotalBD();
 
 
 $regMem->setValor('titulo', 'Ver Productos -' . $regMem->getValor('subtitulo'));
@@ -82,12 +102,6 @@ function quitarEspacios($string){
 		$new_pattern = array("_", "_", "");
 		return preg_replace($old_pattern, $new_pattern , $string);
 }
-
-// Esta plantilla solo se usa para la página de bienvenida.
-
-
-
-
 
 
 include 'cabecera.php';
@@ -101,21 +115,12 @@ include 'cabecera.php';
 		include 'sidebar-categorias.php';
 		?>
 
-
 		<div id="main-content">
-
-
-
-
-			<!-- NOVEDADES -->
-			<h2 class="separacion"><?=$regMem->getValor('subtitulo')?></h2>
+			<h2><?=$regMem->getValor('subtitulo')?></h2>
 
 			<?php
-			$prods = new Productos($controlador);
 
-			//$prods->getItemBD(array('novedades' => MAX_NOVEDADES));
-			$prods->getItemBD(array('recordoffset' => $recordoffset));
-				
+
 			$a = $prods->getItemById();
 			$galeria = new Imagenes($controlador);
 			$galeria->getItemBD(array('principal' => TRUE));
@@ -148,6 +153,11 @@ include 'cabecera.php';
 					</div>				
 			<?php
 			}
+			// No hay productos en la pàgina o se ha llegado modificando la URL.
+			if (!$a) {
+				echo "<h3 class=\"separacion\">No hay productos en esta categoría.</h3>";
+
+			}
 
 			?>
 
@@ -155,9 +165,9 @@ include 'cabecera.php';
 			<?php
 			$pagename = basename($_SERVER['PHP_SELF']);
 			// find total number of records
-			$totalrecords = $prods->getItemBD()->getTotal();
 
 			$numpages = ceil($totalrecords/PRODUCTOS_PAGINA);
+			//echo "numpages: $numpages -- totalrecords: $totalrecords -- PRODUCTOS_PAGINA " . PRODUCTOS_PAGINA;
 			// Create if needed
 			$otherparameters="";
 			if ($numpages>1) {
