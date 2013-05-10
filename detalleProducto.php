@@ -136,28 +136,28 @@ include 'cabecera.php';
 			?>
 		</div>			<!-- FORMULARIO PARA EDITAR PRODUCTOS -->
 
-			<div id="imagenes">
+		<div id="imagenes">
 
-				<?php
-				$a = $galeria->getItemById();
-				$a_actual=0;
-				$a_total = count($a);
+			<?php
+			$a = $galeria->getItemById();
+			$a_actual=0;
+			$a_total = count($a);
 
 				// Imagen Principal
-				$galeria = new Imagenes($controlador);
-				$imagen = $galeria->getItemBD(array('principal' => TRUE, 'producto_id' => $producto->getPropiedad('id')))->getItemByProductoFirst($producto->getPropiedad('id'));
-				
-				if ($imagen) {
-					$b= $imagen->getPropiedad('imagen');
-				} else {
-					$b= 'default';
-				}
+			$galeria = new Imagenes($controlador);
+			$imagen = $galeria->getItemBD(array('principal' => TRUE, 'producto_id' => $producto->getPropiedad('id')))->getItemByProductoFirst($producto->getPropiedad('id'));
 
-				$size=294;
+			if ($imagen) {
+				$b= $imagen->getPropiedad('imagen');
+			} else {
+				$b= 'default';
+			}
 
-				echo "<a class=\"fancybox\" rel=\"gallery1\" href=\"images/products/{$b}.jpeg\" ";
-				echo "title=\"{$producto->getPropiedad('nombre')} - {$a_actual} de {$a_total}\" >";
-				echo "<img class=\"thumb\" src=\"getthumb.php?path=images/products/{$b}.jpeg&size={$size}\" alt=\"{$producto->getPropiedad('nombre')} - {$a_actual} de {$a_total}\"/></a>";
+			$size=294;
+
+			echo "<a class=\"fancybox\" rel=\"gallery1\" href=\"images/products/{$b}.jpeg\" ";
+			echo "title=\"{$producto->getPropiedad('nombre')} - {$a_actual} de {$a_total}\" >";
+			echo "<img class=\"thumb\" src=\"getthumb.php?path=images/products/{$b}.jpeg&size={$size}\" alt=\"{$producto->getPropiedad('nombre')} - {$a_actual} de {$a_total}\"/></a>";
 
 
 
@@ -173,11 +173,10 @@ include 'cabecera.php';
 			echo "title=\"{$producto->getPropiedad('nombre')} - {$a_actual} de {$a_total}\" >";						
 			echo "<img class=\"thumb\" src=\"getthumb.php?path=images/products/{$imagen->getPropiedad('imagen')}.jpeg&size={$size}\" alt=\"{$producto->getPropiedad('nombre')} - {$a_actual} de {$a_total}\"/></a>";
 			
-			
 		}
 		?>
-		</div>
-		<div id="detalle">
+	</div>
+	<div id="detalle">
 		<ul>
 			<?php
 			$fabs = new Fabricantes($controlador);
@@ -191,8 +190,8 @@ include 'cabecera.php';
 		$a = $producto->getPropiedad('descripcion');
 		$a = preg_replace("/[\n]/i", '<br>',$a)
 		?>
-		<p><span><?=$producto->getPropiedad('precio_venta')?>&euro;</span></p>
-		<p>Descripción</b>:</p>
+		<p><span><?=$producto->getPropiedad('precio_venta')?>&euro;</span><span class="comprar"><a href="#">comprar</a></span></p>
+		<p class="separacion">Descripción</b>:</p>
 		<p class="descripcion"><b><?=$a?></b></p>
 	</div>
 

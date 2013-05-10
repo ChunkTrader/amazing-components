@@ -542,7 +542,7 @@ include 'cabecera.php';
 </div>
 </div>
 </div>
-</div>
+
 <script type="text/javascript">
 $(document).ready(function() {
 	$(".fancybox").fancybox(
@@ -556,6 +556,5 @@ $(document).ready(function() {
 <?php
 include 'pie.php';
 ?>
-
 </body>
 </html>
