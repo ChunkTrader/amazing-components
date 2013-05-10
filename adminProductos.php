@@ -36,6 +36,8 @@ if ($regMem->getValor('id')) {
 	}
 }
 
+
+
 // Titulo por defecto de la página
 $regMem->setValor('titulo', 'Añadir Producto');
 
@@ -211,7 +213,9 @@ if (isset($producto)) {
 }
 
 include 'cabecera.php';
+
 ?>
+
 
 <div id="main">
 
@@ -325,12 +329,17 @@ include 'cabecera.php';
 		} else if ($regMem->getValor('accion')=='Editar' || $regMem->getValor('accion')== 'Guardar Imagen' || $regMem->getValor('accion')=='principal') {
 
 			?>
-			<div class="separacion" >
 
+			<h3><?=$producto->getPropiedad('nombre')?></h3>
+			<div class="separacion" >
+					
+				
 				<!-- FORMULARIO PARA EDITAR PRODUCTOS -->
 				<form action="<?=$_SERVER['SCRIPT_NAME'] ?>" method="post">
+	
 					<label>Nombre:</label>
-					<input type="text" name="nombre" value="<?=$producto->getPropiedad('nombre')?>"/>
+
+					<input type="text" name="nombre" value="" disabled/>
 					<label>Categoria:</label>
 					<select name="categoria_id">
 						<?php

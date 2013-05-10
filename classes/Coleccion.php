@@ -81,7 +81,7 @@ abstract class Coleccion {
 		// Eliminamos el id de los valores a actualizar
 		unset ($aux1['id']);
 		unset ($aux2['id']);
-		
+
 		$prepare = 'INSERT INTO ' . $this->tabla .  ' (' . implode($aux1, ',') . ') VALUES (' . implode($aux2, ',') . ')';
 		$stmt = $this->controlador->getPDO()->prepare($prepare);
 		$stmt->execute($propiedades);
@@ -98,10 +98,15 @@ abstract class Coleccion {
 		$propiedades = $item->getPropiedad();
 		$aux= array();
 
-		foreach ($propiedades as $propiedad => $valor) {
+		foreach ($propiedades as $propiedad => $valor) {			
+			if ($valor===null) {
+				unset($propiedades[$propiedad]);
+				continue;
+			}
 			$aux [$propiedad]= "$propiedad=:$propiedad";
 			$propiedades[":$propiedad"] = $propiedades[$propiedad];
 			unset($propiedades[$propiedad]);
+			//echo "<br>Propiedad: $propiedad => $valor";
 		}
 
 		// Eliminamos el id de los valores a actualizar
@@ -126,7 +131,9 @@ abstract class Coleccion {
 
 	protected function sanitize($valor, $tipo){
 		// Por el momento no se utiliza el $tipo
-		return htmlentities(trim($valor), ENT_QUOTES, 'ISO-8859-1');
+		//return htmlentities(trim($valor), ENT_NOQUOTES, 'UTF-8');
+		return htmlentities(trim($valor), ENT_NOQUOTES, 'ISO-8859-1');
+		
 	}
 
 }

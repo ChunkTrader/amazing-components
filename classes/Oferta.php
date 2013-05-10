@@ -9,10 +9,10 @@ class Oferta extends Item {
 
 	static function getListaPropiedades(){
 		return array (
-			'id' => 'int',
-			'producto_id' =>'int',
-			'precio_anterior'=>'double',
-			'activa'=>'boolean'
+			'id' => FILTER_VALIDATE_INT,
+			'producto_id' => FILTER_VALIDATE_INT,
+			'precio_anterior'=>FILTER_VALIDATE_FLOAT,
+			'activa'=>FILTER_VALIDATE_BOOLEAN
 			);
 	}
 

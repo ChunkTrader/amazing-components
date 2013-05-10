@@ -9,18 +9,22 @@ class Producto extends Item {
 
 	static function getListaPropiedades(){
 		return array (
-			'id' => 'int',
-			'categoria_id' =>'int',
+			'id' => FILTER_VALIDATE_INT,
+			'categoria_id' =>FILTER_VALIDATE_INT,
 			'nombre'=>'string',
 			'descripcion'=>'string',
-			'activo'=>'boolean',
-			'precio_venta'=>'double',
-			'fabricante_id'=>'int',
+			'activo'=>FILTER_VALIDATE_BOOLEAN,
+			'precio_venta'=>FILTER_VALIDATE_FLOAT,
+			'fabricante_id'=>FILTER_VALIDATE_INT,
 			'disponibilidad'=>'string',
-			'existencias'=>'int',
+			'existencias'=>FILTER_VALIDATE_INT,
 			'fecha'=>'date'
 			);
+		// El campo fecha se podria validar con FILTER_VALIDATE_REGEXP
+		// Los valores númericos se pueden modificar con opciones para 
 	}
+
+
 
 	public function calcDisponibilidad(){
 		$aux = 'Agotado';

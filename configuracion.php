@@ -7,4 +7,5 @@
 	define ('MAX_OUTLET', 6);
 	define ('MAIN_THUMB_SIZE', 227); // Tamaño para 3 columnas
 	define ('PRODUCTOS_PAGINA', 3); // Ponemos una cantidad baja para testear
+	setlocale(LC_MONETARY, 'es_ES');
 ?>

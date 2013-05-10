@@ -41,6 +41,7 @@ if ($regMem->getValor('id')) {
 // Titulo por defecto de la página
 $regMem->setValor('titulo', 'Crear Oferta');
 
+
 switch ($regMem->getValor('accion')){
 	case 'Cancelar':
 		header("Location: {$_SERVER['SCRIPT_NAME']}");
@@ -53,16 +54,17 @@ switch ($regMem->getValor('accion')){
 		if ($regMem->getValor('producto_id')) {
 			$producto=$prods->getItemBD(array ('id'=>$regMem->getValor('producto_id')))->getItemById($regMem->getValor('id'));
 			// getItemById devuelve un array pero solo nos interesa el primer elemento (el único que debe haber)
-			$producto = $producto[0];
+			if (isset($producto[0])) {
+				$producto = $producto[0];
+			} 
 			if (!$producto) {
 				$regError->setError('general', ' No existe ningún producto con esa <b>id</b>.');
 				$correcto=FALSE;
 			} else {
 				// Comprobamos que no exista ya una oferta para ese producto
 				$ofertas->getItemBD(array('producto_id'=>$regMem->getValor('producto_id')));
-				if ($ofertas->getItemById($regMem->getValor('producto_id'))) {
+				if ($ofertas->getItemByProducto($regMem->getValor('producto_id'))) {
 					$regError->setError('general', ' Ya existe una oferta para ese producto.');
-					print_r($ofertas);
 					$correcto=FALSE;
 				}
 			}
@@ -94,9 +96,126 @@ switch ($regMem->getValor('accion')){
 		}
 		break;
 
-		case 'Editar':
-			$regMem->setValor('titulo', 'Editar Oferta');
-}
+	case 'Editar':
+		$regMem->setValor('titulo', 'Editar Oferta');
+		break;
+
+	case 'Guardar cambios':
+		// Si todo es correcto actualizamos el precio actual de la oferta
+
+		$correcto = TRUE;
+		// Validamos la oferta
+		$valores_oferta = (array_intersect_key($regMem->getValor(), Oferta::getListaPropiedades()));
+
+		if (!$regMem->getValor('activa')) {
+			$valores_oferta['activa']=FALSE;
+		} else {
+			$valores_oferta['activa']=TRUE;
+		}
+
+
+		$args_oferta = array_intersect_key(Oferta::getListaPropiedades(), $valores_oferta);
+		$validar_oferta = filter_var_array($valores_oferta, $args_oferta);
+
+		// Validamos el producto
+		$valores_producto = array(
+				'id'=>$regMem->getValor('producto_id'),
+				'precio_venta'=>$regMem->getValor('precio_venta')
+			);
+
+		$args_producto =array_intersect_key(Producto::getListaPropiedades(), $valores_producto);
+		$validar_producto = filter_var_array($valores_producto, $args_producto);
+
+		// Recorremos los arrays, si algún valor false es que ha habido algún error:
+		// nos saltamos la $key activa porque es boolean y no hemos establecido opciones para el filtro
+
+		foreach ($validar_oferta as $key=>$a) {
+			if (!$a && $key!='activa') {
+				$regError->setError($key,"Error en el campo <b>$key</b>");
+				$correcto=FALSE;
+			}
+		}
+
+		foreach ($validar_producto as $key=>$a) {
+			if (!$a && $key!='activo') {
+				$regError->setError($key,"Error en el campo <b>$key</b>");
+				$correcto=FALSE;
+			}
+		}
+		// Comprobamos si el producto existe.
+		if ($regMem->getValor('producto_id')) {
+			$producto=$prods->getItemBD(array ('id'=>$regMem->getValor('producto_id')))->getItemById($regMem->getValor('producto_id'));
+			if (!$producto) {
+				$regError->setError('general', ' No existe ningún producto con esa <b>id</b>.');
+				$correcto=FALSE;
+			}
+		}
+
+		if ($correcto) {
+			// Guardamos los cambios en la oferta
+			$oferta = new Oferta($validar_oferta);
+			$ofertas->setItemBD($oferta);
+
+			// Guardamos los cambios en el producto
+			$producto->setPropiedad('precio_venta', $validar_producto['precio_venta']);
+			$producto->setPropiedad('id', $validar_producto['id']);
+
+			$producto->setPropiedad('nombre', null);
+
+			$prods->setItemBD($producto);
+
+			$regFeedback->addFeedback('Se han guardado los cambios con éxito');
+		} else {
+			$regError->setError('general', 'No se han podido guardar los cambios');
+		}
+
+		$regMem->setValor('accion','Editar');
+		$regMem->setValor('titulo', 'Editar Oferta');
+
+		break;
+	case 'Eliminar':
+		$correcto=TRUE;
+
+		// Comprobamos si el producto existe.
+		if ($regMem->getValor('producto_id')) {
+			$producto=$prods->getItemBD(array ('id'=>$regMem->getValor('producto_id')))->getItemById($regMem->getValor('producto_id'));
+			if (!$producto) {
+				$regError->setError('general', 'No existe ningún producto con esa <b>id</b>.');
+				$correcto=FALSE;		
+			} else {
+				// Comprobamos que la oferta corresponde a ese producto producto
+				$oferta=$ofertas->getItemByProducto($regMem->getValor('producto_id'));
+				if ($oferta->getPropiedad('producto_id')!=$producto->getPropiedad('id')) {
+					$regError->setError('general', 'Error. La oferta no se corresponde con el producto.');
+					$correcto=FALSE;
+				}
+			}
+		}
+
+		if ($correcto && $regMem->getValor('metodo')=='GET') {
+			$regMem->setValor('titulo', 'Eliminar Oferta');
+		} else {
+			// Borramos la oferta
+			$ofertas->delItemBD($oferta->getPropiedad('id'));
+			$producto->setPropiedad('precio_venta', $oferta->getPropiedad('precio_anterior'));
+			
+			$a = $producto->getPropiedad('nombre');
+			
+			$producto->setPropiedad('nombre', null);
+			$prods->setItemBD($producto);
+
+			// Actualizamos el precio del producto
+
+			$regFeedback->addFeedback('Se ha eliminado la oferta de <b>'. $a .'</b>');
+
+			$regMem->setValor('accion',NULL);
+			$regMem->setValor('metodo',NULL);
+
+		}
+
+	}
+
+
 
 // Cargamos todos los productos, las categorias, las ofertas
 $prods->getItemBD();
@@ -188,15 +307,17 @@ include 'cabecera.php';
 				<label>Precio oferta</label>
 				<input type="text" name="precio_venta" value="<?=$producto->getPropiedad('precio_venta')?>"/>
 
+				<!-- Este campo debería estar disabled para ver el precio anterior, y para las ofertas
+					reemplazar el precio_venta por un precio_oferta, para simplificar lo dejamos así-->
 				<label>Anterior</label>
-				<input type="text" name="precio_venta" value="<?=$oferta->getPropiedad('precio_anterior')?>" disabled/>
+				<input type="text" name="precio_anterior" value="<?=$oferta->getPropiedad('precio_anterior')?>"/>
 
-				<!-- Este campo es para mostrar el % calculado con JavaScript dinamicamente-->
+				<!-- Este campo sería para mostrar el % calculado con JavaScript dinamicamente-->
 				<label>Descuento</label>
 					<?php
 					$descuento = round(100-(1/$oferta->getPropiedad('precio_anterior')*$producto->getPropiedad('precio_venta'))*100,2);
 					?>
-				<input type="text" id="descuento" value="<?=$descuento?>"
+				<input type="text" id="descuento" name="descuento" value="<?=$descuento?>"
 				<?php
 					if ($descuento<=0) {
 						echo ' class="error" ';
@@ -215,28 +336,36 @@ include 'cabecera.php';
 					?>
 				/>
 
-				<input type="hidden" name="producto_id">
-				<input type="hidden" name="id">
+				<input type="hidden" name="producto_id" value="<?=$producto->getPropiedad('id')?>">
+				<input type="hidden" name="id" value="<?=$oferta->getPropiedad('id')?>">
 				<p class="centrado">
 					<input type="submit" name="accion" value="Guardar cambios"/>
+					<input type="submit" value="Cancelar" name="accion" />
 				</p>
 
 			</form>
 
-
-
-
-
 			<?php
-
-			}
-
-			
+			} else {
 			?>
 
+		<!-- FORMULARIO PARA CONFIRMAR ELIMINACIÓN  -->
+		<form action="<?=$_SERVER['SCRIPT_NAME'] ?>" method="post">
 
+			<p class="separacion centrado">¿Estas seguro que deseas eliminar la oferta del producto <b><?=$producto->getPropiedad('nombre')?></b>?</p>
+			<p class="separacion centrado">El precio del producto volverá a su <b>precio anterior</b></p>
+
+			<input type="hidden" name="id" value="<?=$oferta->getPropiedad('id')?>" />
+			<input type="hidden" name="producto_id" value="<?=$producto->getPropiedad('id')?>" />
+			<p class="separacion centrado">
+				<input type="submit" value="Eliminar" name="accion"/>
+				<input type="submit" value="Cancelar" name="accion" />
+			</p>
+		</form>
+			<?php
+			}
+			?>
 		</div>
-
 		<div>
 
 		<?php
@@ -280,8 +409,8 @@ include 'cabecera.php';
 							echo "<a href=\"{$_SERVER['SCRIPT_NAME']}?id=".$oferta->getPropiedad('id') . "&amp;producto_id=" . $oferta->getPropiedad('producto_id') . "&amp;accion=Editar\">";
 							echo "{$b->getPropiedad('nombre')}</a></td>";
 							echo "<td>{$c->getPropiedad('nombre')}</td>";
-							echo "<td>{$b->getPropiedad('precio_venta')}&euro;</td>";
-							echo "<td>{$oferta->getPropiedad('precio_anterior')}&euro;</td>";
+							echo "<td>" . number_format($b->getPropiedad('precio_venta'),2)."&euro;</td>";
+							echo "<td>" . number_format($oferta->getPropiedad('precio_anterior'),2) . "&euro;</td>";
 
 							$descuento = round(100-(1/$oferta->getPropiedad('precio_anterior')*$b->getPropiedad('precio_venta'))*100,2);
 							if ($descuento<=0) {
@@ -292,7 +421,11 @@ include 'cabecera.php';
 							echo "{$descuento}%</td>";
 
 							echo "<td>" . ($oferta->getPropiedad('activa')?'Sí':'No') ."</td>";
-							echo "<td></td>";
+							
+						// Añadimos el icono de eliminar
+							echo "<td>";
+							echo "<a href=\"{$_SERVER['SCRIPT_NAME']}?id={$oferta->getPropiedad('id')}&accion=Eliminar&producto_id={$b->getPropiedad('id')}\" title=\"Eliminar Oferta: {$b->getPropiedad('nombre')}\"><img src=\"images/icon_delete.gif\"/></a>";
+							echo "</td>";
 							echo "</tr>";	
 						}
 						
@@ -310,16 +443,7 @@ include 'cabecera.php';
 
 	</div>
 </div>
-	<script type="text/javascript">
-	$(document).ready(function() {
-		$(".fancybox").fancybox(
-		{
-			'loop' : false,
-		}
-		);
 
-	});
-	</script>
 	<?php
 	include 'pie.php';
 	?>
