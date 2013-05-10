@@ -13,21 +13,23 @@ class Ofertas extends Coleccion{
 	}
 
 	function addItemBD(Item $item) {
-		//Las ofertas siempre estan activas al crearlas
-		$item->setPropiedad('activo', 1);
+		// Las ofertas siempre estan desactivadass al crearlas
+		// Las activamos al editarlas por pimera vez.
+		$item->setPropiedad('activa', 0);
 		return parent::addItemBD($item);
 	}
 
-
-	function getItemByCategoria($id){
-		$items = array();
+	function getItemByProducto($producto_id){
+		// Este mètodo es distinot de getItemCategoria() porque devuelve un único producto
+		// Cada producto solo puede tener enlazada una oferta.
 		foreach ($this->coleccion as $item) {
-			if ($item->getPropiedad('categoria_id') == $id) {
-				$items[] = $item;
+			if ($item->getPropiedad('producto_id') == $producto_id){
+				return $item;
 			}
 		}
-		return $items;
+		return null;
 	}
+
 
 
 }

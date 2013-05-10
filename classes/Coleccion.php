@@ -38,7 +38,7 @@ abstract class Coleccion {
 
 	function getItemBD(array $opciones=null) {
 		// Si tenemos una $id cargamos solo un elemento
-		if ($opciones['id']) {
+		if (isset($opciones['id'])) {
 			$prepare = 'SELECT * FROM ' . $this->tabla . ' WHERE id = :id';
 			$stmt = $this->controlador->getPDO()->prepare($prepare);
 			$stmt->execute(array(':id'=>$opciones['id']));
@@ -81,7 +81,7 @@ abstract class Coleccion {
 		// Eliminamos el id de los valores a actualizar
 		unset ($aux1['id']);
 		unset ($aux2['id']);
-
+		
 		$prepare = 'INSERT INTO ' . $this->tabla .  ' (' . implode($aux1, ',') . ') VALUES (' . implode($aux2, ',') . ')';
 		$stmt = $this->controlador->getPDO()->prepare($prepare);
 		$stmt->execute($propiedades);

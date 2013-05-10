@@ -249,7 +249,7 @@ include 'cabecera.php';
 				?>
 				<!-- FORMULARIO PARA AÑADIR PRODUCTOS -->
 
-				<form action="<?=$_SERVER['SCRIPT_NAME'] ?>" method=post>
+				<form action="<?=$_SERVER['SCRIPT_NAME'] ?>" method="post">
 					<label>Nombre: </label>
 					<input type="text" name="nombre" value="<?=$regMem->getValor('nombre')?>" />
 					<label>Parent Cat: </label>
@@ -453,7 +453,7 @@ include 'cabecera.php';
 	} else if ($producto) {
 		?>
 		<!-- FORMULARIO PARA CONFIRMAR ELIMINACIÓN  -->
-		<form action="<?=$_SERVER['SCRIPT_NAME'] ?>" method=post>
+		<form action="<?=$_SERVER['SCRIPT_NAME'] ?>" method="post">
 
 			<p class="separacion centrado">¿Estas seguro de que deseas eliminar el producto <b><?=$producto->getPropiedad('nombre')?></b>?</p>
 

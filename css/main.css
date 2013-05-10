@@ -475,6 +475,10 @@ div#galeria{
 	color: red;
 }
 
+.correcto {
+	color: green;
+}
+
 div#categorias{
 	clear:both;
 	overflow: hidden;
@@ -671,4 +675,29 @@ div#detalle input {
 	/*cursor: pointer;*/
 	background: #4398d9;
 	text-decoration: none;
+}
+
+table {
+	border: 1px solid #ddd;
+	border-collapse: collapse;
+	margin: 3px;
+	width: 99%;
+}
+
+table tr:nth-child(2n+1) {
+	background: #ddd;
+} 
+
+td, th {
+	padding:3px;
+	font-size: 12px;
+}
+
+
+td+td {
+	text-align: center;
+}
+
+th:first-child {
+	text-align: left;
 }

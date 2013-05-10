@@ -136,7 +136,7 @@ include 'sidebar-administrar.php';
 		
 		<!-- FORMULARIO PARA AÑADIR CATEGORIAS -->
 
-		<form action="<?=$_SERVER['SCRIPT_NAME'] ?>" method=post>
+		<form action="<?=$_SERVER['SCRIPT_NAME'] ?>" method="post">
 			<label>Nombre: </label>
 			<input type="text" name="nombre" />
 			<label>Parent Cat: </label>
@@ -167,7 +167,7 @@ include 'sidebar-administrar.php';
 			?>
 		
 			<!-- FORMULARIO PARA CONFIRMAR ELIMINACIÓN  -->
-			<form action="<?=$_SERVER['SCRIPT_NAME'] ?>" method=post>
+			<form action="<?=$_SERVER['SCRIPT_NAME'] ?>" method="post">
 				<p class="centrado">¿Estas seguro de que deseas eliminar la categoría <b><?=$regMem->getValor('nombre')?></b>?</p>
 				<input type="hidden" name="id" value="<?=$regMem->getValor('id')?>" />
 				<p class="separacion centrado">
@@ -180,7 +180,7 @@ include 'sidebar-administrar.php';
 			if ($regMem->getValor('metodo')=='GET') {
 				?>
 				<!-- FORMULARIO PARA EDITAR CATEGORIAS -->
-				<form action="<?=$_SERVER['SCRIPT_NAME'] ?>" method=post>
+				<form action="<?=$_SERVER['SCRIPT_NAME'] ?>" method="post">
 					<label>Nombre: </label>
 					<input type="text" name="nombre" value="<?=$categoria->getPropiedad('nombre')?>"/>
 					<label>Parent Cat: </label>
