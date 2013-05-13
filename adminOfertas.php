@@ -79,6 +79,7 @@ switch ($regMem->getValor('accion')){
 			$valores = array (
 				'producto_id' => $producto->getPropiedad('id'),
 				'precio_anterior' => $producto->getPropiedad('precio_venta'),
+				'precio_oferta'=>  $producto->getPropiedad('precio_venta'),
 				'activa' => 0
 				);
 
@@ -120,7 +121,7 @@ switch ($regMem->getValor('accion')){
 		// Validamos el producto
 		$valores_producto = array(
 				'id'=>$regMem->getValor('producto_id'),
-				'precio_venta'=>$regMem->getValor('precio_venta')
+				'precio_venta'=>$regMem->getValor('precio_oferta')
 			);
 
 		$args_producto =array_intersect_key(Producto::getListaPropiedades(), $valores_producto);
@@ -152,12 +153,24 @@ switch ($regMem->getValor('accion')){
 		}
 
 		if ($correcto) {
+
+
+
 			// Guardamos los cambios en la oferta
 			$oferta = new Oferta($validar_oferta);
 			$ofertas->setItemBD($oferta);
 
+			// Si la oferta está activa, el precio actual = al precio oferta
+			if ($validar_oferta['activa']) {
+				$producto->setPropiedad('precio_venta', $validar_oferta['precio_oferta']);
+				$regFeedback->addFeedback("El producto muestra ahora el precio de oferta <b>{$validar_oferta['precio_oferta']}</b>&euro;");
+			} else {
+			// Si la oferta está inactiva, el precio actual = al precio anterior
+				$producto->setPropiedad('precio_venta', $validar_oferta['precio_anterior']);
+				$regFeedback->addFeedback("El producto muestra ahora su precio normal <b>{$validar_oferta['precio_anterior']}</b>&euro;");
+			}
+
 			// Guardamos los cambios en el producto
-			$producto->setPropiedad('precio_venta', $validar_producto['precio_venta']);
 			$producto->setPropiedad('id', $validar_producto['id']);
 
 			$producto->setPropiedad('nombre', null);
@@ -305,7 +318,7 @@ include 'cabecera.php';
 			<form action = <?=$_SERVER['SCRIPT_NAME']?> method="post" class="separacion">
 
 				<label>Precio oferta</label>
-				<input type="text" name="precio_venta" value="<?=$producto->getPropiedad('precio_venta')?>"/>
+				<input type="text" name="precio_oferta" value="<?=$oferta->getPropiedad('precio_oferta')?>"/>
 
 				<!-- Este campo debería estar disabled para ver el precio anterior, y para las ofertas
 					reemplazar el precio_venta por un precio_oferta, para simplificar lo dejamos así-->
@@ -315,7 +328,7 @@ include 'cabecera.php';
 				<!-- Este campo sería para mostrar el % calculado con JavaScript dinamicamente-->
 				<label>Descuento</label>
 					<?php
-					$descuento = round(100-(1/$oferta->getPropiedad('precio_anterior')*$producto->getPropiedad('precio_venta'))*100,2);
+					$descuento = round(100-(1/$oferta->getPropiedad('precio_anterior')*$oferta->getPropiedad('precio_oferta'))*100,2);
 					?>
 				<input type="text" id="descuento" name="descuento" value="<?=$descuento?>"
 				<?php
@@ -392,13 +405,14 @@ include 'cabecera.php';
 				<tr>
 					<th>Producto</th>
 					<th>Categoría</th>
-					<th>Precio actual</th>
-					<th>Precio anterior</th>
+					<th>Precio Oferta</th>
+					<th>Precio Normal</th>
 					<th>Descuento</th>
 					<th>Activa</th>
 					<th> </th>
 				</tr>
 				<?php
+				try {
 					foreach ($a as $oferta) {
 						$b = $prods->getItemById($oferta->getPropiedad('producto_id'));
 						$c = $cats->getItemById($b->getPropiedad('categoria_id'));
@@ -409,10 +423,10 @@ include 'cabecera.php';
 							echo "<a href=\"{$_SERVER['SCRIPT_NAME']}?id=".$oferta->getPropiedad('id') . "&amp;producto_id=" . $oferta->getPropiedad('producto_id') . "&amp;accion=Editar\">";
 							echo "{$b->getPropiedad('nombre')}</a></td>";
 							echo "<td>{$c->getPropiedad('nombre')}</td>";
-							echo "<td>" . number_format($b->getPropiedad('precio_venta'),2)."&euro;</td>";
+							echo "<td>" . number_format($oferta->getPropiedad('precio_oferta'),2)."&euro;</td>";
 							echo "<td>" . number_format($oferta->getPropiedad('precio_anterior'),2) . "&euro;</td>";
 
-							$descuento = round(100-(1/$oferta->getPropiedad('precio_anterior')*$b->getPropiedad('precio_venta'))*100,2);
+							$descuento = round(100-(1/$oferta->getPropiedad('precio_anterior')*$oferta->getPropiedad('precio_oferta'))*100,2);
 							if ($descuento<=0) {
 								echo '<td class="error">';
 							} else {
@@ -430,7 +444,17 @@ include 'cabecera.php';
 						}
 						
 					}
-				
+				} catch (Exception $e) {
+					echo ($e->getMessage()) . "<br>";
+					echo "<br>";
+					print_r($e);
+					echo "<br>";
+					echo "<br>";
+					print_r(Oferta::getListaPropiedades());
+					echo "<br>";
+					echo "<br>";
+					print_r($b);
+				}
 			?>
 			</table>
 		<?php

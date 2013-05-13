@@ -106,7 +106,7 @@ abstract class Coleccion {
 			$aux [$propiedad]= "$propiedad=:$propiedad";
 			$propiedades[":$propiedad"] = $propiedades[$propiedad];
 			unset($propiedades[$propiedad]);
-			//echo "<br>Propiedad: $propiedad => $valor";
+			echo "<br>Propiedad: $propiedad => $valor";
 		}
 
 		// Eliminamos el id de los valores a actualizar

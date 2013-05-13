@@ -8,6 +8,8 @@ require_once 'classes/Registro.php';
 require_once 'classes/Categorias.php';
 require_once 'classes/Productos.php';
 require_once 'classes/Fabricantes.php';
+require_once 'classes/Ofertas.php';
+
 require_once 'classes/Imagenes.php'; 
 
 $PDO = new PDOConfig ();
@@ -27,6 +29,7 @@ $controlador -> setPDO($PDO);
 $cats = new Categorias($controlador);
 $prods = new Productos($controlador);
 $galeria = new Imagenes($controlador);
+$ofertas = new Ofertas($controlador);
 
 // Intentamos recuperar el producto
 if ($regMem->getValor('id')) {
@@ -74,6 +77,14 @@ switch ($regMem->getValor('accion')){
 	break;
 
 	case 'Editar':
+
+	// Buscamos si hay alguna oferta relacionada
+	$oferta = $ofertas->getItemBD()->getItemByProducto($producto->getPropiedad('id'));
+	
+	if (isset($oferta) && $oferta->getPropiedad('activa')) {
+		$regFeedback->addFeedback ('¡Atención! este producto está en oferta, si se modifica el precio la oferta será desactivada.');
+	}
+
 	$regMem->setValor('titulo', 'Editar Producto');
 
 	if ($regMem->getValor('metodo')=='POST' && $producto) {
@@ -81,6 +92,26 @@ switch ($regMem->getValor('accion')){
 		$producto = new Producto ($valores);			
 		$prods->setItemBD($producto);
 		$regFeedback->addFeedback("Se ha modificado el producto <b>{$regMem->getValor('nombre')}</b> con éxito.");
+
+		if ($oferta) {
+			$regFeedback->addFeedback ("Se ha desactivado la oferta relacionada con este producto.");
+
+			// Si hemos modificado el precio lo actualizamos en la oferta y la desactivamos.
+			if ($oferta->getPropiedad('precio_anterior')!=$producto->getPropiedad('precio_venta')) {
+				$oferta->setPropiedad('precio_anterior', $producto->getPropiedad('precio_venta'));
+				$oferta->setPropiedad('activa', 0);
+				$ofertas->setItemBD($oferta);
+			}
+
+		} else {
+			$regFeedback->addFeedback ("No hay ninguna oferta relacionada");
+			print_r($oferta);
+		}
+
+		// Recargamos el producto de la base de datos
+		$prods->delItem($producto->getPropiedad('id'));
+		$prods->getItemBD(array ('id' => $producto->getPropiedad('id')));
+		$producto = $prods->getItemById($producto->getPropiedad('id'));
 	}
 
 	if ($regMem->getValor('principal')) {
@@ -329,17 +360,19 @@ include 'cabecera.php';
 		} else if ($regMem->getValor('accion')=='Editar' || $regMem->getValor('accion')== 'Guardar Imagen' || $regMem->getValor('accion')=='principal') {
 
 			?>
+			<h3 class="separacion"><?=$producto->getPropiedad('nombre')?></h3>
+			
 
-			<h3><?=$producto->getPropiedad('nombre')?></h3>
 			<div class="separacion" >
 					
 				
 				<!-- FORMULARIO PARA EDITAR PRODUCTOS -->
 				<form action="<?=$_SERVER['SCRIPT_NAME'] ?>" method="post">
 	
-					<label>Nombre:</label>
 
-					<input type="text" name="nombre" value="" disabled/>
+					<label>Precio:</label>
+					<input type="text" name="precio_venta" value="<?=$producto->getPropiedad('precio_venta')?>"/>
+
 					<label>Categoria:</label>
 					<select name="categoria_id">
 						<?php
@@ -350,7 +383,7 @@ include 'cabecera.php';
 							$b = $cats->getChildItemsById($cat->getPropiedad('id'));
 							foreach ($b as $catb) {
 								echo "<option value=\"{$catb->getPropiedad('id')}\"";
-								if ($catb->getPropiedad('id') == $producto->getPropiedad('id')) {
+								if ($catb->getPropiedad('id') == $producto->getPropiedad('categoria_id')) {
 									echo " selected ";
 								}
 								echo ">{$catb->getPropiedad('nombre')}</option>";
@@ -359,8 +392,10 @@ include 'cabecera.php';
 						}
 						?>
 					</select>
-					<label>Precio:</label>
-					<input type="text" name="precio_venta" value="<?=$producto->getPropiedad('precio_venta')?>"/>
+
+					<label>Existencias:</label>
+					<input type="text" name="existencias" value="<?=$producto->getPropiedad('existencias')?>"/>
+
 
 					<label>Fabricante:</label>
 					<select name="fabricante_id">
@@ -383,8 +418,6 @@ include 'cabecera.php';
 						?>
 					</select>
 
-					<label>Existencias:</label>
-					<input type="text" name="existencias" value="<?=$producto->getPropiedad('existencias')?>"/>
 					
 					<label>Disponibilidad:</label>
 					<input type="text" disabled value="<?=$producto->getPropiedad('disponibilidad')?>"/>
@@ -403,7 +436,7 @@ include 'cabecera.php';
 					?>
 					/>
 					
-					<label>Descripcion:</label>
+					<label class="separacion">Descripcion:</label>
 					<textarea name="descripcion" rows="5"><?=$producto->getPropiedad('descripcion')?></textarea>
 					<input type="hidden" value="<?=$producto->getPropiedad('id')?>" name="id"/>
 

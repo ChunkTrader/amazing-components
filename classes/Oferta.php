@@ -12,6 +12,7 @@ class Oferta extends Item {
 			'id' => FILTER_VALIDATE_INT,
 			'producto_id' => FILTER_VALIDATE_INT,
 			'precio_anterior'=>FILTER_VALIDATE_FLOAT,
+			'precio_oferta'=>FILTER_VALIDATE_FLOAT,
 			'activa'=>FILTER_VALIDATE_BOOLEAN
 			);
 	}
