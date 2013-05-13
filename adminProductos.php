@@ -73,10 +73,12 @@ switch ($regMem->getValor('accion')){
 		foreach ($valores as $clave=>$valor){
 			$regMem->setValor($clave, NULL);
 		}
+
 	}
 	break;
 
 	case 'Editar':
+
 
 	// Buscamos si hay alguna oferta relacionada
 	$oferta = $ofertas->getItemBD()->getItemByProducto($producto->getPropiedad('id'));
@@ -89,6 +91,13 @@ switch ($regMem->getValor('accion')){
 
 	if ($regMem->getValor('metodo')=='POST' && $producto) {
 		$valores = (array_intersect_key($regMem->getValor(), Producto::getListaPropiedades()));
+		
+		if ($regMem->getValor('activo')) {
+			$valores['activo'] = 1;
+		} else {
+			$valores['activo'] = 0;
+		}
+
 		$producto = new Producto ($valores);			
 		$prods->setItemBD($producto);
 		$regFeedback->addFeedback("Se ha modificado el producto <b>{$regMem->getValor('nombre')}</b> con éxito.");
@@ -102,10 +111,8 @@ switch ($regMem->getValor('accion')){
 				$oferta->setPropiedad('activa', 0);
 				$ofertas->setItemBD($oferta);
 			}
-
 		} else {
-			$regFeedback->addFeedback ("No hay ninguna oferta relacionada");
-			print_r($oferta);
+			$regFeedback->addFeedback ("No hay ninguna oferta relacionada");			
 		}
 
 		// Recargamos el producto de la base de datos
@@ -202,7 +209,8 @@ switch ($regMem->getValor('accion')){
 		if ($correcto) {
 				// Generamos un nombre único para la imagen y la guardamos como jpeg.
 			do {
-				$nombre_imagen = $producto->getPropiedad('nombre') . '_' . uniqid();
+				exit;
+				$nombre_imagen = substr($producto->getPropiedad('nombre'), 0, 45) . '_' . uniqid();
 				$nombre_imagen = Imagen::encode($nombre_imagen);
 				
 			} while (file_exists(UPLOADDIR . $nombre_imagen . '.jpeg'));
@@ -426,7 +434,9 @@ include 'cabecera.php';
 
 					<label>Fecha:</label>
 					<input type="text" disabled value="<?=$producto->getPropiedad('fecha')?>"/>
+					<?php
 					
+					?>
 					<label>Activo:</label>
 					<input type="checkbox" name="activo"
 					<?php

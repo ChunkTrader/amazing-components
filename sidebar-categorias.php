@@ -11,16 +11,16 @@ foreach ( $a as $cat ) {
 		$url = 'verProductos.php?cat='.$cat->getPropiedad('id');
 		echo "<ul><li><a href=\"$url\">{$cat->getPropiedad('nombre')}</a>";
 
-		// Buscamos sus hijos si hay alguna categoria seleccionada 
+		// Buscamos sus hijos si hay alguna categoria seleccionada 		
 		if ($cat->getPropiedad('id')==$regMem->getValor('cat') || $cat->getPropiedad('id')==$regMem->getValor('cat_parent_id')) {
 			$children = $cats->getChildItemsById($cat->getPropiedad('id'));
 			echo '<ul>';
 			foreach ( $children as $child ) {
+				$url = 'verProductos.php?cat='.$child->getPropiedad('id');
 				if ($child->getPropiedad('id')==$regMem->getValor('cat')){
-					echo "<li class=\"seleccionado\">{$child->getPropiedad('nombre')}</li>";
+					echo "<li ><a class=\"seleccionado\" href=\"$url\" title=\"{$child->getPropiedad('nombre')}\">{$child->getPropiedad('nombre')}</a></li>";
 				} else {
-					$url = 'verProductos.php?cat='.$child->getPropiedad('id');
-					echo "<li><a href=\"$url\" title=\"{$child->getPropiedad('nombre')}\">{$child->getPropiedad('nombre')}</a></li>";	
+					echo "<li><a href=\"$url\" title=\"{$child->getPropiedad('nombre')}\">{$child->getPropiedad('nombre')}</a></li>";
 				}
 			}
 			echo '</ul>';

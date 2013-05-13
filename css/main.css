@@ -365,7 +365,7 @@ div#main-content p {
 	height: 28px;
 	position: absolute;
 	color: #fff;
-	bottom: 55px;
+	bottom: 58px;
 	width: 85px;
 	left: 0px;
 	z-index: 1;
@@ -379,7 +379,7 @@ p.descuento {
 	position: absolute;
 	color: #fff;
 	top:10px;
-	right: 0px;
+	right: -3px;
 	border: none;
 	padding: 0 10px;
 	margin: 0;
@@ -654,10 +654,16 @@ div#navigator {
 	font-size: 12px;
 }
 
-.seleccionado {
+a.seleccionado {
 	color: #ddd;
 	background-color:#53a8e9;
 }
+
+a.seleccionado:hover{
+	color: #fff;
+	background-color:#ddd;
+}
+
 
 #imagenes {
 	width:300px;

@@ -37,13 +37,16 @@ if ($regMem->getValor('id')) {
 		$regError->setError('general', ' No existe ningún producto con esa <b>id</b>.');
 		$regMem->setValor('titulo', 'Error: El producto no existe');
 	} else {
+		// Titulo por defecto de la página nombre del producto
 		$regMem->setValor('titulo', $producto->getPropiedad('nombre'));
+		// Cargamos la lista de categorias para el sidebar, seleccionamos la categoria padre
+		$cats->getItemBD();
+		$a = $cats->getItemById($producto->getPropiedad('categoria_id'));
+		//$regMem->setValor('cat',$a->getPropiedad('parent_id'));
+		$regMem->setValor('cat',$a->getPropiedad('id'));
+		$regMem->setValor('cat_parent_id',$a->getPropiedad('parent_id'));
 	}
 }
-
-// Titulo por defecto de la página nombre del producto
-
-
 
 
 
@@ -197,8 +200,16 @@ include 'cabecera.php';
 
 			$fabs = new Fabricantes($controlador);
 			$a = $fabs->getItemBD(array('id'=>$producto->getPropiedad('fabricante_id')));
-			$a = $a->getItemById($producto->getPropiedad('fabricante_id'));
-			?>						
+			
+			// Algunas veces no se guarda el valor del fabricante al crear el producto.
+			// para evitar errores si el valor es falso lo ponemos como OEM
+			if (!$producto->getPropiedad('fabricante_id')) {
+				$a = $a->getItemById(1);
+			} else {
+				$a = $a->getItemById($producto->getPropiedad('fabricante_id'));
+			}
+			?>
+
 			<li>Fabricante: <b><?=$a->getPropiedad('nombre')?></b></li>
 			<li>Disponibilidad: <b><?=$producto->getPropiedad('disponibilidad')?></b></li>
 		</ul>

@@ -33,3 +33,11 @@ POSIBLES MEJORAS
 	- Solo permitimos hacer pedidos de productos en existencias. Podria permitirse comprar productos que aún no estan en la tienda (y que no esten descatalogados) pidiendo confirmación al cliente y avisando del tiempo de espera.
 
 	- Todas las funciones de graficos deberian ser movidas a una clase o libreria especial, además habría que añadir funciones para reajustar el tamaño de los banners y slideshows en lugar de obligar a que sean subidos en ese tamaño o sean recortados por la aplicación.
+	
+	
+TESTEO PRODUCTOS
+	Categorias generales con más subcategorias: Perifericos y Componentes
+	Categoria general con más productos: Perifericos
+	Subcategoría con más productos: Monitores
+	Producto con más imagenes: Samsung Galaxy S4 I9505 Negro Libre
+	NOTA: Las descripciones las he hecho copiando y pegando a saco, algunas se han copiado con 
