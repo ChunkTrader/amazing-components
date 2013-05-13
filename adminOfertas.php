@@ -234,6 +234,7 @@ switch ($regMem->getValor('accion')){
 			// Metodo cutre, habria que hacer un solo acceso a la base de datos.
 			$oferta->setPropiedad('slideshow_activo', $regMem->getValor('slideshow_activo')? 1:0);
 			$ofertas->setItemBD($oferta);
+			$cambio_estado=TRUE;			
 
 			if ($regMem->getValor('slideshow_activo') || $regMem->getValor('slideshow_activo')) {
 				$regFeedback->addFeedback('Se ha activado el Slideshow.');
@@ -283,10 +284,7 @@ switch ($regMem->getValor('accion')){
 			$correcto = FALSE;
 		} 
 
-		// Si no se ha enviado ninguna imagen eliminamos cualquier posible error de archivo
-		if (!$regMem->getValor('imagen')) {
-			$regError->unSetError('archivo');
-		}
+		
 
 		if ($correcto) {
 			// Generamos un nombre basado en el producto, si se sube otra imagen para el mismo
@@ -309,6 +307,10 @@ switch ($regMem->getValor('accion')){
 
 		}
 
+		// Si ha sido un cambio de estado ignoramos el mensaje de error del archivo.
+		if (!empty($cambio_estad)) {
+			$regError->unsetError('archivo');
+		}
 		$regMem->setValor('accion','Editar');
 		$regMem->setValor('titulo', 'Editar Oferta');
 
@@ -412,8 +414,8 @@ include 'cabecera.php';
 				<!-- Este campo debería estar disabled para ver el precio anterior, y para las ofertas
 					reemplazar el precio_venta por un precio_oferta, para simplificar lo dejamos así-->
 				<label>Anterior</label>
-				<input type="text" name="precio_anterior" value="<?=$oferta->getPropiedad('precio_anterior')?>"/>
-
+				<input disabled type="text" value="<?=$oferta->getPropiedad('precio_anterior')?>"/>
+				<input type="hidden" name="precio_anterior" value="<?=$oferta->getPropiedad('precio_anterior')?>"/>
 				<!-- Este campo sería para mostrar el % calculado con JavaScript dinamicamente-->
 				<label>Descuento</label>
 					<?php
@@ -450,7 +452,7 @@ include 'cabecera.php';
 			<!-- Formulario Slideshow -->
 			<h2 class="separacion">Imagen Slideshow</h2>
 			
-			<img class="slideshow" src="images/slideshow/<?=$oferta->getPropiedad('slideshow_url')?>.jpeg" alt="">
+			<img class="<?=($oferta->getPropiedad('slideshow_activo'))? 'slideshow' : 'slideshow_disabled'?>" src="images/slideshow/<?=$oferta->getPropiedad('slideshow_url')?>.jpeg" alt="">
 			
 			<p class="separación">La imagen para el Slideshow debe ser de 703x300 pixels o no se mostrará correctamente.</p>
 			<p>El peso máximo de la imagen es de <?=(MAX_FILE_SIZE/1024)?>kbs.</p>

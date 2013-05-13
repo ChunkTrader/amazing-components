@@ -70,6 +70,9 @@ include 'cabecera.php';
 						<div></div></li>
 				</ul>
 			</div>
+
+
+			
 			<h2>Ofertas destacadas</h2>
 
 			<?php

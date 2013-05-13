@@ -9,7 +9,6 @@
 		<li>Administrar Ofertas
 			<ul>
 				<li><a href="adminOfertas.php">Ofertas</a></li>			
-				<li><a href="adminSlideshow.php">Slideshow</a></li>
 				<li><a href="#">Banner (no implementado)</a></li>
 			</ul>
 		</li>
