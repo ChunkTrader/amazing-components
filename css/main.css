@@ -333,7 +333,7 @@ div#main-content p input[type="submit"] {
 	padding-top: 3px;
 }
 
-.box p+p {
+.box p+p a {
 	border-top: 1px solid #ddd;
 }
 
@@ -365,6 +365,21 @@ div#main-content p input[type="submit"] {
 	width: 85px;
 	left: 0px;
 	z-index: 1;
+}
+
+p.descuento {
+	background: rgba(0, 0, 0, 0.6);
+	font-size:32px;
+	font-style:italic;
+	font-weight: bold;
+	position: absolute;
+	color: #fff;
+	top:10px;
+	right: 0px;
+	border: none;
+	padding: 0 10px;
+	margin: 0;
+	
 }
 
 /* FLEXSLIDER 2 */
@@ -595,6 +610,7 @@ div#galeria div{
 }
 
 .derecha {
+	clear:both;
 	text-align: right;
 }
 
@@ -656,22 +672,42 @@ div#detalle input {
 	width:20px;
 }
 
-#detalle span{
-	width:100px;
-	font-size: 60px;
+
+#detalle .precio {
+
+	font-size:64px;
+	color:#53a8e9;
+	font-weight:bold;
+	display: block;
+	float: left;	
+	
 
 }
 
- .comprar a{
+#detalle .comprar_disabled {
+	padding: 5px 10px;
+ 	font-size: 20px;
+	border-radius: 5px;
+	background-color: #ddd;
+	color:#fff;
+	float: left;
+	display: block;
+	margin: 26px;
+
+}
+
+#detalle .comprar a{
  	padding: 5px 10px;
  	font-size: 20px;
 	border-radius: 5px;
 	background-color: #53a8e9;
 	color:#fff;
-
+	float: left;
+	display: block;
+	margin: 26px;
 }
 
-.comprar a:hover{
+#detalle .comprar a:hover{
 	/*cursor: pointer;*/
 	background: #4398d9;
 	text-decoration: none;

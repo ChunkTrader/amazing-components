@@ -6,6 +6,12 @@
 				<li><a href="adminProductos.php">Productos</a></li>			
 			</ul>
 		</li>
-
+		<li>Administrar Ofertas
+			<ul>
+				<li><a href="adminOfertas.php">Ofertas</a></li>			
+				<li><a href="adminSlideshow.php">Slideshow</a></li>
+				<li><a href="#">Banner (no implementado)</a></li>
+			</ul>
+		</li>
 	</ul>
 </div>

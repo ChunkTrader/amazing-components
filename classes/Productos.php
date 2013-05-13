@@ -52,8 +52,18 @@ class Productos extends Coleccion{
 		} else {
 			// Vaciamos la colección antes de cargar la tabla de la base de datos
 			$this->coleccion = array();
+			
+			if (isset($opciones['ofertas'])) {
+				// OJO, en esta consulta no estamos usando la variable para la tabla porque no tenia pensado
+				// necesitar ningún JOIN.
 
-			if (isset($opciones['novedades'])) {
+				$prepare = "SELECT pr.* FROM productos pr JOIN ofertas o on pr.id = o.producto_id WHERE o.activa = 1 AND pr.disponibilidad!='Descatalogado' ORDER BY fecha ASC";
+				$countPrepare = str_replace('SELECT pr.* FROM', 'SELECT COUNT(*) FROM', $prepare);
+				if ($opciones['ofertas']!=-1) {
+					$prepare .= ' LIMIT ' . $opciones['ofertas'];
+				}
+
+			} else if (isset($opciones['novedades'])) {
 				// Novedades, mostramos los últimos productos añadidos primero. Si  'novedades'=-1
 				// las mostramos por páginas, si hay una cantidad es que estamos mostrando las 
 				// del index.
@@ -98,18 +108,15 @@ class Productos extends Coleccion{
 			}
 			
 			//Modificamos la consulta para obtener el total sin limit
-			//if (isset($countPrepare) && strripos($countPrepare, 'LIMIT')){
 			if (strripos($countPrepare, 'LIMIT')){
 				$countPrepare = substr($countPrepare, 0, strripos($countPrepare, 'LIMIT'));
-				
 			}
-			
-
 			
 			$countStmt = $this->controlador->getPDO()->prepare($countPrepare);
 			$countStmt->execute();
 			$this->totalBD=$countStmt->fetch(PDO::FETCH_COLUMN);
 			
+			//echo '<br>Elementos totales en la consulta sin LIMIT: '. $this->totalBD. '<br>';
 		}
 			
 		$rows = $stmt->fetchAll();

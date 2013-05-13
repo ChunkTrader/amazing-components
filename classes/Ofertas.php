@@ -23,6 +23,7 @@ class Ofertas extends Coleccion{
 		// Este mètodo es distinot de getItemCategoria() porque devuelve un único producto
 		// Cada producto solo puede tener enlazada una oferta.
 		foreach ($this->coleccion as $item) {
+			//echo "comprobando {$item->getPropiedad('producto_id')} con {$producto_id}<br>";
 			if ($item->getPropiedad('producto_id') == $producto_id){
 				return $item;
 			}

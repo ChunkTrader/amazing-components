@@ -28,3 +28,6 @@ POSIBLES MEJORAS
 	- Los campos input type="text" no funcionan con los textos con acentos al ponerlos como value, habria
 		que hacer una función con una regexp para reemplazar los &*cute; con la letra acentuada que corresponda. Por la misma razón cuando un texto lleva " tampoco se rellena correctamente.
 		
+	- Añadir una pàgina para administrar el banner, de momento lo dejo manual con el archivo de configuración.
+
+	- Solo permitimos hacer pedidos de productos en existencias. Podria permitirse comprar productos que aún no estan en la tienda (y que no esten descatalogados) pidiendo confirmación al cliente y avisando del tiempo de espera.

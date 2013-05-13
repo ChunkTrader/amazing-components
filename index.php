@@ -8,7 +8,8 @@ require_once 'classes/Registro.php';
 require_once 'classes/Categorias.php';
 require_once 'classes/Productos.php';
 require_once 'classes/Fabricantes.php';
-require_once 'classes/Imagenes.php'; 
+require_once 'classes/Imagenes.php';
+require_once 'classes/Ofertas.php'; 
 
 $PDO = new PDOConfig ();
 
@@ -73,10 +74,61 @@ include 'cabecera.php';
 			</div>
 			<h2>Ofertas destacadas</h2>
 
+			<?php
+			$prods = new Productos($controlador);
+			$ofertas = new Ofertas($controlador);
+
+			$prods->getItemBD(array('ofertas' => MAX_OFERTAS));
+			$ofertas->getItemBD();
+
+			$a = $prods->getItemById();
+			$galeria = new Imagenes($controlador);
+			$galeria->getItemBD(array('principal' => TRUE));
+						
+			foreach ($a as $producto) {
+
+				$imagen=$galeria->getItemByProductoFirst($producto->getPropiedad('id'));							
+				if ($imagen) {
+					$b = $imagen->getPropiedad('imagen');
+
+				} else {
+					$b = 'default';
+				}
+				
+				$size = MAIN_THUMB_SIZE;
+
+				$url = "getthumb.php?path=images/products/{$b}.jpeg&size={$size}";
+
+				?>
+					<div class="box">
+						<a href="detalleProducto.php?id=<?=$producto->getPropiedad('id')?>">
+							<img src="<?=$url?>" title="<?=$producto->getPropiedad('nombre')?>" alt="<?=$producto->getPropiedad('nombre')?>" />
+						</a>
+						<p><?=$producto->getPropiedad('precio_venta')?>&euro;</p>
+						<p>
+							<a href="detalleProducto.php?id=<?=$producto->getPropiedad('id')?>"><?=$producto->getPropiedad('nombre')?></a>
+						</p>
+						<div></div>
+						<p class="<?=quitarEspacios($producto->getPropiedad('disponibilidad'))?>"><?=$producto->getPropiedad('disponibilidad')?></p>
+						<p class="descuento">
+						<?php 
+						$oferta = $ofertas->getItemByProducto($producto->getPropiedad('id'));
+						$descuento = round(100-(1/$oferta->getPropiedad('precio_anterior')*$oferta->getPropiedad('precio_oferta'))*100);
+						echo "-$descuento%";
+						?>
+						</p>
+					</div>
+			<?php
+			}
+
+			?>
+
+
+
 			<p class="derecha"><a href="verProductos.php?ofertas=-1">Ver más ofertas &gt;&gt;</a></p>			<h2 class="separacion">Novedades</h2>
 
 			<?php
-			$prods = new Productos($controlador);
+			
 			$prods->getItemBD(array('novedades' => MAX_NOVEDADES));
 				
 			$a = $prods->getItemById();
@@ -99,12 +151,12 @@ include 'cabecera.php';
 
 				?>
 					<div class="box">
-						<a href="#"><img
-							src="<?=$url?>"
-							title="<?=$producto->getPropiedad('nombre')?>" alt="<?=$producto->getPropiedad('nombre')?>" /></a>
+						<a href="detalleProducto.php?id=<?=$producto->getPropiedad('id')?>">
+							<img src="<?=$url?>" title="<?=$producto->getPropiedad('nombre')?>" alt="<?=$producto->getPropiedad('nombre')?>" />
+						</a>
 						<p><?=$producto->getPropiedad('precio_venta')?>&euro;</p>
 						<p>
-							<a href="#"><?=$producto->getPropiedad('nombre')?></a>
+							<a href="detalleProducto.php?id=<?=$producto->getPropiedad('id')?>"><?=$producto->getPropiedad('nombre')?></a>
 						</p>
 						<div></div>
 						<p class="<?=quitarEspacios($producto->getPropiedad('disponibilidad'))?>"><?=$producto->getPropiedad('disponibilidad')?></p>
@@ -115,8 +167,7 @@ include 'cabecera.php';
 			?>
 			<p class="derecha"><a href="verProductos.php?novedades=-1">Ver más novedades &gt;&gt;</a></p>
 			<h2 class="separacion">Outlet</h2>
-			<?php
-			$prods = new Productos($controlador);
+			<?php			
 			$prods->getItemBD(array('outlet' => MAX_OUTLET));
 				
 			$a = $prods->getItemById();
@@ -139,12 +190,12 @@ include 'cabecera.php';
 
 				?>
 					<div class="box">
-						<a href="#"><img
-							src="<?=$url?>"
-							title="<?=$producto->getPropiedad('nombre')?>" alt="<?=$producto->getPropiedad('nombre')?>" /></a>
+						<a href="detalleProducto.php?id=<?=$producto->getPropiedad('id')?>">
+							<img src="<?=$url?>" title="<?=$producto->getPropiedad('nombre')?>" alt="<?=$producto->getPropiedad('nombre')?>" />
+						</a>
 						<p><?=$producto->getPropiedad('precio_venta')?>&euro;</p>
 						<p>
-							<a href="#"><?=$producto->getPropiedad('nombre')?></a>
+							<a href="detalleProducto.php?id=<?=$producto->getPropiedad('id')?>"><?=$producto->getPropiedad('nombre')?></a>
 						</p>
 						<div></div>
 						<p class="<?=quitarEspacios($producto->getPropiedad('disponibilidad'))?>"><?=$producto->getPropiedad('disponibilidad')?></p>

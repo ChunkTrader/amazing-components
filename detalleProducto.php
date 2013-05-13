@@ -187,10 +187,20 @@ include 'cabecera.php';
 			<li>Disponibilidad: <b><?=$producto->getPropiedad('disponibilidad')?></b></li>
 		</ul>
 		<?php
+		// Reemplazamos los saltos de línea de la descripción por <br>
 		$a = $producto->getPropiedad('descripcion');
 		$a = preg_replace("/[\n]/i", '<br>',$a)
 		?>
-		<p><span><?=$producto->getPropiedad('precio_venta')?>&euro;</span><span class="comprar"><a href="#">comprar</a></span></p>
+		<p class="precio"><?=$producto->getPropiedad('precio_venta')?>&euro;</p>
+		<?php
+			if ($producto->getPropiedad('existencias')<1) {
+				echo "<p class=\"comprar_disabled\">comprar</p>";
+			} else {
+				echo "<p class=\"comprar\"><a href=\"#\">comprar</a></p>";
+			}
+		?>
+		
+		
 		<p class="separacion">Descripción</b>:</p>
 		<p class="descripcion"><b><?=$a?></b></p>
 	</div>
