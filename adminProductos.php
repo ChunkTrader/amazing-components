@@ -162,76 +162,76 @@ switch ($regMem->getValor('accion')){
 	break;
 
 	case 'Guardar Imagen':
-	$correcto = TRUE;
+		$correcto = TRUE;
 
-	if (!$producto) {
-		$correcto = FALSE;
-	}
-
-	if (!($_FILES['imagen']['name'])) {
-		$regError->setError('archivo', 'El archivo no se ha subido correctamente.');
-		$correcto = FALSE;
-	}
-
-	if ($_FILES['imagen']['size']>MAX_FILE_SIZE) {
-		$regError->setError('archivo', 'El tamaño máximo para el archivo es '. MAX_FILE_SIZE . ' bytes.');
-		$correcto = FALSE;
-	}
-
-	switch ($_FILES['imagen']['type']) {
-		case 'image/gif':
-		$nueva_imagen = @imagecreatefromgif($_FILES['imagen']['tmp_name']);
-		break;
-		case 'image/jpeg':
-		$nueva_imagen = @imagecreatefromjpeg($_FILES['imagen']['tmp_name']);
-		break;
-		case 'image/png':
-		$nueva_imagen = @imagecreatefrompng($_FILES['imagen']['tmp_name']);
-		break;
-		default:
-		$regError->setError('archivo', 'El archivo debe ser de tipo jpeg, png o gif.');
-		$correcto = FALSE;
-	}
-
-		// Comprobamos que se ha reprocesado correctamente
-	if (empty($nueva_imagen)) {
-		$regError->setError('archivo', 'La imagen no es válida.');
-		$correcto = FALSE;
-	} 
-
-	if ($correcto) {
-			// Generamos un nombre único para la imagen y la guardamos como jpeg.
-		do {
-			$nombre_imagen = $producto->getPropiedad('nombre') . '_' . uniqid();
-			$nombre_imagen = Imagen::encode($nombre_imagen);
-			
-		} while (file_exists(UPLOADDIR . $nombre_imagen . '.jpeg'));
-
-			// Guardamos la imagen
-		imagejpeg($nueva_imagen, UPLOADDIR . $nombre_imagen . '.jpeg');
-
-		$a=$galeria->getItemBD( array (
-			'producto_id' => $producto->getPropiedad('id'),
-			'principal' => TRUE
-			))->getItemById();
-
-		
-		$valores = array (
-			'imagen' => $nombre_imagen,
-			'producto_id' => $producto->getPropiedad('id')
-			);
-
-		if (!$a) {
-			$valores['principal'] = TRUE;
-			$regFeedback->addFeedback('Imagen establecida como principal.');
+		if (!$producto) {
+			$correcto = FALSE;
 		}
 
-		$imagen = new Imagen ($valores);
-		$galeria->addItemBD($imagen);
-		$regFeedback->addFeedback('Se ha añadido la imagen con éxito.');
+		if (!($_FILES['imagen']['name'])) {
+			$regError->setError('archivo', 'El archivo no se ha subido correctamente.');
+			$correcto = FALSE;
+		}
 
-	}
-	break;
+		if ($_FILES['imagen']['size']>MAX_FILE_SIZE) {
+			$regError->setError('archivo', 'El tamaño máximo para el archivo es '. MAX_FILE_SIZE . ' bytes.');
+			$correcto = FALSE;
+		}
+
+		switch ($_FILES['imagen']['type']) {
+			case 'image/gif':
+			$nueva_imagen = @imagecreatefromgif($_FILES['imagen']['tmp_name']);
+			break;
+			case 'image/jpeg':
+			$nueva_imagen = @imagecreatefromjpeg($_FILES['imagen']['tmp_name']);
+			break;
+			case 'image/png':
+			$nueva_imagen = @imagecreatefrompng($_FILES['imagen']['tmp_name']);
+			break;
+			default:
+			$regError->setError('archivo', 'El archivo debe ser de tipo jpeg, png o gif.');
+			$correcto = FALSE;
+		}
+
+			// Comprobamos que se ha reprocesado correctamente
+		if (empty($nueva_imagen)) {
+			$regError->setError('archivo', 'La imagen no es válida.');
+			$correcto = FALSE;
+		} 
+
+		if ($correcto) {
+				// Generamos un nombre único para la imagen y la guardamos como jpeg.
+			do {
+				$nombre_imagen = $producto->getPropiedad('nombre') . '_' . uniqid();
+				$nombre_imagen = Imagen::encode($nombre_imagen);
+				
+			} while (file_exists(UPLOADDIR . $nombre_imagen . '.jpeg'));
+
+				// Guardamos la imagen
+			imagejpeg($nueva_imagen, UPLOADDIR . $nombre_imagen . '.jpeg');
+
+			$a=$galeria->getItemBD( array (
+				'producto_id' => $producto->getPropiedad('id'),
+				'principal' => TRUE
+				))->getItemById();
+
+			
+			$valores = array (
+				'imagen' => $nombre_imagen,
+				'producto_id' => $producto->getPropiedad('id')
+				);
+
+			if (!$a) {
+				$valores['principal'] = TRUE;
+				$regFeedback->addFeedback('Imagen establecida como principal.');
+			}
+
+			$imagen = new Imagen ($valores);
+			$galeria->addItemBD($imagen);
+			$regFeedback->addFeedback('Se ha añadido la imagen con éxito.');
+
+		}
+		break;
 
 }
 
@@ -454,7 +454,7 @@ include 'cabecera.php';
 				$a = $galeria->getItemById();
 				$a_actual=0;
 				$a_total = count($a);
-		$size = 161; // Tamanño del Thumnail 161 : 4 por fila
+		$size = 161; // Tamaño del Thumnail 161 : 4 por fila
 
 		foreach ($a as $key=>$imagen){
 			$a_actual += 1;

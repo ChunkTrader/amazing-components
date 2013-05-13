@@ -9,6 +9,7 @@ require_once 'classes/Categorias.php';
 require_once 'classes/Productos.php';
 require_once 'classes/Fabricantes.php';
 require_once 'classes/Imagenes.php'; 
+require_once 'classes/Ofertas.php'; 
 
 $PDO = new PDOConfig ();
 
@@ -27,6 +28,7 @@ $controlador -> setPDO($PDO);
 $cats = new Categorias($controlador);
 $prods = new Productos($controlador);
 $galeria = new Imagenes($controlador);
+$ofertas = new Ofertas($controlador);
 
 // Intentamos recuperar el producto
 if ($regMem->getValor('id')) {
@@ -177,8 +179,22 @@ include 'cabecera.php';
 		?>
 	</div>
 	<div id="detalle">
+		<?php
+		// Comprobamos si existe una oferta para este producto
+		?>
 		<ul>
 			<?php
+			$ofertas->getItemBD(array('producto_id' =>$producto->getPropiedad('id')));
+			$c=$ofertas->getItemByProducto($producto->getPropiedad('id')); 
+			if ($c && $c->getPropiedad('activa')==1){
+				echo '<li>¡Este producto está en oferta! </li>';
+				echo '<li class="descuento">';
+				$oferta = $ofertas->getItemByProducto($producto->getPropiedad('id'));
+				$descuento = round(100-(1/$oferta->getPropiedad('precio_anterior')*$oferta->getPropiedad('precio_oferta'))*100);
+				echo "-$descuento%";
+				echo '</li>';
+			}
+
 			$fabs = new Fabricantes($controlador);
 			$a = $fabs->getItemBD(array('id'=>$producto->getPropiedad('fabricante_id')));
 			$a = $a->getItemById($producto->getPropiedad('fabricante_id'));

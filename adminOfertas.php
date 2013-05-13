@@ -153,9 +153,6 @@ switch ($regMem->getValor('accion')){
 		}
 
 		if ($correcto) {
-
-
-
 			// Guardamos los cambios en la oferta
 			$oferta = new Oferta($validar_oferta);
 			$ofertas->setItemBD($oferta);
@@ -225,6 +222,98 @@ switch ($regMem->getValor('accion')){
 			$regMem->setValor('metodo',NULL);
 
 		}
+		break;
+
+	case 'Guardar Imagen':
+		$correcto = TRUE;
+
+		if (!$oferta) {			
+			$correcto = FALSE;
+		} else if ($regMem->getValor('slideshow_activo')!=$oferta->getPropiedad('slideshow_activo')) {
+			// El valor es distinto, guardamos el nuevo estado independientemente de si hay o no imagen
+			// Metodo cutre, habria que hacer un solo acceso a la base de datos.
+			$oferta->setPropiedad('slideshow_activo', $regMem->getValor('slideshow_activo')? 1:0);
+			$ofertas->setItemBD($oferta);
+
+			if ($regMem->getValor('slideshow_activo') || $regMem->getValor('slideshow_activo')) {
+				$regFeedback->addFeedback('Se ha activado el Slideshow.');
+			} else {
+				$regFeedback->addFeedback('Se ha desactivado el Slideshow.');
+			}
+
+		}
+
+		if ($regMem->getValor('producto_id')) {
+			$producto=$prods->getItemBD(array ('id'=>$regMem->getValor('producto_id')))->getItemById($regMem->getValor('producto_id'));
+			if (!$producto) {
+				$regError->setError('general', ' No existe ningún producto con esa <b>id</b>.');
+				$correcto=FALSE;
+			}
+		}
+
+
+		if (!($_FILES['imagen']['name'])) {
+			$regError->setError('archivo', 'El archivo no se ha subido correctamente.');
+			$correcto = FALSE;
+		}
+
+		if ($_FILES['imagen']['size']>MAX_FILE_SIZE) {
+			$regError->setError('archivo', 'El tamaño máximo para el archivo es '. MAX_FILE_SIZE . ' bytes.');
+			$correcto = FALSE;
+		}
+
+		switch ($_FILES['imagen']['type']) {
+			case 'image/gif':
+			$nueva_imagen = @imagecreatefromgif($_FILES['imagen']['tmp_name']);
+			break;
+			case 'image/jpeg':
+			$nueva_imagen = @imagecreatefromjpeg($_FILES['imagen']['tmp_name']);
+			break;
+			case 'image/png':
+			$nueva_imagen = @imagecreatefrompng($_FILES['imagen']['tmp_name']);
+			break;
+			default:
+			$regError->setError('archivo', 'El archivo debe ser de tipo jpeg, png o gif.');
+			$correcto = FALSE;
+		}
+
+			// Comprobamos que se ha reprocesado correctamente
+		if (empty($nueva_imagen)){
+			$regError->setError('archivo', 'La imagen no es válida.');
+			$correcto = FALSE;
+		} 
+
+		// Si no se ha enviado ninguna imagen eliminamos cualquier posible error de archivo
+		if (!$regMem->getValor('imagen')) {
+			$regError->unSetError('archivo');
+		}
+
+		if ($correcto) {
+			// Generamos un nombre basado en el producto, si se sube otra imagen para el mismo
+			// producto la reescribimos.
+			$nombre_imagen = $producto->getPropiedad('nombre');
+			$nombre_imagen = Imagen::encode($nombre_imagen);
+
+			// Guardamos la imagen
+			imagejpeg($nueva_imagen, SHLOADDIR . $nombre_imagen . '.jpeg');
+
+			
+			// Activamos el slideshow tras subir la imagen con exito.
+			$oferta->setPropiedad('slideshow_url', $nombre_imagen);
+			$oferta->setPropiedad('slideshow_activo', TRUE);
+			
+			$ofertas->setItemBD($oferta);
+
+			$regFeedback->addFeedback('Se ha actualizado la imagen con éxito.');
+			
+
+		}
+
+		$regMem->setValor('accion','Editar');
+		$regMem->setValor('titulo', 'Editar Oferta');
+
+		break;
+
 
 	}
 
@@ -313,7 +402,7 @@ include 'cabecera.php';
 				$oferta=$ofertas->getItemByProducto($regMem->getValor('producto_id'));
 			?>
 			<!-- FORMULARIO PARA EDITAR -->
-			
+
 			<h3 class="separacion"><?=$producto->getPropiedad('nombre')?></h3>
 			<form action = <?=$_SERVER['SCRIPT_NAME']?> method="post" class="separacion">
 
@@ -356,6 +445,37 @@ include 'cabecera.php';
 					<input type="submit" value="Cancelar" name="accion" />
 				</p>
 
+			</form>
+			
+			<!-- Formulario Slideshow -->
+			<h2 class="separacion">Imagen Slideshow</h2>
+			
+			<img class="slideshow" src="images/slideshow/<?=$oferta->getPropiedad('slideshow_url')?>.jpeg" alt="">
+			
+			<p class="separación">La imagen para el Slideshow debe ser de 703x300 pixels o no se mostrará correctamente.</p>
+			<p>El peso máximo de la imagen es de <?=(MAX_FILE_SIZE/1024)?>kbs.</p>
+			<p>La imagen solo se mostrará en el Slideshow si la oferta está activa.</p>
+			<form class="separacion" action="<?=$_SERVER['SCRIPT_NAME'] ?>" method="post" enctype="multipart/form-data">
+				<label>Añadir:</label>
+				<input type="hidden" name="MAX_FILE_SIZE" value="<?=MAX_FILE_SIZE?>" />
+				<input type="file" name="imagen"/>
+				<input type="hidden" value="<?=$oferta->getPropiedad('id')?>" name="id" />
+				<input type="hidden" name="producto_id" value="<?=$producto->getPropiedad('id')?>" />
+				<label>Activo</label>
+				<input type="checkbox" name="slideshow_activo"
+					<?php
+					if ($oferta->getPropiedad('slideshow_activo')){
+						echo ' checked';
+					}
+					if ($oferta->getPropiedad('slideshow_url')==NULL) {
+						echo ' disabled';
+					}
+					?>
+				/>
+
+				<p class="centrado">
+					<input type="submit" value="Guardar Imagen" name="accion"/>
+				</p>
 			</form>
 
 			<?php

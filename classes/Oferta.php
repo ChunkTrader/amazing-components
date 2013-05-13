@@ -13,7 +13,9 @@ class Oferta extends Item {
 			'producto_id' => FILTER_VALIDATE_INT,
 			'precio_anterior'=>FILTER_VALIDATE_FLOAT,
 			'precio_oferta'=>FILTER_VALIDATE_FLOAT,
-			'activa'=>FILTER_VALIDATE_BOOLEAN
+			'activa'=>FILTER_VALIDATE_BOOLEAN,
+			'slideshow_url'=>'',
+			'slideshow_activo'=>FILTER_VALIDATE_BOOLEAN,
 			);
 	}
 

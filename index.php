@@ -50,7 +50,6 @@ include 'cabecera.php';
 		include 'sidebar-categorias.php';
 		?>
 
-
 		<div id="main-content">
 			<div class="flexslider">
 				<ul class="slides">
@@ -69,7 +68,6 @@ include 'cabecera.php';
 						<p>7187&euro;</p>
 						<p>antes: 9227&euro;</p>
 						<div></div></li>
-
 				</ul>
 			</div>
 			<h2>Ofertas destacadas</h2>
@@ -160,6 +158,18 @@ include 'cabecera.php';
 						</p>
 						<div></div>
 						<p class="<?=quitarEspacios($producto->getPropiedad('disponibilidad'))?>"><?=$producto->getPropiedad('disponibilidad')?></p>
+						<?php
+							// Comprobamos si existe una oferta para este producto
+							$c =$ofertas->getItemByProducto($producto->getPropiedad('id')); 
+							if ($c && $c->getPropiedad('activa')==1){
+								echo '<p class="descuento">';
+								$oferta = $ofertas->getItemByProducto($producto->getPropiedad('id'));
+								$descuento = round(100-(1/$oferta->getPropiedad('precio_anterior')*$oferta->getPropiedad('precio_oferta'))*100);
+								echo "-$descuento%";
+								echo '</p>';
+							}
+						?>
+
 					</div>				
 			<?php
 			}
@@ -199,6 +209,17 @@ include 'cabecera.php';
 						</p>
 						<div></div>
 						<p class="<?=quitarEspacios($producto->getPropiedad('disponibilidad'))?>"><?=$producto->getPropiedad('disponibilidad')?></p>
+						<?php
+							// Comprobamos si existe una oferta para este producto
+							$c =$ofertas->getItemByProducto($producto->getPropiedad('id')); 
+							if ($c && $c->getPropiedad('activa')==1){
+								echo '<p class="descuento">';
+								$oferta = $ofertas->getItemByProducto($producto->getPropiedad('id'));
+								$descuento = round(100-(1/$oferta->getPropiedad('precio_anterior')*$oferta->getPropiedad('precio_oferta'))*100);
+								echo "-$descuento%";
+								echo '</p>';
+							}
+						?>
 					</div>				
 			<?php
 			}

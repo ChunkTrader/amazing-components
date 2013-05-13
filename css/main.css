@@ -312,6 +312,10 @@ div#main-content p input[type="submit"] {
 	float: none;
 }
 
+div#main-content p {
+	margin: 3px;
+}
+
 /* MAIN BOXES */
 .box {
 	width: 227px;
@@ -379,7 +383,21 @@ p.descuento {
 	border: none;
 	padding: 0 10px;
 	margin: 0;
-	
+}
+
+/* Para la página de detalleProducto.php */
+div#detalle li.descuento {
+	background: rgba(0, 0, 0, 0.6);
+	font-size:48px;
+	font-style:italic;
+	font-weight: bold;
+	width: 115px;
+	text-align: center;
+	color: #fff;
+	border: none;
+	padding: 0 10px;
+	display: block;
+	margin: 25px auto;
 }
 
 /* FLEXSLIDER 2 */
@@ -737,3 +755,11 @@ td+td {
 th:first-child {
 	text-align: left;
 }
+
+img.slideshow {
+	max-width: 703px;
+	max-height: 300px;
+	margin: 0 auto;
+	display:block;
+}
+

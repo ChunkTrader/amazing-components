@@ -21,6 +21,6 @@
 			<a href="index.php"><img src="images/logo1.png" alt="Logo amazing-components.com" /></a>
 		</div>
 		<div>
-			<a href="#"><img src="images/banners/banner.jpg" title="Banner principal" alt="banner principal" /></a>
+			<a href="<?=URL_BANNER?>"><img src="images/banners/<?=IMG_BANNER?>" title="<?=MSG_BANNER?>" alt="<?=MSG_BANNER?>" /></a>
 		</div>
 	</div>

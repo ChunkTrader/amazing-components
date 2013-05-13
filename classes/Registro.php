@@ -17,6 +17,11 @@ abstract class Registro {
 		$this->valores[$clave] = $valor;
 	}
 
+	protected function del ($clave){
+		unset($this->valores[$clave]);
+	}
+
+
 }
 
 class RegistroMemoria extends Registro {
@@ -70,6 +75,10 @@ class RegistroErrores extends Registro {
 
 	public function setError($clave, $error){
 		parent::set($clave, $error);
+	}
+
+	public function unSetError($clave){
+		parent::del($clave);
 	}
 
 	public function getError($clave=null){

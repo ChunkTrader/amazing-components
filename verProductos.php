@@ -10,6 +10,7 @@ require_once 'classes/Categorias.php';
 require_once 'classes/Productos.php';
 require_once 'classes/Fabricantes.php';
 require_once 'classes/Imagenes.php'; 
+require_once 'classes/Ofertas.php';
 
 
 
@@ -45,9 +46,8 @@ $controlador -> setRegistro ('errores', $regError);
 $controlador -> setPDO($PDO);
 
 $cats = new Categorias($controlador);
-
-
 $prods = new Productos($controlador);
+$ofertas = new Ofertas($controlador);
 
 $opciones = array('recordoffset' => $recordoffset);
 
@@ -65,8 +65,9 @@ if ($regMem->getValor('novedades')) {
 	$opciones += array('outlet'=>-1);
 
 } else if ($regMem->getValor('ofertas')){
-	$parametro="&amp;ofertas";
+	$parametro="&amp;ofertas=-1";
 	$regMem->setValor('subtitulo', 'Ofertas');
+	$opciones += array('ofertas'=>-1);
 
 } else if ($regMem->getValor('cat')){
 	$parametro="&amp;cat=" . $regMem->getValor('cat');
@@ -121,8 +122,9 @@ include 'cabecera.php';
 
 			<?php
 
-
 			$a = $prods->getItemById();
+			$ofertas->getItemBD();
+
 			$galeria = new Imagenes($controlador);
 			$galeria->getItemBD(array('principal' => TRUE));
 						
@@ -151,13 +153,25 @@ include 'cabecera.php';
 						</p>
 						<div></div>
 						<p class="<?=quitarEspacios($producto->getPropiedad('disponibilidad'))?>"><?=$producto->getPropiedad('disponibilidad')?></p>
+					<?php
+						// Comprobamos si existe una oferta para este producto
+						$c =$ofertas->getItemByProducto($producto->getPropiedad('id')); 
+						if ($c && $c->getPropiedad('activa')==1){
+							echo '<p class="descuento">';
+							$oferta = $ofertas->getItemByProducto($producto->getPropiedad('id'));
+							$descuento = round(100-(1/$oferta->getPropiedad('precio_anterior')*$oferta->getPropiedad('precio_oferta'))*100);
+							echo "-$descuento%";
+							echo '</p>';
+						}
+					?>
+
+
 					</div>				
 			<?php
 			}
 			// No hay productos en la pàgina o se ha llegado modificando la URL.
 			if (!$a) {
 				echo "<h3 class=\"separacion\">No hay productos en esta categoría.</h3>";
-
 			}
 
 			?>
