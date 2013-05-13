@@ -406,17 +406,34 @@ div.flexslider {
 	margin: 4px;
 	width: 701px;
 	height: 299px;
+	overflow: hidden;
 }
 
-ul.slides li>div {
+div.fondo_precio {
 	background: rgba(83, 168, 233, 0.5);
 	width: 160px;
 	height: 65px;
 	position: relative;
 	color: #fff;
-	bottom: 155px;
+	bottom: 158px;
 	left: 0;
 	z-index: 1;
+}
+
+p.fondo_texto {
+	display: block;
+	position: relative;
+	bottom: 445px;
+	right: 10px;
+	background:rgba(0, 0, 0, 0.5);
+	font-size: 36px;
+	font-weight: bold;
+	z-index: 2;
+	color:#fff;
+	text-align: right;
+	width:703px;
+
+
 }
 
 ul.slides a+p {

@@ -31,3 +31,5 @@ POSIBLES MEJORAS
 	- Añadir una pàgina para administrar el banner, de momento lo dejo manual con el archivo de configuración.
 
 	- Solo permitimos hacer pedidos de productos en existencias. Podria permitirse comprar productos que aún no estan en la tienda (y que no esten descatalogados) pidiendo confirmación al cliente y avisando del tiempo de espera.
+
+	- Todas las funciones de graficos deberian ser movidas a una clase o libreria especial, además habría que añadir funciones para reajustar el tamaño de los banners y slideshows en lugar de obligar a que sean subidos en ese tamaño o sean recortados por la aplicación.

@@ -53,34 +53,49 @@ include 'cabecera.php';
 		<div id="main-content">
 			<div class="flexslider">
 				<ul class="slides">
-					<li><a href="#" title="nombre del producto 3"><img
-							src="images/slideshow/slide1.jpg" /></a>
-						<p>520&euro;</p>
-						<p>antes: 649&euro;</p>
-						<div></div></li>
-					<li><a href="#" title="nombre del producto 3"><img
-							src="images/slideshow/slide2.jpg" /></a>
-						<p>231&euro;</p>
-						<p>antes: 328&euro;</p>
-						<div></div></li>
-					<li><a href="#" title="nombre del producto 3"><img
-							src="images/slideshow/slide3.jpg" /></a>
-						<p>7187&euro;</p>
-						<p>antes: 9227&euro;</p>
-						<div></div></li>
+					<?php
+					$prods = new Productos($controlador);
+					$ofertas = new Ofertas($controlador);
+					
+					// Cargamos todos las productos en oferta
+					$prods->getItemBD(array('ofertas'=>-1));
+					// Cargamos todas las ofertas (habria que mejorarlo 
+					// para hacerlo todo con una sola consulta)
+					$ofertas->getItemBD();
+
+					// Recorremos los productos y comprobamos si la oferta
+					// tiene un slideshow activo.
+					
+					$a=$prods->getItemById();
+
+					foreach ($a as $producto){
+						
+						$oferta=$ofertas->getItemByProducto($producto->getPropiedad('id'));
+
+						if ($oferta->getPropiedad('activa') && $oferta->getPropiedad('slideshow_activo')){
+							echo "<li>";
+							echo "<a href=\"detalleProducto.php?id={$producto->getPropiedad('id')}\" title=\"{$producto->getPropiedad('nombre')}\">";
+							echo "<img src=\"images/slideshow/{$oferta->getPropiedad('slideshow_url')}.jpeg\" />";
+							echo "</a>";
+							echo "<p>{$producto->getPropiedad('precio_venta')}&euro;</p>";
+							echo "<p>antes: {$oferta->getPropiedad('precio_anterior')}&euro;</p>";
+							echo "<div class=\"fondo_precio\"></div>";
+							echo "<p class=\"fondo_texto\">{$producto->getPropiedad('nombre')}</>";
+							echo "</li>";
+						}
+					}
+					?>
 				</ul>
 			</div>
 
 
-			
+
 			<h2>Ofertas destacadas</h2>
 
 			<?php
-			$prods = new Productos($controlador);
-			$ofertas = new Ofertas($controlador);
 
 			$prods->getItemBD(array('ofertas' => MAX_OFERTAS));
-			$ofertas->getItemBD();
+			// $ofertas->getItemBD(); // Ya las hemos cargado en el Slideshow
 
 			$a = $prods->getItemById();
 			$galeria = new Imagenes($controlador);

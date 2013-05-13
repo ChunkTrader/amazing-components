@@ -30,6 +30,7 @@ $prods = new Productos($controlador);
 $galeria = new Imagenes($controlador);
 $ofertas = new Ofertas($controlador);
 
+
 // Intentamos recuperar la oferta
 if ($regMem->getValor('id')) {
 	$oferta =$ofertas->getItemBD(array ('id'=>$regMem->getValor('id')))->getItemById($regMem->getValor('id'));
@@ -278,13 +279,24 @@ switch ($regMem->getValor('accion')){
 			$correcto = FALSE;
 		}
 
-			// Comprobamos que se ha reprocesado correctamente
+		// Comprobamos que se ha reprocesado correctamente
 		if (empty($nueva_imagen)){
 			$regError->setError('archivo', 'La imagen no es válida.');
 			$correcto = FALSE;
-		} 
+		} else {
+			// La recortamos a 703x300.
+			$width = 703;
+			$height = 300;
+			$copia = imagecreatetruecolor(703, 300);
+			$white = imagecolorallocate($copia, 255, 255, 255);
+			imagefilledrectangle($copia, 0, 0, 703, 300, $white);
+			
+			
+			imagecopyresampled($copia,$nueva_imagen,0,0,0,0,$width,$height,$width,$height);
+			$nueva_imagen = $copia;
+		}
 
-		
+
 
 		if ($correcto) {
 			// Generamos un nombre basado en el producto, si se sube otra imagen para el mismo

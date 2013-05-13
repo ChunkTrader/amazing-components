@@ -132,6 +132,7 @@ class Productos extends Coleccion{
 			$aux = new $clase ($campos);
 			$aux->calcDisponibilidad();
 			$this->addItem($aux);
+			//echo "Añadido el objeto: ".$campos['nombre'] ."<br>";
 		}
 		return $this;
 	}
