@@ -45,6 +45,7 @@ class Productos extends Coleccion{
 	*/
 	function getItemBD(array $opciones=null) {
 		// Si tenemos una $id cargamos solo un elemento
+
 		if (isset($opciones['id'])) {
 			$prepare = 'SELECT * FROM ' . $this->tabla . ' WHERE id = :id';
 			$stmt = $this->controlador->getPDO()->prepare($prepare);
@@ -86,12 +87,20 @@ class Productos extends Coleccion{
 				// necesitar ning˙n JOIN.
 				$prepare = 'SELECT pr.* FROM productos pr INNER JOIN categorias cat ON pr.categoria_id=cat.id WHERE cat.parent_id = '.$opciones['parent_id'];
 				$countPrepare = str_replace('SELECT pr.* FROM', 'SELECT COUNT(*) FROM', $prepare);
+
 			} else if (isset($opciones['cat_id'])) {
 				// Mostramos todos los productos de la categorÌa
 				$prepare = 'SELECT * FROM ' . $this->tabla . ' WHERE categoria_id = ' . $opciones['cat_id'];
+
+			} else if (isset($opciones['buscar'])) {
+				// Llamamos a otro mËtodo que nos construya la consulta
+				$prepare = $this->getSearch($opciones['buscar']);
+				$countPrepare = str_replace('SELECT pr.* FROM', 'SELECT COUNT(*) FROM', $prepare);
+
+
 			} else {
 				// Default, los mostramos seg˙n lo establecido en el constructor.
-				$prepare = 'SELECT * FROM ' . $this->tabla .' ORDER BY ' . $this->orden;	
+				$prepare = 'SELECT * FROM ' . $this->tabla .' ORDER BY ' . $this->orden;
 			}
 
 			if (isset($opciones['recordoffset'])){
@@ -135,6 +144,39 @@ class Productos extends Coleccion{
 			//echo "AÒadido el objeto: ".$campos['nombre'] ."<br>";
 		}
 		return $this;
+	}
+
+	protected function getSearch($buscar){
+
+		//Eliminamos los separadores y los caracteres sobrantes
+		$buscar  = trim(preg_replace("/[,.\s+]/",' ',$buscar));   
+		
+		//Eliminamos los separadores (,.)
+		//$buscar  = trim(preg_replace("/[,.]/",' ',$buscar));    // Eliminamos los espacios sobrantes;
+		// +^[a-zA-Z0-9·ÈÌÛ˙¡…Õ”⁄Á«Ò—‡ËÚ¿»“¸‹]*/"
+
+		echo  '<br><br>'.$buscar.'<br><br>';
+
+		$palabras = explode (' ', $buscar);
+
+		// Cuando aÒadimos una palabra a la busqueda la guardamos en $memoria
+		// Antes de aÒadir otra comprobamos que no este ya en $memoria.
+		// Si la cadena est· vacia la ignoramos.
+
+		$memoria = array();
+		foreach ($palabras as $palabra) {
+			if (!in_array($palabra, $memoria) AND !empty($palabra)) {
+				$memoria[]=$palabra;
+				echo "Palabra encontrada: $palabra<br>";
+				$aux[] = "pr.nombre LIKE '%$palabra%' OR pr.descripcion LIKE '%$palabra%' OR fab.nombre like '%$palabra%' ";
+			} 
+		}
+
+		$where = implode (' OR ', $aux);
+		$prepare = 'SELECT pr.* FROM productos pr LEFT JOIN fabricantes fab ON pr.fabricante_id=fab.id WHERE ' . $where;
+		
+		echo  '<br><br>'.$prepare.'<br><br>';
+		return $prepare;
 	}
 
 }

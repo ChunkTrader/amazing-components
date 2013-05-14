@@ -1,6 +1,6 @@
 <div id="main-menu">
-	<form>
-		<input type="text" /> <input type="submit" value="Buscar" />
+	<form action="buscar.php" method="GET">
+		<input type="text" name="buscar" value="" size="40"/> <input type="submit" value="Buscar" />
 	</form>
 	<ul>
 		<li>Conectar</li>
