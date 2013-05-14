@@ -163,16 +163,22 @@ include 'cabecera.php';
 				$url = "getthumb.php?path=images/products/{$b}.jpeg&size={$size}";
 
 				?>
-					<div class="box">
-						<a href="detalleProducto.php?id=<?=$producto->getPropiedad('id')?>"><img
-							src="<?=$url?>"
-							title="<?=$producto->getPropiedad('nombre')?>" alt="<?=$producto->getPropiedad('nombre')?>" /></a>
-						<p><?=$producto->getPropiedad('precio_venta')?>&euro;</p>
+					<div class="box2">
 						<p>
 							<a href="detalleProducto.php?id=<?=$producto->getPropiedad('id')?>"><?=$producto->getPropiedad('nombre')?></a>
 						</p>
-						<div></div>
-						<p class="<?=quitarEspacios($producto->getPropiedad('disponibilidad'))?>"><?=$producto->getPropiedad('disponibilidad')?></p>
+						<a href="detalleProducto.php?id=<?=$producto->getPropiedad('id')?>"><img
+							src="<?=$url?>"
+							title="<?=$producto->getPropiedad('nombre')?>" alt="<?=$producto->getPropiedad('nombre')?>" /></a>
+
+
+						<p class="separacion descripcion"><b>Descripcion: </b><?=substr($producto->getPropiedad('descripcion'),0,DESCRIPCION_CORTA)?>...</p>
+				
+						<p class="separacion precio"><?=$producto->getPropiedad('precio_venta')?>&euro;</p>
+
+						<p class="separacion <?=quitarEspacios($producto->getPropiedad('disponibilidad'))?>"><?=$producto->getPropiedad('disponibilidad')?></p>
+
+						
 					<?php
 						// Comprobamos si existe una oferta para este producto
 						$c =$ofertas->getItemByProducto($producto->getPropiedad('id')); 
@@ -184,8 +190,6 @@ include 'cabecera.php';
 							echo '</p>';
 						}
 					?>
-
-
 					</div>				
 			<?php
 			}

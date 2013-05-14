@@ -151,23 +151,16 @@ class Productos extends Coleccion{
 		//Eliminamos los separadores y los caracteres sobrantes
 		$buscar  = trim(preg_replace("/[,.\s+]/",' ',$buscar));   
 		
-		//Eliminamos los separadores (,.)
-		//$buscar  = trim(preg_replace("/[,.]/",' ',$buscar));    // Eliminamos los espacios sobrantes;
-		// +^[a-zA-Z0-9·ÈÌÛ˙¡…Õ”⁄Á«Ò—‡ËÚ¿»“¸‹]*/"
-
-		echo  '<br><br>'.$buscar.'<br><br>';
-
 		$palabras = explode (' ', $buscar);
-
 		// Cuando aÒadimos una palabra a la busqueda la guardamos en $memoria
 		// Antes de aÒadir otra comprobamos que no este ya en $memoria.
-		// Si la cadena est· vacia la ignoramos.
+		// Por si acaso comprobamos si la cadena est· vacia y si es asÌ la ignoramos.
 
 		$memoria = array();
 		foreach ($palabras as $palabra) {
 			if (!in_array($palabra, $memoria) AND !empty($palabra)) {
 				$memoria[]=$palabra;
-				echo "Palabra encontrada: $palabra<br>";
+				//echo "Palabra encontrada: $palabra<br>";
 				$aux[] = "pr.nombre LIKE '%$palabra%' OR pr.descripcion LIKE '%$palabra%' OR fab.nombre like '%$palabra%' ";
 			} 
 		}
@@ -175,7 +168,7 @@ class Productos extends Coleccion{
 		$where = implode (' OR ', $aux);
 		$prepare = 'SELECT pr.* FROM productos pr LEFT JOIN fabricantes fab ON pr.fabricante_id=fab.id WHERE ' . $where;
 		
-		echo  '<br><br>'.$prepare.'<br><br>';
+		//echo  '<br><br>'.$prepare.'<br><br>';
 		return $prepare;
 	}
 

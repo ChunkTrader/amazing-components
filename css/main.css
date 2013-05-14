@@ -385,6 +385,7 @@ p.descuento {
 	margin: 0;
 }
 
+
 /* Para la página de detalleProducto.php */
 div#detalle li.descuento {
 	background: rgba(0, 0, 0, 0.6);
@@ -789,4 +790,70 @@ img.slideshow {
 
 img.slideshow_disabled {
 	opacity:0.2;
+}
+
+/* BOX2 para las busquedas, despliegue horizontal */
+.box2 {
+	width: 695px;
+	min-height: 227px;
+	border: 1px solid #ddd;
+	float: left;
+	margin: 4px;
+	position: relative;
+	padding: 3px;
+}
+
+.box2 img {
+	display: block;
+	width: 227px;
+	height: 227px;
+	position: absolute;
+	right: 0;
+	top:0;
+
+}
+
+.box2 p {
+	max-width: 455px;
+	margin: 0px 5px;
+	padding-top: 3px;
+	float: left;
+}
+
+
+.box2 p>a {
+}
+
+
+.box2 p>a {
+	font-size: 20px;
+	height: 30px;
+	display: block;
+	overflow: hidden;
+}
+
+
+.box2 p.descuento {
+	background: rgba(0, 0, 0, 0.6);
+	font-size:48px;
+	font-style:italic;
+	font-weight: bold;
+	position: absolute;
+	color: #fff;
+	top:10px;
+	right: -3px;
+	border: none;
+	padding: 0 10px;
+	margin: 0;
+}
+
+.box2 .precio {
+	background: rgba(83, 168, 233, 0.8);
+	padding: 0px 10px;
+	font-size: 36px;
+	font-weight: bold;
+	color: #fff;
+	text-align: center;
+	z-index: 2;
+
 }
