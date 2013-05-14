@@ -10,12 +10,16 @@ require_once 'classes/Usuarios.php';
 require_once 'classes/Roles.php';
 require_once 'classes/Privilegios.php';
 
+
+
 $PDO = new PDOConfig ();
 
 // Incializamos los registros
 $regMem = RegistroMemoria::instancia();
 $regError = RegistroErrores::instancia();
 $regFeedback = RegistroFeedback::instancia();
+$regSistema = RegistroSistema::instancia();
+
 
 // El controlador de registros almacena un array con acceso a los registros que le añadamos, este
 // controlador se pasa a las colecciones al crearlo para que puedan mandar mensajes a la aplicación
@@ -24,20 +28,25 @@ $controlador -> setRegistro ('feedback', $regFeedback);
 $controlador -> setRegistro ('errores', $regError);
 $controlador -> setPDO($PDO);
 
+// Cargamos la comprobación despues de cargar las demás clases e inicializar los registros
+
+
 $usuarios = new Usuarios($controlador);
 $roles = new Roles($controlador);
 $privilegios = new Privilegios($controlador);
 
+require_once 'comprobarUsuario.php';
 
 // Titulo por defecto de la página
 $regMem->setValor('titulo', 'Añadir usuarios');
 
-//print_r($regMem->getValor());
 
 // Cargamos las listas
 $usuarios->getItemBD();
 $roles->getItemBD();
 $privilegios->getItemBD();
+
+print_r($regMem->getValor());
 
 
 switch ($regMem->getValor('ver')) {
@@ -82,8 +91,18 @@ switch ($regMem->getValor('ver')) {
 			} else {
 				$regError->setError('general', 'No se ha creado el usuario.');
 			}
-		}
+		
 		break;
+
+		case 'Editar':
+			echo "<br>Estaban marcadas: <br>";
+			$checked = $regMem->getValor('rol');
+			for($i=0; $i < count($checked); $i++){
+			    echo $checked[$i] . "<br/>";
+			}
+			
+			break;
+		}
 
 	case 'roles':
 		$regMem->setValor('titulo', 'Añadir roles');
@@ -115,7 +134,10 @@ switch ($regMem->getValor('ver')) {
 				}
 				
 				break;
-			}
+
+
+
+		}
 
 	case 'privilegios':
 		$regMem->setValor('titulo', 'Añadir privilegios');
@@ -195,29 +217,80 @@ include 'sidebar-administrar.php';
 	/*		VER USUARIOS 		*/
 	if ($regMem->getValor('ver')=='usuarios' || !$regMem->getValor('ver')){
 		$regMem->setValor('ver','usuarios');
+	
+		if (!$regMem->getValor('accion')) {
+
+	?>
+		<div class="separacion">
+		<form action="<?=$_SERVER['SCRIPT_NAME']?>" method="POST">
+			<label>Nombre: </label>
+			<input type="text" name="nombre"/>
+			
+			<label>e-mail: </label>
+			<input type="text" name="email" disabled/>
+
+			<label>Password: </label>
+			<input type="password" name="password1"/>
+			
+			<label>Repite pass: </label>
+			<input type="password" name="password2"/>
+			
+			<input type="hidden" name="ver" value="<?=$regMem->getValor('ver')?>"/>
+			
+			<p class="centrado">
+				<input type="submit" name="accion" value="Añadir"/>
+			</p>
+		</form>
+		</div>
+	<?php
+	} else if ($regMem->getValor('accion')=="Editar") {
 	?>
 	<div class="separacion">
+		<h3><?=$usuario_conectado->getPropiedad('nombre')?></h3>
+
 	<form action="<?=$_SERVER['SCRIPT_NAME']?>" method="POST">
-		<label>Nombre: </label>
-		<input type="text" name="nombre"/>
-		
-		<label>e-mail: </label>
-		<input type="text" name="email" disabled/>
+		<table>
+			<tr>
+				<th>Rol</th>
+				<th>Activo</th>
+				<th></th>
+		<?php
+		// Lista de roles
+		$a = $roles->getItemById();
+		foreach ($a as $rol) {
+			echo "<tr>";
+			echo "<td>" . $rol->getPropiedad('nombre') . "</td>";
+			echo "<td>" . "<input type=\"checkbox\" ";
+			if (!$usuario_conectado->getRol($rol->getPropiedad('nombre'))) {
+			} else {
+				echo ' checked ';
+			}
+			echo " name=\"rol[]\" value=\"{$rol->getPropiedad('nombre')}\"/>";
 
-		<label>Password: </label>
-		<input type="password" name="password1"/>
-		
-		<label>Repite pass: </label>
-		<input type="password" name="password2"/>
-		
+			echo "</td>";
+			echo "<td></td>";
+			echo "</tr>";
+		}
+
+		?>
+
 		<input type="hidden" name="ver" value="<?=$regMem->getValor('ver')?>"/>
-		
 		<p class="centrado">
-			<input type="submit" name="accion" value="Añadir"/>
+			<input type="submit" name="accion" value="Editar"/>
 		</p>
+	</table>
 	</form>
-	</div>
 
+
+	</div>
+	<?php
+	}
+
+
+
+
+
+	?>
 	<h2>Lista de usuarios</h2>
 	<div class="separacion">
 		<table>
@@ -315,12 +388,11 @@ include 'sidebar-administrar.php';
 	<?php
 	$a = $privilegios->getItemById();
 	
-	foreach ($a as $rol) {
+	foreach ($a as $privilegio) {
 		echo "<tr>";
 		echo "<td><a href=\"{$_SERVER['SCRIPT_NAME']}?id=".$privilegio->getPropiedad('id') . "&amp;accion=Editar&amp;ver=privilegios\">";
 		echo $privilegio->getPropiedad('nombre');
 		echo "</a></td>";
-		$activo = ($privilegio->getPropiedad('activo')?"Sí":"No");
 		echo "<td></td>";
 		echo "</tr>";
 	}

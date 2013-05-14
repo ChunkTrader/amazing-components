@@ -12,15 +12,5 @@ class Roles extends Coleccion{
 		$this->miembro = 'Rol';
 	}
 
-	public function getItemByNombre($nombre){
-		$a=$this->coleccion;
-		foreach ($a as $usuario){
-			if ($usuario->getPropiedad('nombre')==$nombre) {
-				return $usuario;
-			}
-		}
-		return null;
-	}
-
 }
 ?>

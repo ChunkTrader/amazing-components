@@ -111,3 +111,50 @@ class RegistroFeedback extends Registro {
 	}
 }
 
+class RegistroSistema extends Registro {
+	private static $instancia;
+
+	protected function __construct(){
+	}
+
+	static function instancia() {
+		if (!isset(self::$instancia)) {
+			self::$instancia = new self();
+			self::$instancia->inicializar();
+		}
+	return self::$instancia;
+	}
+
+	private function inicializar() {
+		// Inicializamos con los valores de session
+		$this->valores=$_SESSION;
+		if (isset($_SESSION['usuario'])) {
+			$a= $_SESSION['usuario'];
+			$valores = array();
+			foreach ($a as $key => $test){
+				$valores[$key]=$test;
+			}
+			$this->setValor('usuario', new Usuario($valores));
+		}
+
+	}
+
+	public function setValor($clave, $valor){
+		$_SESSION[$clave]=$valor;
+		parent::set($clave, $valor);
+	}
+
+	public function getValor($clave=null){
+		if ($clave) {
+			return parent::get($clave);
+		}
+		return $this->valores;
+	}
+
+	public function limpiar(){
+		$this->valores = null;
+		session_unset();
+		session_destroy();
+	}
+}
+
