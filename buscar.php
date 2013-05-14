@@ -177,8 +177,7 @@ include 'cabecera.php';
 						<p class="separacion precio"><?=$producto->getPropiedad('precio_venta')?>&euro;</p>
 
 						<p class="separacion <?=quitarEspacios($producto->getPropiedad('disponibilidad'))?>"><?=$producto->getPropiedad('disponibilidad')?></p>
-
-						
+		
 					<?php
 						// Comprobamos si existe una oferta para este producto
 						$c =$ofertas->getItemByProducto($producto->getPropiedad('id')); 

@@ -111,20 +111,20 @@ include 'sidebar-administrar.php';
 	<h2><?=$regMem->getValor('titulo')?></h2>
 	<div class="separacion">
 		<?php
-		if ($regError->getError()) {
-			$a = $regError->getError();
-			foreach ($a as $error) {
-				echo "<p class=\"error centrado\">{$regError->getError('general')}</p>";
+			if ($regError->getError()) {
+				$a = $regError->getError();
+				foreach ($a as $error) {
+					echo "<p class=\"error centrado\">{$error}</p>";
+				}
 			}
-		}
 
-		if ($regFeedback->getFeedback()) {
-			$a = $regFeedback->getFeedback();
-			foreach ($a as $feed) {
-				echo "<p class=\"centrado\">{$feed}</p>";
+			if ($regFeedback->getFeedback()) {
+				$a = $regFeedback->getFeedback();
+				foreach ($a as $feed) {
+					echo "<p class=\"centrado\">{$feed}</p>";
+				}
 			}
-		}
-		?>
+			?>
 	</div>
 
 	<div class="separacion">
@@ -296,8 +296,6 @@ include 'sidebar-administrar.php';
 			}
 
 		}
-		//Cerramos la conexión con la base de datos
-		$PDO = null;
 		?>
 		</div>
 	</div>

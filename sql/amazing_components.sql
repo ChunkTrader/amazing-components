@@ -431,3 +431,30 @@ INSERT INTO `productos` (`id`, `nombre`, `descripcion`, `categoria_id`, `fabrica
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+
+CREATE TABLE IF NOT EXISTS `usuarios` (
+  `id` int(11) AUTO_INCREMENT PRIMARY KEY,
+  `nombre` varchar(60) NOT NULL UNIQUE,
+  `password` varchar(40) NOT NULL,
+  `token` varchar(40),
+  `activo` tinyint(1) DEFAULT '1' NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS `roles` (
+  `id` int(11) AUTO_INCREMENT PRIMARY KEY,
+  `nombre` varchar(60) NOT NULL UNIQUE,
+  `activo` tinyint(1) DEFAULT '1' NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS `privilegios`(
+  `id` int(11) AUTO_INCREMENT PRIMARY KEY,
+  `nombre` varchar(60) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS `privilegios_rol`(
+  `privilegio_id` int(11) NOT NULL,
+  `rol_id` int(11) NOT NULL,
+  PRIMARY KEY (privilegio_id, rol_id)
+);

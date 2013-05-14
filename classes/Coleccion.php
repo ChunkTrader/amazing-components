@@ -114,6 +114,8 @@ abstract class Coleccion {
 
 		$prepare = 'UPDATE ' . $this->tabla . ' SET ' . implode($aux, ',') . ' WHERE id=:id';
 		$stmt = $this->controlador->getPDO()->prepare($prepare);
+		
+
 		$stmt->execute ($propiedades);
 
 		// Temporal, en lugar de actualizar el objeto en memoria lo eliminamos y añadimos este.

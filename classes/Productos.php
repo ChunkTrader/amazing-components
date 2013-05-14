@@ -148,8 +148,8 @@ class Productos extends Coleccion{
 
 	protected function getSearch($buscar){
 
-		//Eliminamos los separadores y los caracteres sobrantes
-		$buscar  = trim(preg_replace("/[,.\s+]/",' ',$buscar));   
+		//Eliminamos los separadores (espacios extras, ',')
+		$buscar  = trim(preg_replace("/[,\s+]/",' ',$buscar));   
 		
 		$palabras = explode (' ', $buscar);
 		// Cuando añadimos una palabra a la busqueda la guardamos en $memoria
