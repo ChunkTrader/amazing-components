@@ -83,6 +83,7 @@ abstract class Coleccion {
 		unset ($aux2['id']);
 
 		$prepare = 'INSERT INTO ' . $this->tabla .  ' (' . implode($aux1, ',') . ') VALUES (' . implode($aux2, ',') . ')';
+
 		$stmt = $this->controlador->getPDO()->prepare($prepare);
 		$stmt->execute($propiedades);
 	}

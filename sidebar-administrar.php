@@ -12,5 +12,12 @@
 				<li><a href="#">Banner (no implementado)</a></li>
 			</ul>
 		</li>
+		<li>Administrar Usuarios
+			<ul>
+				<li><a href="adminUsuarios.php?ver=usuarios">Usuarios</a></li>			
+				<li><a href="adminUsuarios.php?ver=roles">Roles</a></li>
+				<li><a href="adminUsuarios.php?ver=privilegios">Privilegios</a></li>
+			</ul>
+		</li>
 	</ul>
 </div>

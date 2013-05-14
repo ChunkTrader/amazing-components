@@ -458,3 +458,9 @@ CREATE TABLE IF NOT EXISTS `privilegios_rol`(
   `rol_id` int(11) NOT NULL,
   PRIMARY KEY (privilegio_id, rol_id)
 );
+
+CREATE TABLE IF NOT EXISTS `usuarios_roles`(
+  `usuario_id` int(11) NOT NULL,
+  `rol_id` int(11) NOT NULL,
+  PRIMARY KEY (usuario_id, rol_id)
+  );

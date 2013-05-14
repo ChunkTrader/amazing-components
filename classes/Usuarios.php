@@ -8,7 +8,7 @@ class Usuarios extends Coleccion{
 	public function __construct(Controlador $controlador) {
 		$this->controlador = $controlador;
 		$this->tabla = 'usuarios';
-		$this->orden = 'id';
+		$this->orden = 'nombre';
 		$this->miembro = 'Usuario';
 	}
 
