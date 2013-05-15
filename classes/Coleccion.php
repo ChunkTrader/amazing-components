@@ -139,5 +139,16 @@ abstract class Coleccion {
 		
 	}
 
+	public function getItemByNombre($nombre){
+		$a=$this->coleccion;
+		foreach ($a as $item){
+			if ($item->getPropiedad('nombre')==$nombre) {
+				return $item;
+			}
+		}
+		return null;
+	}
+
+
 }
 ?>

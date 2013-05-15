@@ -18,5 +18,7 @@
 	define ('IMG_BANNER', 'banner.jpg'); // La imagen debe ser de 654x121 pixeles
 	define ('MSG_BANNER', 'Aerocool Xpredator X3 Devil Red Edition');
 
+	// Iniciamos la session, nos hace falta en todas las páginas
+	session_start();
 
 ?>
