@@ -152,6 +152,12 @@ switch ($regMem->getValor('ver')) {
 			break;
 		}
 
+		break;
+
+
+
+
+
 	case 'roles':
 		$regMem->setValor('titulo', 'Añadir roles');
 
@@ -183,8 +189,89 @@ switch ($regMem->getValor('ver')) {
 				
 				break;
 
+			case 'Editar':
+				$regMem->setValor('titulo', 'Editar roles');			
+
+				// Comprobamos si existe el rol
+				$rol = $roles->getItemBD(array('id'=>$regMem->getValor('id')))->getItemById($regMem->getValor('id'));
+
+				if ($rol) {
+					// pasamos los privilegios enviados en el formulario
+					if ($regMem->getValor('privilegio')) {
+						$checked = $regMem->getValor('privilegio');
+						foreach ($checked as $privilegio) {
+							$rol->setPrivilegio($privilegio);							
+						}
+					}
+
+					if ($regMem->getValor('metodo')=='POST') {
+						// Hemos enviado el formulario, actualizamos los privilegios
+						
+						$roles->setPrivilegiosBD($privilegios, $rol);
+						$regFeedback->addFeedback('Privilegios actualizados.');	
+
+
+
+					}
+
+
+
+/*
+		if ($regMem->getValor('metodo')=='POST') {
+					// Hemos enviado el formulario, actualizamos los roles
+					$usuarios->setRolesBD($usuario, $roles);
+					$regFeedback->addFeedback('Roles actualizados.');
+
+					// Comprobamos si se ha cambiado el pass, y si es así si es correcto:
+					if (!($regMem->getValor('password1') && $regMem->getValor('password2'))){
+						// No se ha enviado hay pass, no hacemos nada.
+					} else if ($regMem->getValor('password2')!=$regMem->getValor('password1')){
+						$regError->setError('password', 'Las contraseñas no coinciden.');
+					} else if (strlen($regMem->getValor('password1'))<5){
+						$regError->setError('password', 'La contraseña debe tener al menos 5 caracteres.');
+					} else if (strlen($regMem->getValor('password1'))>40) {
+						$regError->setError('password', 'La contraseña debe ser como máximo de 40 caracteres.');
+					} else {
+						// Todo es correcto, actualizamos el password y el usuario
+					$usuario->setPropiedad('password', SHA1($regMem->getValor('password1')));
+					
+					$regFeedback->addFeedback('Se ha actualizado el password.');
+					}
+
+					// Actualizamos el estado activo/inactivo
+					if ($regMem->getValor('activo')) {
+						$usuario->setPropiedad('activo', 1);
+					} else {
+						$usuario->setPropiedad('activo', 0);
+					}
+
+					// Guardamos los cambios en la base de datos
+					// Ojo, no hemos comprobado si ha habido realmente algún cambio
+					$usuarios->setItemBD($usuario);
+
+				}
+				
+				// Recuperamos los roles actualizados (no necesitamos los privilegios en este caso)
+			$usuarios->getRolesBD($usuario);
+*/
+
+
+
+				} else {
+					$regError->setError('general', 'No existe el rol.');
+				}
+
+
+				break;
 		}
 		break;
+
+
+
+
+
+
+
 
 	case 'privilegios':
 		$regMem->setValor('titulo', 'Añadir privilegios');
@@ -369,7 +456,7 @@ include 'sidebar-administrar.php';
 			echo "<tr>";
 			echo "<td>" . $rol->getPropiedad('nombre') . "</td>";
 			echo "<td>" . "<input type=\"checkbox\" ";
-			if (!$usuario_conectado->getRol($rol->getPropiedad('nombre'))) {
+			if (!$usuario->getRol($rol->getPropiedad('nombre'))) {
 			} else {
 				echo ' checked ';
 			}
@@ -425,44 +512,137 @@ include 'sidebar-administrar.php';
 	<?php
 	/*		VER ROLES 		*/
 	} else if ($regMem->getValor('ver')=='roles') {
-	?>
-	<div class="separacion">
-	<form action="<?=$_SERVER['SCRIPT_NAME']?>" method="POST">
-		<label>Nombre: </label>
-		<input type="text" name="nombre"/>
-		
-		<input type="hidden" name="ver" value="<?=$regMem->getValor('ver')?>"/>
-		
-		<p class="centrado">
-			<input type="submit" name="accion" value="Añadir"/>
-		</p>
-	</form>
-	</div>
+	
+		if ($regMem->getValor('accion')=='Añadir' || !$regMem->getValor('accion')) {
+		?>
+		<div class="separacion">
+		<form action="<?=$_SERVER['SCRIPT_NAME']?>" method="POST">
+			<label>Nombre: </label>
+			<input type="text" name="nombre"/>
+			
+			<input type="hidden" name="ver" value="<?=$regMem->getValor('ver')?>"/>
+			
+			<p class="centrado">
+				<input type="submit" name="accion" value="Añadir"/>
+			</p>
+		</form>
+		</div>
 
-	<h2>Lista de roles</h2>
+		<h2>Lista de roles</h2>
+		<div class="separacion">
+			<table>
+				<tr>
+					<th>Rol</th>
+					<th>Activo</th>
+					<th> </th>
+				</tr>
+		<?php
+		$a = $roles->getItemById();
+		
+		foreach ($a as $rol) {
+			echo "<tr>";
+			echo "<td><a href=\"{$_SERVER['SCRIPT_NAME']}?id=".$rol->getPropiedad('id') . "&amp;accion=Editar&amp;ver=roles\">";
+			echo $rol->getPropiedad('nombre');
+			echo "</a></td>";
+			$activo = ($rol->getPropiedad('activo')?"Sí":"No");
+			echo "<td>{$activo}</td>";
+			echo "<td></td>";
+			echo "</tr>";
+		}
+		?>	
+		</table>
+		</div>
+	<?php 
+	} else if ($regMem->getValor('accion')=='Editar') {
+
+
+	/* EDITAR ROLES 		*/
+	?>
+	<h3><?=$rol->getPropiedad('nombre')?></h3>
+
+	<form action="<?=$_SERVER['SCRIPT_NAME']?>" method="POST">
+
 	<div class="separacion">
 		<table>
 			<tr>
-				<th>Rol</th>
+				<th>Privilegio</th>
 				<th>Activo</th>
 				<th> </th>
 			</tr>
-	<?php
-	$a = $roles->getItemById();
-	
-	foreach ($a as $rol) {
-		echo "<tr>";
-		echo "<td><a href=\"{$_SERVER['SCRIPT_NAME']}?id=".$rol->getPropiedad('id') . "&amp;accion=Editar&amp;ver=roles\">";
-		echo $rol->getPropiedad('nombre');
-		echo "</a></td>";
-		$activo = ($rol->getPropiedad('activo')?"Sí":"No");
-		echo "<td>{$activo}</td>";
-		echo "<td></td>";
-		echo "</tr>";
-	}
-	?>	
-	</table>
+		<?php
+
+		
+		$a = $privilegios->getItemById();
+
+
+		foreach ($a as $privilegio) {
+						
+			echo "<tr>";
+			echo "<td>" . $privilegio->getPropiedad('nombre') . "</td>";
+			echo "<td>" . "<input type=\"checkbox\" ";
+			
+			if (array_key_exists($privilegio->getPropiedad('nombre'), $rol->getPrivilegios())) {
+				echo ' checked ';
+			}
+			echo " name=\"privilegio[]\" value=\"{$privilegio->getPropiedad('nombre')}\"/>";
+			echo "</td>";
+			echo "<td></td>";
+			echo "</tr>";
+		}
+
+		?>	
+		</table>
+		<input type="hidden" name="ver" value="<?=$regMem->getValor('ver')?>"/>
+		<input type="hidden" name="id" value="<?=$regMem->getValor('id')?>"/>
+				
+		<p class="centrado">
+			<input type="submit" name="accion" value="Editar"/>
+		</p>
+		</form>
 	</div>
+
+
+
+
+
+
+
+
+		<h2>Lista de roles</h2>
+		<div class="separacion">
+			<table>
+				<tr>
+					<th>Rol</th>
+					<th>Activo</th>
+					<th> </th>
+				</tr>
+		<?php
+		$a = $roles->getItemById();
+		
+		foreach ($a as $rol) {
+			echo "<tr>";
+			echo "<td><a href=\"{$_SERVER['SCRIPT_NAME']}?id=".$rol->getPropiedad('id') . "&amp;accion=Editar&amp;ver=roles\">";
+			echo $rol->getPropiedad('nombre');
+			echo "</a></td>";
+			$activo = ($rol->getPropiedad('activo')?"Sí":"No");
+			echo "<td>{$activo}</td>";
+			echo "<td></td>";
+			echo "</tr>";
+		}
+		?>	
+		</table>
+		</div>
+
+
+
+
+
+
+<?php
+
+	}
+	?>
+
 
 	<?php
 
