@@ -49,8 +49,8 @@ class Usuarios extends Coleccion{
 
 
 	public function getPrivilegiosUsuarioBD(Usuario $usuario){
-		$prepare = "SELECT pr.nombre FROM usuarios u INNER JOIN usuarios_roles ur ON u.id=ur.usuario_id INNER JOIN roles r ON ur.rol_id=u.id INNER JOIN privilegios_rol pr_r USING (rol_id) INNER JOIN privilegios pr WHERE u.id={$usuario->getPropiedad('id')} AND r.activo=1";
-		//$prepare = "SELECT pr.nombre FROM usuarios u INNER JOIN usuarios_roles ur ON u.id=ur.usuario_id INNER JOIN privilegios_rol pr_r USING (rol_id) INNER JOIN privilegios pr WHERE u.id={$usuario->getPropiedad('id')} AND ";
+		$prepare = "SELECT p.nombre FROM privilegios p INNER JOIN privilegios_rol pr ON pr.privilegio_id=p.id INNER JOIN roles r ON pr.rol_id = r.id INNER JOIN usuarios_roles ur ON ur.rol_id=r.id INNER JOIN usuarios u ON ur.usuario_id = u.id WHERE r.activo = 1 AND u.id={$usuario->getPropiedad('id')}";
+
 		echo "<br>$prepare</br>";
 		$stmt = $this->controlador->getPDO()->prepare($prepare);
 		$stmt->execute();

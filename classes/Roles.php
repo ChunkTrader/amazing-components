@@ -27,7 +27,6 @@ class Roles extends Coleccion{
 
 
 	public function setPrivilegiosBD(Privilegios $privilegios, Rol $rol){
-
 		// Eliminamos todos los roles actuales
 		$prepare = "DELETE FROM privilegios_rol WHERE rol_id = '" . $rol->getPropiedad('id') . "'";
 		$stmt = $this->controlador->getPDO()->prepare($prepare);

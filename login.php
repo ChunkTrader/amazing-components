@@ -74,7 +74,7 @@ switch ($regMem->getValor('accion')){
 					$usuarios->setItemBD($usuario);
 
 					// Establecemos el usuario conectado
-					$usuario_conectado=$usuario;
+					$usuario=$usuario;
 
 					// Aqui hay que poner el código para almacenar los datos en la session y en las cookies
 					$regSistema->setValor('autenticado', TRUE);
@@ -82,9 +82,12 @@ switch ($regMem->getValor('accion')){
 					$regSistema->setValor('id', $usuario->getPropiedad('id'));
 
 					// Recuperamos los roles y los privilegios
-					$usuarios->getRolesBD($usuario_conectado);
+					$usuarios->getRolesBD($usuario);
 
-					$usuarios->getPrivilegiosBD($usuario_conectado);
+					// Obtenemos la lista de privilegios del usuario
+					$usuarios->getPrivilegiosUsuarioBD($usuario);
+					print_r($usuario->getPrivilegios());
+
 				} else {
 					$regError->setError('usuario', 'Este usuario está desactivado, pongase en contacto con un administrador.');
 
@@ -102,7 +105,7 @@ switch ($regMem->getValor('accion')){
 	case 'Desconectar':
 		// Cerramos la sesión:
 		$regSistema->limpiar();
-		$usuario_conectado=null;
+		$usuario=null;
 		$regFeedback->addFeedback('Ahora estas desconectado.');
 
 
