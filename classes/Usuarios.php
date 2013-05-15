@@ -49,8 +49,9 @@ class Usuarios extends Coleccion{
 
 
 	public function getPrivilegiosUsuarioBD(Usuario $usuario){
-		$prepare = "SELECT pr.nombre FROM usuarios u INNER JOIN usuarios_roles ur ON u.id=ur.usuario_id INNER JOIN privilegios_rol pr_r USING (rol_id) INNER JOIN privilegios pr WHERE u.id={$usuario->getPropiedad('id')}";
-		//echo "<br>$prepare</br>";
+		$prepare = "SELECT pr.nombre FROM usuarios u INNER JOIN usuarios_roles ur ON u.id=ur.usuario_id INNER JOIN roles r ON ur.rol_id=u.id INNER JOIN privilegios_rol pr_r USING (rol_id) INNER JOIN privilegios pr WHERE u.id={$usuario->getPropiedad('id')} AND r.activo=1";
+		//$prepare = "SELECT pr.nombre FROM usuarios u INNER JOIN usuarios_roles ur ON u.id=ur.usuario_id INNER JOIN privilegios_rol pr_r USING (rol_id) INNER JOIN privilegios pr WHERE u.id={$usuario->getPropiedad('id')} AND ";
+		echo "<br>$prepare</br>";
 		$stmt = $this->controlador->getPDO()->prepare($prepare);
 		$stmt->execute();
 		$rows = $stmt->fetchAll();
@@ -75,14 +76,12 @@ class Usuarios extends Coleccion{
 		$prepare = "DELETE FROM usuarios_roles WHERE usuario_id = '" . $usuario->getPropiedad('id') . "'";
 		$stmt = $this->controlador->getPDO()->prepare($prepare);
 		$count=$stmt->execute();
-		//$this->controlador->getRegistro('feedback')->addFeedback("Roles anteriores eliminados.");
 
 		// Añadimos los roles seleccionados
 		$prepare = "INSERT INTO usuarios_roles(usuario_id, rol_id) VALUES (:usuario_id, :rol_id)";
 		$stmt = $this->controlador->getPDO()->prepare($prepare);
 		$a = $usuario->getRoles();
 		foreach ($a as $key=>$rol) {
-			//$this->controlador->getRegistro('feedback')->addFeedback("Añadido rol <b>$key</b>.");
 			$stmt->execute(array (
 					':usuario_id' => $usuario->getPropiedad('id'),
 					':rol_id' => $roles->getItemByNombre($key)->getPropiedad('id')

@@ -857,3 +857,7 @@ img.slideshow_disabled {
 	z-index: 2;
 
 }
+
+td>input[type="checkbox"]{
+	height:12px;
+}

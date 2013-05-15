@@ -142,7 +142,7 @@ switch ($regMem->getValor('ver')) {
 				}
 				
 				// Recuperamos los roles actualizados (no necesitamos los privilegios en este caso)
-			$usuarios->getRolesBD($usuario);
+				$usuarios->getRolesBD($usuario);
 
 
 			} else {
@@ -206,55 +206,23 @@ switch ($regMem->getValor('ver')) {
 
 					if ($regMem->getValor('metodo')=='POST') {
 						// Hemos enviado el formulario, actualizamos los privilegios
-						
 						$roles->setPrivilegiosBD($privilegios, $rol);
 						$regFeedback->addFeedback('Privilegios actualizados.');	
 
+						// Actualizamos el estado activo/inactivo
+						if ($regMem->getValor('activo')) {
+							$rol->setPropiedad('activo', 1);
+						} else {
+							$rol->setPropiedad('activo', 0);
+						}
 
-
+						// Guardamos los cambios en la base de datos
+						// Ojo, no hemos comprobado si ha habido realmente algún cambio
+						$roles->setItemBD($rol);
 					}
 
-
-
-/*
-		if ($regMem->getValor('metodo')=='POST') {
-					// Hemos enviado el formulario, actualizamos los roles
-					$usuarios->setRolesBD($usuario, $roles);
-					$regFeedback->addFeedback('Roles actualizados.');
-
-					// Comprobamos si se ha cambiado el pass, y si es así si es correcto:
-					if (!($regMem->getValor('password1') && $regMem->getValor('password2'))){
-						// No se ha enviado hay pass, no hacemos nada.
-					} else if ($regMem->getValor('password2')!=$regMem->getValor('password1')){
-						$regError->setError('password', 'Las contraseñas no coinciden.');
-					} else if (strlen($regMem->getValor('password1'))<5){
-						$regError->setError('password', 'La contraseña debe tener al menos 5 caracteres.');
-					} else if (strlen($regMem->getValor('password1'))>40) {
-						$regError->setError('password', 'La contraseña debe ser como máximo de 40 caracteres.');
-					} else {
-						// Todo es correcto, actualizamos el password y el usuario
-					$usuario->setPropiedad('password', SHA1($regMem->getValor('password1')));
-					
-					$regFeedback->addFeedback('Se ha actualizado el password.');
-					}
-
-					// Actualizamos el estado activo/inactivo
-					if ($regMem->getValor('activo')) {
-						$usuario->setPropiedad('activo', 1);
-					} else {
-						$usuario->setPropiedad('activo', 0);
-					}
-
-					// Guardamos los cambios en la base de datos
-					// Ojo, no hemos comprobado si ha habido realmente algún cambio
-					$usuarios->setItemBD($usuario);
-
-				}
-				
-				// Recuperamos los roles actualizados (no necesitamos los privilegios en este caso)
-			$usuarios->getRolesBD($usuario);
-*/
-
+					// Recuperamos los roles actualizados (no necesitamos los privilegios en este caso)
+					$roles->getPrivilegiosBD($rol);
 
 
 				} else {
@@ -397,7 +365,6 @@ include 'sidebar-administrar.php';
 			<label>Activo:</label>
 				<input type="checkbox" name="activo"
 				<?php
-				var_dump($usuario->getPropiedad('activo'));
 				if ($usuario->getPropiedad('activo')) {
 					echo " CHECKED ";
 				}
@@ -561,6 +528,15 @@ include 'sidebar-administrar.php';
 	<h3><?=$rol->getPropiedad('nombre')?></h3>
 
 	<form action="<?=$_SERVER['SCRIPT_NAME']?>" method="POST">
+
+		<label>Activo:</label>
+				<input type="checkbox" name="activo"
+				<?php
+				if ($rol->getPropiedad('activo')) {
+					echo " CHECKED ";
+				}
+				?>
+			/>
 
 	<div class="separacion">
 		<table>
