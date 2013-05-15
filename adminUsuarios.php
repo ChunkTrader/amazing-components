@@ -36,6 +36,13 @@ $privilegios = new Privilegios($controlador);
 
 require_once 'comprobarUsuario.php';
 
+if (!$regMem->getValor('ver') && (!$regSistema->getValor('privilegios')['verAdminUsuarios'])) {
+	$regSistema->setValor('acceso_denegado', 'administrar');
+	
+	header('Location: error.php');
+	exit;
+} 
+
 // Titulo por defecto de la página
 $regMem->setValor('titulo', 'Añadir usuarios');
 
@@ -47,208 +54,187 @@ $privilegios->getItemBD();
 
 //print_r($regMem->getValor()); echo '<br>';
 
+switch ($regMem->getValor('ver')) {
 
-if (!$regMem->getValor('ver') && isset($regSistema->getValor('privilegios')['verAdminUsuarios'])){
+	case 'usuarios':
+	if ($regSistema->getValor('privilegios')['verAdminUsuarios']){
 
-	switch ($regMem->getValor('ver')) {
-
-		case 'usuarios':
-		if ($regSistema->getValor('privilegios')['verAdminUsuarios']){
-
-			switch ($regMem->getValor('accion')){
-				case 'Añadir':
-				$correcto = TRUE;
+		switch ($regMem->getValor('accion')){
+			case 'Añadir':
+			$correcto = TRUE;
 						// Comenzamos a validar los datos
-				if (strlen($regMem->getValor('nombre'))<5) {
-					$regError->setError('nombre', 'El nombre debe tener al menos 5 caracteres.');
-					$correcto=FALSE;
-				} else if ($usuarios->getItemByNombre($regMem->getValor('nombre'))){
-					$regError->setError('nombre', 'Ya existe un usuario con ese nombre');
-					$correcto=FALSE;
-				} else if (strlen($regMem->getValor('nombre'))>40) {
-					$regError->setError('nombre', 'El nombre no puede tener más de 40 caracteres.');
-					$correcto=FALSE;
-				}
-
-				if ($regMem->getValor('password2')!=$regMem->getValor('password1')){
-					$regError->setError('password', 'Las contraseñas no coinciden.');
-					$correcto=FALSE;
-				} else if (strlen($regMem->getValor('password1'))<5){
-					$regError->setError('password', 'La contraseña debe tener al menos 5 caracteres.');
-					$correcto=FALSE;
-				} else if (strlen($regMem->getValor('password1'))>40) {
-					$regError->setError('password', 'La contraseña debe ser como máximo de 40 caracteres.');
-					$correcto=FALSE;
-				}
-
-				if ($correcto) {
-					$valores = array (
-						'nombre' => $regMem->getValor('nombre'),
-						'password' => SHA1($regMem->getValor('password1'))
-						);
-					$usuario = new Usuario($valores);
-					$usuarios->addItemBD($usuario);
-
-					$regFeedback->addFeedback ('Usuario creado con éxito <b>' . $regMem->getValor('nombre') . ':' . $regMem->getValor('password1') . '</b>');
-				} else {
-					$regError->setError('general', 'No se ha creado el usuario.');
-				}
-				break;
-
-				case 'Editar':
-				$regMem->setValor('titulo', 'Editar usuarios');
-
-
-					// Comprobamos si existe el usuario
-				$usuario = $usuarios->getItemBD(array('id'=>$regMem->getValor('id')))->getItemById($regMem->getValor('id'));
-					//print_r($usuario);
-				if ($usuario) {
-					if ($regMem->getValor('rol')) {
-						$checked = $regMem->getValor('rol');
-						foreach ($checked as $rol) {
-							$usuario->setRol($rol);
-						}
-					}
-
-					if ($regMem->getValor('metodo')=='POST') {
-							// Hemos enviado el formulario, actualizamos los roles
-						$usuarios->setRolesBD($usuario, $roles);
-						$regFeedback->addFeedback('Roles actualizados.');
-
-							// Comprobamos si se ha cambiado el pass, y si es así si es correcto:
-						if (!($regMem->getValor('password1') && $regMem->getValor('password2'))){
-								// No se ha enviado hay pass, no hacemos nada.
-						} else if ($regMem->getValor('password2')!=$regMem->getValor('password1')){
-							$regError->setError('password', 'Las contraseñas no coinciden.');
-						} else if (strlen($regMem->getValor('password1'))<5){
-							$regError->setError('password', 'La contraseña debe tener al menos 5 caracteres.');
-						} else if (strlen($regMem->getValor('password1'))>40) {
-							$regError->setError('password', 'La contraseña debe ser como máximo de 40 caracteres.');
-						} else {
-								// Todo es correcto, actualizamos el password y el usuario
-							$usuario->setPropiedad('password', SHA1($regMem->getValor('password1')));
-							
-							$regFeedback->addFeedback('Se ha actualizado el password.');
-						}
-
-							// Actualizamos el estado activo/inactivo
-						if ($regMem->getValor('activo')) {
-							$usuario->setPropiedad('activo', 1);
-						} else {
-							$usuario->setPropiedad('activo', 0);
-						}
-
-							// Guardamos los cambios en la base de datos
-							// Ojo, no hemos comprobado si ha habido realmente algún cambio
-						$usuarios->setItemBD($usuario);
-
-					}
-
-						// Recuperamos los roles actualizados (no necesitamos los privilegios en este caso)
-					$usuarios->getRolesBD($usuario);
-
-
-				} else {
-					$regError->setError('general', 'No existe el usuario.');
-				}
-
-				break;
+			if (strlen($regMem->getValor('nombre'))<5) {
+				$regError->setError('nombre', 'El nombre debe tener al menos 5 caracteres.');
+				$correcto=FALSE;
+			} else if ($usuarios->getItemByNombre($regMem->getValor('nombre'))){
+				$regError->setError('nombre', 'Ya existe un usuario con ese nombre');
+				$correcto=FALSE;
+			} else if (strlen($regMem->getValor('nombre'))>40) {
+				$regError->setError('nombre', 'El nombre no puede tener más de 40 caracteres.');
+				$correcto=FALSE;
 			}
-		} else {
-			$regMem->setValor('acceso_denegado', TRUE);
-			$regMem->setValor('titulo', 'Error');
+
+			if ($regMem->getValor('password2')!=$regMem->getValor('password1')){
+				$regError->setError('password', 'Las contraseñas no coinciden.');
+				$correcto=FALSE;
+			} else if (strlen($regMem->getValor('password1'))<5){
+				$regError->setError('password', 'La contraseña debe tener al menos 5 caracteres.');
+				$correcto=FALSE;
+			} else if (strlen($regMem->getValor('password1'))>40) {
+				$regError->setError('password', 'La contraseña debe ser como máximo de 40 caracteres.');
+				$correcto=FALSE;
+			}
+
+			if ($correcto) {
+				$valores = array (
+					'nombre' => $regMem->getValor('nombre'),
+					'password' => SHA1($regMem->getValor('password1'))
+					);
+				$usuario = new Usuario($valores);
+				$usuarios->addItemBD($usuario);
+
+				$regFeedback->addFeedback ('Usuario creado con éxito <b>' . $regMem->getValor('nombre') . ':' . $regMem->getValor('password1') . '</b>');
+			} else {
+				$regError->setError('general', 'No se ha creado el usuario.');
+			}
+			break;
+
+			case 'Editar':
+			$regMem->setValor('titulo', 'Editar usuarios');
+
+			// Comprobamos si existe el usuario
+			$usuario = $usuarios->getItemBD(array('id'=>$regMem->getValor('id')))->getItemById($regMem->getValor('id'));
+			
+			if ($usuario) {
+				if ($regMem->getValor('rol')) {
+					$checked = $regMem->getValor('rol');
+					foreach ($checked as $rol) {
+						$usuario->setRol($rol);
+					}
+				}
+
+				if ($regMem->getValor('metodo')=='POST') {
+					// Hemos enviado el formulario, actualizamos los roles
+					$usuarios->setRolesBD($usuario, $roles);
+					$regFeedback->addFeedback('Roles actualizados.');
+
+					// Comprobamos si se ha cambiado el pass, y si es así si es correcto:
+					if (!($regMem->getValor('password1') && $regMem->getValor('password2'))){
+								// No se ha enviado hay pass, no hacemos nada.
+					} else if ($regMem->getValor('password2')!=$regMem->getValor('password1')){
+						$regError->setError('password', 'Las contraseñas no coinciden.');
+					} else if (strlen($regMem->getValor('password1'))<5){
+						$regError->setError('password', 'La contraseña debe tener al menos 5 caracteres.');
+					} else if (strlen($regMem->getValor('password1'))>40) {
+						$regError->setError('password', 'La contraseña debe ser como máximo de 40 caracteres.');
+					} else {
+						// Todo es correcto, actualizamos el password y el usuario
+						$usuario->setPropiedad('password', SHA1($regMem->getValor('password1')));
+
+						$regFeedback->addFeedback('Se ha actualizado el password.');
+					}
+
+					// Actualizamos el estado activo/inactivo
+					if ($regMem->getValor('activo')) {
+						$usuario->setPropiedad('activo', 1);
+					} else {
+						$usuario->setPropiedad('activo', 0);
+					}
+					// Guardamos los cambios en la base de datos
+					// Ojo, no hemos comprobado si ha habido realmente algún cambio
+					$usuarios->setItemBD($usuario);
+				}
+				// Recuperamos los roles actualizados (no necesitamos los privilegios en este caso)
+				$usuarios->getRolesBD($usuario);
+			} else {
+				$regError->setError('general', 'No existe el usuario.');
+			}
+			break;
 		}
-		break;
+	} else {
+		$regSistema->setValor('acceso_denegado', 'administrar');
+		
+	}
+	break;
 
 	case 'roles':
-		if ($regSistema->getValor('privilegios')['verAdminRoles']){
-			$regMem->setValor('titulo', 'Añadir roles');
+	if ($regSistema->getValor('privilegios')['verAdminRoles']){
+		$regMem->setValor('titulo', 'Añadir roles');
 
-			switch ($regMem->getValor('accion')){
-				case 'Añadir':
-				$correcto = TRUE;
-				if (strlen($regMem->getValor('nombre'))<5) {
-					$regError->setError('nombre', 'El nombre debe tener al menos 5 caracteres.');
-					$correcto=FALSE;
-				} else if ($roles->getItemByNombre($regMem->getValor('nombre'))){
-					$regError->setError('nombre', 'Ya existe un rol con ese nombre');
-					$correcto=FALSE;
-				} else if (strlen($regMem->getValor('nombre'))>40) {
-					$regError->setError('nombre', 'El nombre no puede tener más de 40 caracteres.');
-					$correcto=FALSE;
-				}
+		switch ($regMem->getValor('accion')){
+			case 'Añadir':
+			$correcto = TRUE;
+			if (strlen($regMem->getValor('nombre'))<5) {
+				$regError->setError('nombre', 'El nombre debe tener al menos 5 caracteres.');
+				$correcto=FALSE;
+			} else if ($roles->getItemByNombre($regMem->getValor('nombre'))){
+				$regError->setError('nombre', 'Ya existe un rol con ese nombre');
+				$correcto=FALSE;
+			} else if (strlen($regMem->getValor('nombre'))>40) {
+				$regError->setError('nombre', 'El nombre no puede tener más de 40 caracteres.');
+				$correcto=FALSE;
+			}
 
-							// Añadimos el nuevo rol a la base de datos
-				if ($correcto) {
-					$valores = array (
-						'nombre' => $regMem->getValor('nombre')
-						);
-					$rol = new Rol($valores);
-					$roles->addItemBD($rol);
-					$regFeedback->addFeedback ('El rol <b>' . $regMem->getValor('nombre') . '</b> ha sido creado con éxito');
-				} else {
-					$regError->setError('general', 'No se ha creado el rol.');
-				}
+			// Añadimos el nuevo rol a la base de datos
+			if ($correcto) {
+				$valores = array (
+					'nombre' => $regMem->getValor('nombre')
+					);
+				$rol = new Rol($valores);
+				$roles->addItemBD($rol);
+				$regFeedback->addFeedback ('El rol <b>' . $regMem->getValor('nombre') . '</b> ha sido creado con éxito');
+			} else {
+				$regError->setError('general', 'No se ha creado el rol.');
+			}
 
-				break;
+			break;
 
-				case 'Editar':
-				$regMem->setValor('titulo', 'Editar roles');			
+			case 'Editar':
+			$regMem->setValor('titulo', 'Editar roles');			
 
 							// Comprobamos si existe el rol
-				$rol = $roles->getItemBD(array('id'=>$regMem->getValor('id')))->getItemById($regMem->getValor('id'));
+			$rol = $roles->getItemBD(array('id'=>$regMem->getValor('id')))->getItemById($regMem->getValor('id'));
 
-				if ($rol) {
-								// pasamos los privilegios enviados en el formulario
-					if ($regMem->getValor('privilegio')) {
-						$checked = $regMem->getValor('privilegio');
-						foreach ($checked as $privilegio) {
-							$rol->setPrivilegio($privilegio);							
-						}
+			if ($rol) {
+				// pasamos los privilegios enviados en el formulario
+				if ($regMem->getValor('privilegio')) {
+					$checked = $regMem->getValor('privilegio');
+					foreach ($checked as $privilegio) {
+						$rol->setPrivilegio($privilegio);							
 					}
-
-					if ($regMem->getValor('metodo')=='POST') {
-									// Hemos enviado el formulario, actualizamos los privilegios
-						$roles->setPrivilegiosBD($privilegios, $rol);
-						$regFeedback->addFeedback('Privilegios actualizados.');	
-
-									// Actualizamos el estado activo/inactivo
-						if ($regMem->getValor('activo')) {
-							$rol->setPropiedad('activo', 1);
-						} else {
-							$rol->setPropiedad('activo', 0);
-						}
-
-									// Guardamos los cambios en la base de datos
-									// Ojo, no hemos comprobado si ha habido realmente algún cambio
-						$roles->setItemBD($rol);
-					}
-
-								// Recuperamos los roles actualizados (no necesitamos los privilegios en este caso)
-					$roles->getPrivilegiosBD($rol);
-
-
-				} else {
-					$regError->setError('general', 'No existe el rol.');
 				}
 
+				if ($regMem->getValor('metodo')=='POST') {
+					// Hemos enviado el formulario, actualizamos los privilegios
+					$roles->setPrivilegiosBD($privilegios, $rol);
+					$regFeedback->addFeedback('Privilegios actualizados.');	
 
-				break;
+					// Actualizamos el estado activo/inactivo
+					if ($regMem->getValor('activo')) {
+						$rol->setPropiedad('activo', 1);
+					} else {
+						$rol->setPropiedad('activo', 0);
+					}
+					// Guardamos los cambios en la base de datos
+					// Ojo, no hemos comprobado si ha habido realmente algún cambio
+					$roles->setItemBD($rol);
+				}
+				// Recuperamos los roles actualizados (no necesitamos los privilegios en este caso)
+				$roles->getPrivilegiosBD($rol);
+
+
+			} else {
+				$regError->setError('general', 'No existe el rol.');
 			}
-		} else {
-			$regMem->setValor('acceso_denegado', TRUE);
-			$regMem->setValor('titulo', 'Error');
 
 
+			break;
 		}
-		break;
-
-
-
-
-
-
-
+	} else {
+		$regSistema->setValor('acceso_denegado', 'administrar');
+		
+	}
+	break;
 
 	case 'privilegios':
 	if ($regSistema->getValor('privilegios')['verAdminPrivilegios']){
@@ -283,14 +269,16 @@ if (!$regMem->getValor('ver') && isset($regSistema->getValor('privilegios')['ver
 			break;
 		}
 	} else {
-		$regMem->setValor('acceso_denegado', TRUE);
-		$regMem->setValor('titulo', 'Error');
+		$regSistema->setValor('acceso_denegado', 'administrar');
+		
 	}
 	break;
-	}
-} else {
-	$regMem->setValor('acceso_denegado', TRUE);
-	$regMem->setValor('titulo', 'Error');
+
+	default:
+		// Hay un valor en ver, pero no es válido.
+		if ($regMem->getValor('ver'))
+		$regSistema->setValor('acceso_denegado', 'administrar');
+		
 }
 
 // Reargamos las listas para asegurarnos que todos los valores estan actualizados.
@@ -310,13 +298,11 @@ include 'main-menu.php';
 include 'sidebar-administrar.php';
 
 
-// Esto debería ir en un include a parte, pero da error porque no se puede cerrar el bloque.
-if ($regMem->getValor('acceso_denegado')) {
-	echo "<div id=\"main-content\">";
-	echo "<h2>Error</h2>";
-	echo "<h3 class=\"separacion\">No tienes permisos para acceder a esta página.</h3>";
-	echo "<p class=\"separacion centrado\"><a href=\"index.php\">Página principal</a></p>";
-} else {
+// Si hay un error redirigimos la página
+if ($regSistema->getValor('acceso_denegado')) {
+	header('Location: error.php');
+	exit;
+}
 
 ?>
 
@@ -697,7 +683,7 @@ if ($regMem->getValor('acceso_denegado')) {
 
 	<?php
 	}	
-}
+
 	?>
 
 </div>

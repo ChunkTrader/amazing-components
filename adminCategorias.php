@@ -24,12 +24,17 @@ $controlador -> setRegistro ('feedback', $regFeedback);
 $controlador -> setRegistro ('errores', $regError);
 $controlador -> setPDO($PDO);
 
-$cats = new Categorias($controlador);
-
-
 require_once 'comprobarUsuario.php';
 
-if (isset($regSistema->getValor('privilegios')['verAdminCategorias'])){
+// Comprobamos si tiene privilegio de acceso a la página
+if (!$regSistema->getValor('privilegios')['verAdminCategorias']){
+	$regSistema->setValor('acceso_denegado', 'administrar');
+	header('Location: error.php');
+	exit;
+}
+
+$cats = new Categorias($controlador);
+
 
 	// Intentamos recuperar la categoria
 	if ($regMem->getValor('id')){
@@ -102,10 +107,6 @@ if (isset($regSistema->getValor('privilegios')['verAdminCategorias'])){
 
 	// Cargamos la lista de categorias
 	$cats->getItemBD();
-} else {
-	$regMem->setValor('acceso_denegado', TRUE);
-	$regMem->setValor('titulo', 'Error');
-}
 
 
 include 'cabecera.php';
