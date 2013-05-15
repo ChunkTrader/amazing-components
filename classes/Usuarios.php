@@ -75,14 +75,14 @@ class Usuarios extends Coleccion{
 		$prepare = "DELETE FROM usuarios_roles WHERE usuario_id = '" . $usuario->getPropiedad('id') . "'";
 		$stmt = $this->controlador->getPDO()->prepare($prepare);
 		$count=$stmt->execute();
-		$this->controlador->getRegistro('feedback')->addFeedback("Roles anteriores eliminados.");
+		//$this->controlador->getRegistro('feedback')->addFeedback("Roles anteriores eliminados.");
 
 		// Añadimos los roles seleccionados
 		$prepare = "INSERT INTO usuarios_roles(usuario_id, rol_id) VALUES (:usuario_id, :rol_id)";
 		$stmt = $this->controlador->getPDO()->prepare($prepare);
 		$a = $usuario->getRoles();
 		foreach ($a as $key=>$rol) {
-			$this->controlador->getRegistro('feedback')->addFeedback("Añadido rol <b>$key</b>.");
+			//$this->controlador->getRegistro('feedback')->addFeedback("Añadido rol <b>$key</b>.");
 			$stmt->execute(array (
 					':usuario_id' => $usuario->getPropiedad('id'),
 					':rol_id' => $roles->getItemByNombre($key)->getPropiedad('id')

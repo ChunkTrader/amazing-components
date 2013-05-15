@@ -30,7 +30,6 @@ $controlador -> setPDO($PDO);
 
 // Cargamos la comprobación despues de cargar las demás clases e inicializar los registros
 
-
 $usuarios = new Usuarios($controlador);
 $roles = new Roles($controlador);
 $privilegios = new Privilegios($controlador);
@@ -46,7 +45,7 @@ $usuarios->getItemBD();
 $roles->getItemBD();
 $privilegios->getItemBD();
 
-print_r($regMem->getValor()); echo '<br>';
+//print_r($regMem->getValor()); echo '<br>';
 
 switch ($regMem->getValor('ver')) {
 
@@ -81,7 +80,7 @@ switch ($regMem->getValor('ver')) {
 			if ($correcto) {
 				$valores = array (
 					'nombre' => $regMem->getValor('nombre'),
-					'password' => SHA1($regMem->getValor('nombre'))
+					'password' => SHA1($regMem->getValor('password1'))
 					);
 				$usuario = new Usuario($valores);
 				$usuarios->addItemBD($usuario);
@@ -94,7 +93,7 @@ switch ($regMem->getValor('ver')) {
 		break;
 
 		case 'Editar':
-			
+			$regMem->setValor('titulo', 'Editar usuarios');
 
 
 			// Comprobamos si existe el usuario
@@ -111,10 +110,39 @@ switch ($regMem->getValor('ver')) {
 				if ($regMem->getValor('metodo')=='POST') {
 					// Hemos enviado el formulario, actualizamos los roles
 					$usuarios->setRolesBD($usuario, $roles);
+					$regFeedback->addFeedback('Roles actualizados.');
 				}
 				
 				// Recuperamos los roles actualizados (no necesitamos los privilegios en este caso)
 				$usuarios->getRolesBD($usuario);
+
+				// Comprobamos si se ha cambiado el pass, y si es así si es correcto:
+				if (!($regMem->getValor('password1') && $regMem->getValor('password2'))){
+					// No se ha enviado hay pass, no hacemos nada.
+				} else if ($regMem->getValor('password2')!=$regMem->getValor('password1')){
+					$regError->setError('password', 'Las contraseñas no coinciden.');
+				} else if (strlen($regMem->getValor('password1'))<5){
+					$regError->setError('password', 'La contraseña debe tener al menos 5 caracteres.');
+				} else if (strlen($regMem->getValor('password1'))>40) {
+					$regError->setError('password', 'La contraseña debe ser como máximo de 40 caracteres.');
+				} else {
+					// Todo es correcto, actualizamos el password y el usuario
+				$usuario->setPropiedad('password', SHA1($regMem->getValor('password1')));
+				
+				$regFeedback->addFeedback('Se ha actualizado el password.');
+				}
+
+				// Actualizamos el estado activo/inactivo
+				if ($regMem->getValor('activo')) {
+					$usuario->setPropiedad('activo', 1);
+				} else {
+					$usuario->setPropiedad('activo', 0);
+				}
+
+				// Guardamos los cambios en la base de datos
+				// Ojo, no hemos comprobado si ha habido realmente algún cambio
+				$usuarios->setItemBD($usuario);
+
 
 			} else {
 				$regError->setError('general', 'No existe el usuario.');	
@@ -122,6 +150,7 @@ switch ($regMem->getValor('ver')) {
 
 			break;
 		}
+		break;
 
 	case 'roles':
 		$regMem->setValor('titulo', 'Añadir roles');
@@ -157,6 +186,7 @@ switch ($regMem->getValor('ver')) {
 
 
 		}
+		break;
 
 	case 'privilegios':
 		$regMem->setValor('titulo', 'Añadir privilegios');
@@ -190,7 +220,7 @@ switch ($regMem->getValor('ver')) {
 				break;
 		}
 
-
+		break;
 }
 
 
@@ -262,44 +292,64 @@ include 'sidebar-administrar.php';
 		</form>
 		</div>
 	<?php
+	/*		EDICION DE USUARIOS 		*/
 	} else if ($regMem->getValor('accion')=="Editar" && $usuario) {
 	?>
 	<div class="separacion">
 		<h3><?=$usuario->getPropiedad('nombre')?></h3>
 
-	<form action="<?=$_SERVER['SCRIPT_NAME']?>" method="POST">
-		<table>
-			<tr>
-				<th>Rol</th>
-				<th>Activo</th>
-				<th></th>
-		<?php
-		// Lista de roles
-		$a = $roles->getItemById();
-		foreach ($a as $rol) {
-			echo "<tr>";
-			echo "<td>" . $rol->getPropiedad('nombre') . "</td>";
-			echo "<td>" . "<input type=\"checkbox\" ";
-			if (!$usuario->getRol($rol->getPropiedad('nombre'))) {
-			} else {
-				echo ' checked ';
+		<form action="<?=$_SERVER['SCRIPT_NAME']?>" method="POST">
+
+			<label>Password:</label>
+			<input type="password" name="password1"/>
+				
+			<label>Repite pass:</label>
+			<input type="password" name="password2"/>
+
+			<label>e-mail:</label>
+			<input type="text" name="email" disabled/>
+
+			<label>Activo:</label>
+				<input type="checkbox" name="activo"
+				<?php
+				if ($usuario->getPropiedad('activo')) {
+					echo " CHECKED ";
+				}
+				?>
+			/>
+
+			<table class="separacion">
+				<tr>
+					<th>Rol</th>
+					<th>Activo</th>
+					<th></th>
+			<?php
+			// Lista de roles
+			$a = $roles->getItemById();
+			foreach ($a as $rol) {
+				echo "<tr>";
+				echo "<td>" . $rol->getPropiedad('nombre') . "</td>";
+				echo "<td>" . "<input type=\"checkbox\" ";
+				if (!$usuario->getRol($rol->getPropiedad('nombre'))) {
+				} else {
+					echo ' checked ';
+				}
+				echo " name=\"rol[]\" value=\"{$rol->getPropiedad('nombre')}\"/>";
+
+				echo "</td>";
+				echo "<td></td>";
+				echo "</tr>";
 			}
-			echo " name=\"rol[]\" value=\"{$rol->getPropiedad('nombre')}\"/>";
 
-			echo "</td>";
-			echo "<td></td>";
-			echo "</tr>";
-		}
-
-		?>
-	</table>
-		<input type="hidden" name="ver" value="<?=$regMem->getValor('ver')?>"/>
-		<input type="hidden" name="id" value="<?=$regMem->getValor('id')?>"/>
-		<p class="centrado">
-			<input type="submit" name="accion" value="Editar"/>
-		</p>
-	
-	</form>
+			?>
+			</table>
+			<input type="hidden" name="ver" value="<?=$regMem->getValor('ver')?>"/>
+			<input type="hidden" name="id" value="<?=$regMem->getValor('id')?>"/>
+			<p class="centrado">
+				<input type="submit" name="accion" value="Editar"/>
+			</p>
+		
+		</form>
 
 
 	</div>

@@ -55,30 +55,40 @@ switch ($regMem->getValor('accion')){
 			
 			//echo "usuario_id :$usuario_id";
 			if ($usuario_id) {
-				// Si el usurio existe y la contraseña es correcta regeneramos la sesion y
-				// creamos un nuevo token.
-				session_regenerate_id();
-
-				$regFeedback->addFeedback ('Has conectado con éxito como <b>'.$usuario->getPropiedad('nombre').'</b>');
-				$usuario->setPropiedad('id', $usuario_id);
-				$usuario->setToken();
+				// Recuperamos los datos del usuario y compramos si esta activado
+				$usuario=$usuarios->getItemBD(array('id' =>$usuario_id))->getItemById($usuario_id);
 				
-				// Almacenamos el token en la base de datos, de momento guardamos todo el usuario entero
-				// Esto habria que optimizarlo.				
-				$usuarios->setItemBD($usuario);
+				if ($usuario->getPropiedad('activo')) {
 
-				// Establecemos el usuario conectado
-				$usuario_conectado=$usuario;
 
-				// Aqui hay que poner el código para almacenar los datos en la session y en las cookies
-				$regSistema->setValor('autenticado', TRUE);
-				$regSistema->setValor('nombre', $usuario->getPropiedad('nombre'));
-				$regSistema->setValor('id', $usuario->getPropiedad('id'));
+					// Si el usuraio existe y la contraseña es correcta regeneramos la sesion y
+					// creamos un nuevo token.
+					session_regenerate_id();
 
-				// Recuperamos los roles y los privilegios
-				$usuarios->getRolesBD($usuario_conectado);
+					$regFeedback->addFeedback ('Has conectado con éxito como <b>'.$usuario->getPropiedad('nombre').'</b>');
+					$usuario->setPropiedad('id', $usuario_id);
+					$usuario->setToken();
+					
+					// Almacenamos el token en la base de datos, de momento guardamos todo el usuario entero
+					// Esto habria que optimizarlo.				
+					$usuarios->setItemBD($usuario);
 
-				$usuarios->getPrivilegiosBD($usuario_conectado);
+					// Establecemos el usuario conectado
+					$usuario_conectado=$usuario;
+
+					// Aqui hay que poner el código para almacenar los datos en la session y en las cookies
+					$regSistema->setValor('autenticado', TRUE);
+					$regSistema->setValor('nombre', $usuario->getPropiedad('nombre'));
+					$regSistema->setValor('id', $usuario->getPropiedad('id'));
+
+					// Recuperamos los roles y los privilegios
+					$usuarios->getRolesBD($usuario_conectado);
+
+					$usuarios->getPrivilegiosBD($usuario_conectado);
+				} else {
+					$regError->setError('usuario', 'Este usuario está desactivado, pongase en contacto con un administrador.');
+
+				}
 
 			} else {
 				$regError->setError('general', 'Nombre de usuario o contraseña incorrectos');
