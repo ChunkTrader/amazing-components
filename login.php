@@ -58,7 +58,6 @@ switch ($regMem->getValor('accion')){
 				// Recuperamos los datos del usuario y compramos si esta activado
 				$usuario=$usuarios->getItemBD(array('id' =>$usuario_id))->getItemById($usuario_id);
 				
-<<<<<<< HEAD
 				if ($usuario->getPropiedad('activo')) {
 
 
@@ -90,24 +89,6 @@ switch ($regMem->getValor('accion')){
 					$regError->setError('usuario', 'Este usuario está desactivado, pongase en contacto con un administrador.');
 
 				}
-=======
-				// Almacenamos el token en la base de datos, de momento guardamos todo el usuario entero
-				// Esto habria que optimizarlo.				
-				$usuarios->setItemBD($usuario);
-
-				// Establecemos el usuario conectado
-				$usuario_conectado=$usuario;
-
-				// Aqui hay que poner el código para almacenar los datos en la session y en las cookies
-				$regSistema->setValor('autenticado', TRUE);
-				$regSistema->setValor('nombre', $usuario->getPropiedad('nombre'));
-				$regSistema->setValor('id', $usuario->getPropiedad('id'));
-
-				// Recuperamos los roles y los privilegios
-				$usuarios->getRolesBD($usuario_conectado);
-
-				$usuarios->getPrivilegiosBD($usuario_conectado);
->>>>>>> b1af39fe6e6a047a58472d02d1af34b5a3f30c02
 
 			} else {
 				$regError->setError('general', 'Nombre de usuario o contraseña incorrectos');

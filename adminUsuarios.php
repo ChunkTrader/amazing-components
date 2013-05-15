@@ -30,14 +30,6 @@ $controlador -> setPDO($PDO);
 
 // Cargamos la comprobación despues de cargar las demás clases e inicializar los registros
 
-<<<<<<< HEAD
-
-=======
-<<<<<<< HEAD
-=======
-
->>>>>>> b1af39fe6e6a047a58472d02d1af34b5a3f30c02
->>>>>>> 3b131acaf80d949434687fe5a05a986d6f5f3668
 $usuarios = new Usuarios($controlador);
 $roles = new Roles($controlador);
 $privilegios = new Privilegios($controlador);
@@ -53,12 +45,7 @@ $usuarios->getItemBD();
 $roles->getItemBD();
 $privilegios->getItemBD();
 
-<<<<<<< HEAD
 //print_r($regMem->getValor()); echo '<br>';
-=======
-print_r($regMem->getValor());
-
->>>>>>> b1af39fe6e6a047a58472d02d1af34b5a3f30c02
 
 
 switch ($regMem->getValor('ver')) {
@@ -103,12 +90,6 @@ switch ($regMem->getValor('ver')) {
 			} else {
 				$regError->setError('general', 'No se ha creado el usuario.');
 			}
-<<<<<<< HEAD
-
-=======
-		
-<<<<<<< HEAD
->>>>>>> 3b131acaf80d949434687fe5a05a986d6f5f3668
 		break;
 
 		case 'Editar':
@@ -169,19 +150,6 @@ switch ($regMem->getValor('ver')) {
 
 			break;
 		}
-=======
->>>>>>> b1af39fe6e6a047a58472d02d1af34b5a3f30c02
-		break;
-
-		case 'Editar':
-			echo "<br>Estaban marcadas: <br>";
-			$checked = $regMem->getValor('rol');
-			for($i=0; $i < count($checked); $i++){
-			    echo $checked[$i] . "<br/>";
-			}
-			
-			break;
-		}
 
 	case 'roles':
 		$regMem->setValor('titulo', 'Añadir roles');
@@ -214,13 +182,8 @@ switch ($regMem->getValor('ver')) {
 				
 				break;
 
-
-
 		}
-<<<<<<< HEAD
 		break;
-=======
->>>>>>> b1af39fe6e6a047a58472d02d1af34b5a3f30c02
 
 	case 'privilegios':
 		$regMem->setValor('titulo', 'Añadir privilegios');
@@ -326,11 +289,6 @@ include 'sidebar-administrar.php';
 		</form>
 		</div>
 	<?php
-<<<<<<< HEAD
-
-=======
-<<<<<<< HEAD
->>>>>>> 3b131acaf80d949434687fe5a05a986d6f5f3668
 	/*		EDICION DE USUARIOS 		*/
 	} else if ($regMem->getValor('accion')=="Editar" && $usuario) {
 	?>
@@ -389,11 +347,8 @@ include 'sidebar-administrar.php';
 			</p>
 		
 		</form>
-<<<<<<< HEAD
+
 		<?php
-=======
-=======
->>>>>>> 3b131acaf80d949434687fe5a05a986d6f5f3668
 	} else if ($regMem->getValor('accion')=="Editar") {
 	?>
 	<div class="separacion">
@@ -417,9 +372,6 @@ include 'sidebar-administrar.php';
 				echo ' checked ';
 			}
 			echo " name=\"rol[]\" value=\"{$rol->getPropiedad('nombre')}\"/>";
-<<<<<<< HEAD
-=======
-
 			echo "</td>";
 			echo "<td></td>";
 			echo "</tr>";
@@ -433,43 +385,12 @@ include 'sidebar-administrar.php';
 		</p>
 	</table>
 	</form>
->>>>>>> b1af39fe6e6a047a58472d02d1af34b5a3f30c02
->>>>>>> 3b131acaf80d949434687fe5a05a986d6f5f3668
-
-			echo "</td>";
-			echo "<td></td>";
-			echo "</tr>";
-		}
-
-<<<<<<< HEAD
-		?>
-=======
-	</div>
-	<?php
-	}
-<<<<<<< HEAD
-
-
-
-
-
-=======
->>>>>>> 3b131acaf80d949434687fe5a05a986d6f5f3668
-
-		<input type="hidden" name="ver" value="<?=$regMem->getValor('ver')?>"/>
-		<p class="centrado">
-			<input type="submit" name="accion" value="Editar"/>
-		</p>
-	</table>
-	</form>
 
 
 	</div>
 	<?php
 	}
 
-
->>>>>>> b1af39fe6e6a047a58472d02d1af34b5a3f30c02
 	?>
 	<h2>Lista de usuarios</h2>
 	<div class="separacion">

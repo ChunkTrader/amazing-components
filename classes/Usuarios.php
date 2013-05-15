@@ -33,7 +33,6 @@ class Usuarios extends Coleccion{
 	}
 
 
-<<<<<<< HEAD
 
 	public function getRolesBD(Usuario $usuario){
 		$prepare = "SELECT r.nombre FROM usuarios u INNER JOIN usuarios_roles ur ON u.id=ur.usuario_id INNER JOIN roles r ON ur.rol_id=r.id WHERE u.id={$usuario->getPropiedad('id')}";
@@ -52,16 +51,10 @@ class Usuarios extends Coleccion{
 	public function getPrivilegiosBD(Usuario $usuario){
 		$prepare = "SELECT pr.nombre FROM usuarios u INNER JOIN usuarios_roles ur ON u.id=ur.usuario_id INNER JOIN privilegios_rol pr_r USING (rol_id) INNER JOIN privilegios pr WHERE u.id={$usuario->getPropiedad('id')}";
 		//echo "<br>$prepare</br>";
-=======
-	public function getPrivilegiosBD(Usuario $usuario){
-		$prepare = "SELECT pr.nombre FROM usuarios u INNER JOIN usuarios_roles ur ON u.id=ur.usuario_id INNER JOIN privilegios_rol pr_r USING (rol_id) INNER JOIN privilegios pr WHERE u.id={$usuario->getPropiedad('id')}";
-		echo "<br>$prepare</br>";
->>>>>>> b1af39fe6e6a047a58472d02d1af34b5a3f30c02
 		$stmt = $this->controlador->getPDO()->prepare($prepare);
 		$stmt->execute();
 		$rows = $stmt->fetchAll();
 
-<<<<<<< HEAD
 		// Rellenamos la lista de privilegios del objeto
 		foreach ($rows as $key => $row){
 			$usuario->setPrivilegio($row['nombre']);
@@ -96,16 +89,6 @@ class Usuarios extends Coleccion{
 				));
 		}
 
-=======
-		print_r($rows);
-
-		// Rellenamos la lista de privilegios del objeto
-		foreach ($rows as $key => $row){
-			$usuario->setPrivilegio($row);
-		}
-
-		
->>>>>>> b1af39fe6e6a047a58472d02d1af34b5a3f30c02
 	}
 
 }

@@ -42,13 +42,6 @@ class Usuario extends Item {
 
 	public function setRol($clave){
 		//Siempre que se asigna un privilegio es TRUE
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-		
-=======
->>>>>>> b1af39fe6e6a047a58472d02d1af34b5a3f30c02
->>>>>>> 3b131acaf80d949434687fe5a05a986d6f5f3668
 		$this->roles[$clave] = TRUE;
 	}
 
@@ -61,7 +54,6 @@ class Usuario extends Item {
 		}
 	}
 
-<<<<<<< HEAD
 	public function getRoles() {
 		return $this->roles;
 	}
@@ -70,9 +62,5 @@ class Usuario extends Item {
 		return $this->privilegios;
 	}
 
-
-
-=======
->>>>>>> b1af39fe6e6a047a58472d02d1af34b5a3f30c02
 }
 ?>

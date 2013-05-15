@@ -141,15 +141,9 @@ abstract class Coleccion {
 
 	public function getItemByNombre($nombre){
 		$a=$this->coleccion;
-<<<<<<< HEAD
 		foreach ($a as $item){
 			if ($item->getPropiedad('nombre')==$nombre) {
 				return $item;
-=======
-		foreach ($a as $usuario){
-			if ($usuario->getPropiedad('nombre')==$nombre) {
-				return $usuario;
->>>>>>> b1af39fe6e6a047a58472d02d1af34b5a3f30c02
 			}
 		}
 		return null;
