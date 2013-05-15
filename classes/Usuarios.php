@@ -32,8 +32,6 @@ class Usuarios extends Coleccion{
 		return $row['id'];
 	}
 
-
-
 	public function getRolesBD(Usuario $usuario){
 		$prepare = "SELECT r.nombre FROM usuarios u INNER JOIN usuarios_roles ur ON u.id=ur.usuario_id INNER JOIN roles r ON ur.rol_id=r.id WHERE u.id={$usuario->getPropiedad('id')}";
 		//echo "<br>$prepare</br>";
@@ -75,7 +73,7 @@ class Usuarios extends Coleccion{
 				
 		$prepare = "DELETE FROM usuarios_roles WHERE usuario_id = '" . $usuario->getPropiedad('id') . "'";
 		$stmt = $this->controlador->getPDO()->prepare($prepare);
-		$count=$stmt->execute();
+		$stmt->execute();
 
 		// Añadimos los roles seleccionados
 		$prepare = "INSERT INTO usuarios_roles(usuario_id, rol_id) VALUES (:usuario_id, :rol_id)";
@@ -87,6 +85,32 @@ class Usuarios extends Coleccion{
 					':rol_id' => $roles->getItemByNombre($key)->getPropiedad('id')
 				));
 		}
+
+	}
+
+	public function getUsuarioByNombreBD($nombre){
+		// Limpiamos la colección
+		$this->coleccion = array();
+		
+		$prepare = "SELECT * FROM {$this->tabla} WHERE nombre = :nombre";
+		$stmt = $this->controlador->getPDO()->prepare($prepare);
+		$stmt->execute( array(
+				':nombre'=>$nombre
+			));
+		$rows = $stmt->fetchAll();
+
+		$clase = $this->miembro;
+		$propiedades = call_user_func($clase.'::getListaPropiedades');
+
+
+		foreach ($rows as $row){
+			$campos = array();
+			foreach ($propiedades as $propiedad=>$tipo) {
+				$campos[$propiedad] = $this->sanitize($row[$propiedad], $tipo);
+			}
+			$this->addItem(new $clase ($campos));
+		}
+		return $this;
 
 	}
 

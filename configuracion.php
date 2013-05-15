@@ -14,9 +14,9 @@
 	define ('DESCRIPCION_CORTA', 400); // Número de caracteres a mostrar en las descripciones fuera del detalle.
 	
 	//Configuración Banner
-	define ('URL_BANNER', 'detalleProducto.php?id=50'); // La url puede ser cualquier dirección: de un producto, de una sección, otro sitio, etc.
+	define ('URL_BANNER', 'detalleProducto.php?id=55'); // La url puede ser cualquier dirección: de un producto, de una sección, otro sitio, etc.
 	define ('IMG_BANNER', 'banner.jpg'); // La imagen debe ser de 654x121 pixeles
-	define ('MSG_BANNER', 'Aerocool Xpredator X3 Devil Red Edition');
+	define ('MSG_BANNER', 'Consigue ya tu iPhone 5!!');
 
 	// Iniciamos la session, nos hace falta en todas las páginas
 	session_start();

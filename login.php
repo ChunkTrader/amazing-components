@@ -73,9 +73,6 @@ switch ($regMem->getValor('accion')){
 					// Esto habria que optimizarlo.				
 					$usuarios->setItemBD($usuario);
 
-					// Establecemos el usuario conectado
-					$usuario=$usuario;
-
 					// Aqui hay que poner el código para almacenar los datos en la session y en las cookies
 					$regSistema->setValor('autenticado', TRUE);
 					$regSistema->setValor('nombre', $usuario->getPropiedad('nombre'));
@@ -162,10 +159,12 @@ include 'sidebar-categorias.php';
 		<label>Password: </label>
 		<input type="password" name="password"/>
 
-		<p class="centrado">
+		<p class="centrado separacion">
 			<input type="submit" name="accion" value="Conectar"/>
 		</p>
 	</form>
+
+	<p class="centrado separacion">¿No tienes cuenta?  <a href="nuevoUsuario.php">Registrate</a></p>
 	
 	<?php
 	// 			CONECTADO CON ÉXITO

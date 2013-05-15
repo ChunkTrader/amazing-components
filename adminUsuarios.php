@@ -93,7 +93,7 @@ switch ($regMem->getValor('ver')) {
 				$usuario = new Usuario($valores);
 				$usuarios->addItemBD($usuario);
 
-				$regFeedback->addFeedback ('Usuario creado con éxito <b>' . $regMem->getValor('nombre') . ':' . $regMem->getValor('password1') . '</b>');
+				$regFeedback->addFeedback ('Usuario creado con éxito <b>' . $regMem->getValor('nombre') . '</b>');
 			} else {
 				$regError->setError('general', 'No se ha creado el usuario.');
 			}
@@ -104,7 +104,8 @@ switch ($regMem->getValor('ver')) {
 
 			// Comprobamos si existe el usuario
 			$usuario = $usuarios->getItemBD(array('id'=>$regMem->getValor('id')))->getItemById($regMem->getValor('id'));
-			
+
+
 			if ($usuario) {
 				if ($regMem->getValor('rol')) {
 					$checked = $regMem->getValor('rol');
@@ -598,12 +599,6 @@ if ($regSistema->getValor('acceso_denegado')) {
 		</p>
 		</form>
 	</div>
-
-
-
-
-
-
 
 
 		<h2>Lista de roles</h2>

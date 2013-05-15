@@ -51,6 +51,7 @@ input[type="button"]:hover,input[type="submit"]:hover{
 }
 
 
+
 select {
 	border: 1px solid #ddd;
 	border-radius:5px;
@@ -494,7 +495,7 @@ ul.slides p+p {
 }
 
 .separacion {
-	margin-top: 25px;
+	margin-top: 25px !important;
 	clear: both;
 	overflow: hidden;
 }
