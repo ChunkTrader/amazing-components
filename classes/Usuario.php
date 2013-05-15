@@ -42,7 +42,6 @@ class Usuario extends Item {
 
 	public function setRol($clave){
 		//Siempre que se asigna un privilegio es TRUE
-		
 		$this->roles[$clave] = TRUE;
 	}
 

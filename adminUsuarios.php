@@ -30,6 +30,7 @@ $controlador -> setPDO($PDO);
 
 // Cargamos la comprobación despues de cargar las demás clases e inicializar los registros
 
+
 $usuarios = new Usuarios($controlador);
 $roles = new Roles($controlador);
 $privilegios = new Privilegios($controlador);
@@ -46,6 +47,7 @@ $roles->getItemBD();
 $privilegios->getItemBD();
 
 //print_r($regMem->getValor()); echo '<br>';
+
 
 switch ($regMem->getValor('ver')) {
 
@@ -89,7 +91,7 @@ switch ($regMem->getValor('ver')) {
 			} else {
 				$regError->setError('general', 'No se ha creado el usuario.');
 			}
-		
+
 		break;
 
 		case 'Editar':
@@ -292,6 +294,7 @@ include 'sidebar-administrar.php';
 		</form>
 		</div>
 	<?php
+
 	/*		EDICION DE USUARIOS 		*/
 	} else if ($regMem->getValor('accion')=="Editar" && $usuario) {
 	?>
@@ -350,14 +353,49 @@ include 'sidebar-administrar.php';
 			</p>
 		
 		</form>
+		<?php
+	} else if ($regMem->getValor('accion')=="Editar") {
+	?>
+	<div class="separacion">
+		<h3><?=$usuario_conectado->getPropiedad('nombre')?></h3>
+
+	<form action="<?=$_SERVER['SCRIPT_NAME']?>" method="POST">
+		<table>
+			<tr>
+				<th>Rol</th>
+				<th>Activo</th>
+				<th></th>
+		<?php
+		// Lista de roles
+		$a = $roles->getItemById();
+		foreach ($a as $rol) {
+			echo "<tr>";
+			echo "<td>" . $rol->getPropiedad('nombre') . "</td>";
+			echo "<td>" . "<input type=\"checkbox\" ";
+			if (!$usuario_conectado->getRol($rol->getPropiedad('nombre'))) {
+			} else {
+				echo ' checked ';
+			}
+			echo " name=\"rol[]\" value=\"{$rol->getPropiedad('nombre')}\"/>";
+
+			echo "</td>";
+			echo "<td></td>";
+			echo "</tr>";
+		}
+
+		?>
+
+		<input type="hidden" name="ver" value="<?=$regMem->getValor('ver')?>"/>
+		<p class="centrado">
+			<input type="submit" name="accion" value="Editar"/>
+		</p>
+	</table>
+	</form>
 
 
 	</div>
 	<?php
 	}
-
-
-
 
 
 	?>
