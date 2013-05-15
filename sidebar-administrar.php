@@ -1,9 +1,17 @@
 <div id="sidebar">
 	<ul>
-		<li>Administrar productos
+		<li>Administrar Productos
 			<ul>
-				<li><a href="adminCategorias.php">Categorias</a></li>			
-				<li><a href="adminProductos.php">Productos</a></li>			
+				<?php
+				if (isset($regSistema->getValor('privilegios')['verAdminCategorias'])) {
+					echo "<li><a href=\"adminCategorias.php\">Categorias</a></li>";
+				}
+				
+				if (isset($regSistema->getValor('privilegios')['verAdminProductos'])) {
+					echo "<li><a href=\"adminProductos.php\">Productos</a></li>";
+				}
+				?>
+				
 			</ul>
 		</li>
 		<li>Administrar Ofertas
@@ -15,15 +23,15 @@
 		<li>Administrar Usuarios
 			<ul>
 				<?php
-				if ($regSistema->getValor('privilegios')['verAdminUsuarios']){
+				if (isset($regSistema->getValor('privilegios')['verAdminUsuarios'])) {
 					echo "<li><a href=\"adminUsuarios.php?ver=usuarios\">Usuarios</a></li>";
 				}
 
-				if ($regSistema->getValor('privilegios')['verAdminRoles']){
+				if (isset($regSistema->getValor('privilegios')['verAdminRoles'])) {
 					echo "<li><a href=\"adminUsuarios.php?ver=roles\">Roles</a></li>";
 				}
 
-				if ($regSistema->getValor('privilegios')['verAdminPrivilegios']){
+				if (isset($regSistema->getValor('privilegios')['verAdminPrivilegios'])){
 					echo "<li><a href=\"adminUsuarios.php?ver=privilegios\">Privilegios</a></li>";
 				}
 

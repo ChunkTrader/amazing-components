@@ -26,77 +26,87 @@ $controlador -> setPDO($PDO);
 
 $cats = new Categorias($controlador);
 
-// Intentamos recuperar la categoria
-if ($regMem->getValor('id')){
-	$categoria=$cats->getItemBD(array('id'=>$regMem->getValor('id')))->getItemById($regMem->getValor('id'));
-}
 
-// Titulo por defecto de la página
-$regMem->setValor('titulo', 'Añadir Categoría');
+require_once 'comprobarUsuario.php';
 
+if (isset($regSistema->getValor('privilegios')['verAdminCategorias'])){
 
-switch ($regMem->getValor('accion')){
-
-	case 'Cancelar':
-		header("Location: {$_SERVER['SCRIPT_NAME']}");
-		exit;
-		break;
-
-	case 'Añadir':
-		if ($regMem->getValor('nombre')) {
-			$valores = array (
-				'nombre'=>$regMem->getValor('nombre'), 
-				'parent_id' => $regMem->getValor('parent_id'), 
-				'descripcion' => $regMem->getValor('descripcion'));
-			$cats->addItemBD ( new Categoria ( $valores));
-			$regFeedback->addFeedback("Se ha añadido la categoría <b>{$regMem->getValor('nombre')}</b> con éxito.");
-		} else {
-			$regError->setError('general', 'El nombre no puede estar vacío');
-		}
-		break;
-
-	case 'Eliminar':		
-		$regMem->setValor('titulo', 'Eliminar Categoría');
-
-		// Si el método es POST es que hemos enviado la confiramación
-		if ($regMem->getValor('metodo')=='POST' && $categoria) {				
-				$cats->getItemBD();
-				if ($cats->getChildItemsById($categoria->getPropiedad('id'))) {
-					$regError->setError('general' , "No puede eliminarse <b>{$categoria->getPropiedad('nombre')}</b> porque tiene categorias descendientes.");
-				} else {
-					$cats->delItemBD($regMem->getValor('id'));
-					$regFeedback->addFeedback("Se ha eliminado la categoria <b>{$categoria->getPropiedad('nombre')}</b> con éxito.");
-				}
-		} else if ($regMem->getValor('metodo')=='GET' && $categoria) {
-			$regMem->setValor('nombre', $categoria->getPropiedad('nombre'));
-		} else {
-			$regError->setError('general', 'No existe ninguna categoría con esa <b>id</b>.');
-		}
-		
-		break;
-
-	case 'Editar':
-		$regMem->setValor('titulo', 'Editar Categoría');
-
-		if ($regMem->getValor('metodo')=='POST' && $categoria) {
-
-			$valores = array (
-				'id' =>$regMem->getValor('id'),
-				'nombre'=>$regMem->getValor('nombre'),
-				'parent_id' => $regMem->getValor('parent_id'),
-				'descripcion' => $regMem->getValor('descripcion'),
-				'activa' => (boolean)($regMem->getValor('activa'))
-			);
-			$cats->setItemBD ( new Categoria ( $valores));
-			$regFeedback->addFeedback("Se ha modificado la categoría <b>{$regMem->getValor('nombre')}</b> con éxito.");
-		} else if (!$categoria) {
-			$regError->setError('general', 'No existe ninguna categoría con esa <b>id</b>.');
-		}
-		break;
+	// Intentamos recuperar la categoria
+	if ($regMem->getValor('id')){
+		$categoria=$cats->getItemBD(array('id'=>$regMem->getValor('id')))->getItemById($regMem->getValor('id'));
 	}
 
-// Cargamos la lista de categorias
-$cats->getItemBD();
+	// Titulo por defecto de la página
+	$regMem->setValor('titulo', 'Añadir Categoría');
+
+
+	switch ($regMem->getValor('accion')){
+
+		case 'Cancelar':
+			header("Location: {$_SERVER['SCRIPT_NAME']}");
+			exit;
+			break;
+
+		case 'Añadir':
+			if ($regMem->getValor('nombre')) {
+				$valores = array (
+					'nombre'=>$regMem->getValor('nombre'), 
+					'parent_id' => $regMem->getValor('parent_id'), 
+					'descripcion' => $regMem->getValor('descripcion'));
+				$cats->addItemBD ( new Categoria ( $valores));
+				$regFeedback->addFeedback("Se ha añadido la categoría <b>{$regMem->getValor('nombre')}</b> con éxito.");
+			} else {
+				$regError->setError('general', 'El nombre no puede estar vacío');
+			}
+			break;
+
+		case 'Eliminar':		
+			$regMem->setValor('titulo', 'Eliminar Categoría');
+
+			// Si el método es POST es que hemos enviado la confiramación
+			if ($regMem->getValor('metodo')=='POST' && $categoria) {				
+					$cats->getItemBD();
+					if ($cats->getChildItemsById($categoria->getPropiedad('id'))) {
+						$regError->setError('general' , "No puede eliminarse <b>{$categoria->getPropiedad('nombre')}</b> porque tiene categorias descendientes.");
+					} else {
+						$cats->delItemBD($regMem->getValor('id'));
+						$regFeedback->addFeedback("Se ha eliminado la categoria <b>{$categoria->getPropiedad('nombre')}</b> con éxito.");
+					}
+			} else if ($regMem->getValor('metodo')=='GET' && $categoria) {
+				$regMem->setValor('nombre', $categoria->getPropiedad('nombre'));
+			} else {
+				$regError->setError('general', 'No existe ninguna categoría con esa <b>id</b>.');
+			}
+			
+			break;
+
+		case 'Editar':
+			$regMem->setValor('titulo', 'Editar Categoría');
+
+			if ($regMem->getValor('metodo')=='POST' && $categoria) {
+
+				$valores = array (
+					'id' =>$regMem->getValor('id'),
+					'nombre'=>$regMem->getValor('nombre'),
+					'parent_id' => $regMem->getValor('parent_id'),
+					'descripcion' => $regMem->getValor('descripcion'),
+					'activa' => (boolean)($regMem->getValor('activa'))
+				);
+				$cats->setItemBD ( new Categoria ( $valores));
+				$regFeedback->addFeedback("Se ha modificado la categoría <b>{$regMem->getValor('nombre')}</b> con éxito.");
+			} else if (!$categoria) {
+				$regError->setError('general', 'No existe ninguna categoría con esa <b>id</b>.');
+			}
+			break;
+		}
+
+	// Cargamos la lista de categorias
+	$cats->getItemBD();
+} else {
+	$regMem->setValor('acceso_denegado', TRUE);
+	$regMem->setValor('titulo', 'Error');
+}
+
 
 include 'cabecera.php';
 ?>
@@ -107,6 +117,15 @@ include 'cabecera.php';
 include 'top-menu.php';
 include 'main-menu.php';
 include 'sidebar-administrar.php';
+
+
+// Esto debería ir en un include a parte, pero da error porque no se puede cerrar el bloque.
+if ($regMem->getValor('acceso_denegado')) {
+	echo "<div id=\"main-content\">";
+	echo "<h2>Error</h2>";
+	echo "<h3 class=\"separacion\">No tienes permisos para acceder a esta página.</h3>";
+	echo "<p class=\"separacion centrado\"><a href=\"index.php\">Página principal</a></p>";
+} else {
 ?>
 
 <div id="main-content">
@@ -301,6 +320,9 @@ include 'sidebar-administrar.php';
 		?>
 		</div>
 	</div>
+	<?php
+}
+?>
 </div>
 
 <?php

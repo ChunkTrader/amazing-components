@@ -170,9 +170,7 @@ include 'sidebar-categorias.php';
 	<?php
 	// 			CONECTADO CON ÉXITO
 	} else {
-
-
-
+		echo "<p class=\"separacion centrado\"><a href=\"index.php\">Página principal</a></p>";
 
 	}
 	?>
