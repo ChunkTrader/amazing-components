@@ -16,8 +16,13 @@
 		</li>
 		<li>Administrar Ofertas
 			<ul>
-				<li><a href="adminOfertas.php">Ofertas</a></li>			
-				<li><a href="#">Banner (no implementado)</a></li>
+				<?php
+					if (isset($regSistema->getValor('privilegios')['verAdminOfertas'])) {
+						echo "<li><a href=\"adminOfertas.php\">Ofertas</a></li>";
+						echo "<li><a href=\"#\">Banner (no implementado)</a></li>";
+					}
+				?>
+				
 			</ul>
 		</li>
 		<li>Administrar Usuarios

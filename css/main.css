@@ -133,6 +133,7 @@ div#header div+div img {
 /* Top-menu CSS */
 div#top-menu {
 	width: 942px;
+	height:21px;
 	background-color: #53a8e9;
 	margin: 0 9px 4px 9px;
 	overflow: hidden;
@@ -141,18 +142,20 @@ div#top-menu {
 div#top-menu li a {
 	padding: 3px;
 	color: #fff;
-	border-right: 1px solid #ddd;
+	border-right: 2px solid #ddd;
 	float: left;
 	display: block;
+	font-weight:bold;
 }
 
 div#top-menu li a:hover {
-	text-decoration: none;
-	background-color: #fff;
+	text-decoration: none;	
+	color:#000;
 }
 /* Main-menu CSS */
 div#main-menu {
 	width: 934px;
+
 	margin: 4px 9px;
 	padding: 3px;
 	border: 1px solid #ddd;

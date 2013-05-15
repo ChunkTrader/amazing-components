@@ -27,6 +27,16 @@ $controlador -> setRegistro ('feedback', $regFeedback);
 $controlador -> setRegistro ('errores', $regError);
 $controlador -> setPDO($PDO);
 
+require_once 'comprobarUsuario.php';
+
+// Comprobamos si tiene privilegio de acceso a la página
+if (!$regSistema->getValor('privilegios')['verAdminOfertas']){
+	$regSistema->setValor('acceso_denegado', 'administrar');
+	header('Location: error.php');
+	exit;
+}
+
+
 $cats = new Categorias($controlador);
 $prods = new Productos($controlador);
 $galeria = new Imagenes($controlador);

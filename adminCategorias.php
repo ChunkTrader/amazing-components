@@ -120,13 +120,7 @@ include 'main-menu.php';
 include 'sidebar-administrar.php';
 
 
-// Esto debería ir en un include a parte, pero da error porque no se puede cerrar el bloque.
-if ($regMem->getValor('acceso_denegado')) {
-	echo "<div id=\"main-content\">";
-	echo "<h2>Error</h2>";
-	echo "<h3 class=\"separacion\">No tienes permisos para acceder a esta página.</h3>";
-	echo "<p class=\"separacion centrado\"><a href=\"index.php\">Página principal</a></p>";
-} else {
+
 ?>
 
 <div id="main-content">
@@ -321,9 +315,7 @@ if ($regMem->getValor('acceso_denegado')) {
 		?>
 		</div>
 	</div>
-	<?php
-}
-?>
+
 </div>
 
 <?php

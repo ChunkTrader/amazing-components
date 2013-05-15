@@ -363,7 +363,7 @@ if ($regSistema->getValor('acceso_denegado')) {
 	<div class="separacion">
 		<h3><?=$usuario->getPropiedad('nombre')?></h3>
 
-		<form action="<?=$_SERVER['SCRIPT_NAME']?>" method="POST">
+		<form class="separacion" action="<?=$_SERVER['SCRIPT_NAME']?>" method="POST">
 
 			<label>Password:</label>
 			<input type="password" name="password1"/>
@@ -422,7 +422,7 @@ if ($regSistema->getValor('acceso_denegado')) {
 	<div class="separacion">
 		<h3><?=$usuario->getPropiedad('nombre')?></h3>
 
-	<form action="<?=$_SERVER['SCRIPT_NAME']?>" method="POST">
+	<form class="separacion" action="<?=$_SERVER['SCRIPT_NAME']?>" method="POST">
 		<table>
 			<tr>
 				<th>Rol</th>
@@ -549,7 +549,7 @@ if ($regSistema->getValor('acceso_denegado')) {
 	?>
 	<h3><?=$rol->getPropiedad('nombre')?></h3>
 
-	<form action="<?=$_SERVER['SCRIPT_NAME']?>" method="POST">
+	<form class="separacion" action="<?=$_SERVER['SCRIPT_NAME']?>" method="POST">
 
 		<label>Activo:</label>
 				<input type="checkbox" name="activo"
@@ -643,11 +643,13 @@ if ($regSistema->getValor('acceso_denegado')) {
 
 
 	<?php
-
+	/* 		VER PRIVILEGIOS 		*/
 	} else if ($regMem->getValor('ver')=='privilegios') {
 	?>
 	<div class="separacion">
-	<form action="<?=$_SERVER['SCRIPT_NAME']?>" method="POST">
+
+	<p class="centrado">¡Cuidado! Los privilegios son usados internamente por la aplicación y solo deben ser usados por los desarrolladores.</p>
+	<form class="separacion" action="<?=$_SERVER['SCRIPT_NAME']?>" method="POST">
 		<label>Nombre: </label>
 		<input type="text" name="nombre"/>
 		
