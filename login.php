@@ -86,7 +86,12 @@ switch ($regMem->getValor('accion')){
 
 					// Obtenemos la lista de privilegios del usuario
 					$usuarios->getPrivilegiosUsuarioBD($usuario);
-					print_r($usuario->getPrivilegios());
+					
+					// Guardamos los privilegios en la sesion
+					$regSistema->setValor('privilegios', $usuario->getPrivilegios());
+
+
+
 
 				} else {
 					$regError->setError('usuario', 'Este usuario está desactivado, pongase en contacto con un administrador.');

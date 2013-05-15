@@ -32,6 +32,7 @@ $PDO = new PDOConfig ();
 $regMem = RegistroMemoria::instancia();
 $regError = RegistroErrores::instancia();
 $regFeedback = RegistroFeedback::instancia();
+$regSistema = RegistroSistema::instancia();
 
 // El controlador de registros almacena un array con acceso a los registros que le añadamos, este
 // controlador se pasa a las colecciones al crearlo para que puedan mandar mensajes a la aplicación
@@ -47,55 +48,6 @@ $prods = new Productos($controlador);
 $ofertas = new Ofertas($controlador);
 
 $opciones = array('recordoffset' => $recordoffset);
-
-//Obtenemos el parametro
-
-/*
-if ($regMem->getValor('novedades')) {
-	$parametro="&amp;novedades=-1";
-	$regMem->setValor('subtitulo', 'Novedades');
-	$opciones += array('novedades'=>-1);
-
-} else if ($regMem->getValor('outlet')){
-	$parametro="&amp;outlet=-1";
-	$regMem->setValor('subtitulo', 'Outlet');
-	$opciones += array('outlet'=>-1);
-
-} else if ($regMem->getValor('ofertas')){
-	$parametro="&amp;ofertas=-1";
-	$regMem->setValor('subtitulo', 'Ofertas');
-	$opciones += array('ofertas'=>-1);
-
-} else if ($regMem->getValor('cat')){
-	$parametro="&amp;cat=" . $regMem->getValor('cat');
-	$cats->getItemBD(array('id'=>$regMem->getValor('cat')));
-	$a = $cats->getItemBD()->getItemById($regMem->getValor('cat'));
-	$regMem->setValor('subtitulo', $a->getPropiedad('nombre'));
-	$regMem->setValor('cat_parent_id', $a->getPropiedad('parent_id'));
-	if ($regMem->getValor('cat_parent_id')==0) {
-		// No tiene parent, mostramos todos los productos que pertenecen
-		// a sus categorias hijas.
-		$opciones +=  array('parent_id'=>$regMem->getValor('cat'));
-
-	} else {
-		// Mostramos todos los productos de la subcategoria
-		$opciones +=  array('cat_id'=>$regMem->getValor('cat'));
-
-	}
-} else {
-	$parametro ='';
-}
-
-
-// Cargamos los productos segun la opción: novedades, outlet, ofertas, cat
-
-$prods->getItemBD($opciones);
-$totalrecords = $prods->getTotalBD();
-$regMem->setValor('titulo', 'Ver Productos -' . $regMem->getValor('subtitulo'));
-
-
-
-*/
 
 
 // Obtenemos los parametros de consulta

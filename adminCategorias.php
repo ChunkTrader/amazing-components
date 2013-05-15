@@ -14,6 +14,8 @@ $PDO = new PDOConfig ();
 $regMem = RegistroMemoria::instancia();
 $regError = RegistroErrores::instancia();
 $regFeedback = RegistroFeedback::instancia();
+$regSistema = RegistroSistema::instancia();
+
 
 // El controlador de registros almacena un array con acceso a los registros que le añadamos, este
 // controlador se pasa a las colecciones al crearlo para que puedan mandar mensajes a la aplicación

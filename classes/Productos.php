@@ -161,7 +161,9 @@ class Productos extends Coleccion{
 			if (!in_array($palabra, $memoria) AND !empty($palabra)) {
 				$memoria[]=$palabra;
 				//echo "Palabra encontrada: $palabra<br>";
-				$aux[] = "pr.nombre LIKE '%$palabra%' OR pr.descripcion LIKE '%$palabra%' OR fab.nombre like '%$palabra%' ";
+			
+				$aux[] = "pr.nombre LIKE '%$palabra%' OR pr.descripcion LIKE '%$palabra%' OR fab.nombre LIKE '%$palabra%' ";
+
 			} 
 		}
 

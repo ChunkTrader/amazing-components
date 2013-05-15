@@ -4,7 +4,12 @@
 	</form>
 	<ul>
 		<li><?php
-
+		if ($regSistema->getValor('privilegios')['noConectar']){
+			echo "Estas conectado como <b>{$regSistema->getValor('nombre')}</b> ";
+			echo "<a href=\"login.php?accion=Desconectar\">(desconectar)</a>";
+		} else {
+			echo "<a href=\"login.php\">Conectar</a>";
+		}
 
 
 		?></li>
