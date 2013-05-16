@@ -465,3 +465,21 @@ CREATE TABLE IF NOT EXISTS `usuarios_roles`(
   `rol_id` int(11) NOT NULL,
   PRIMARY KEY (usuario_id, rol_id)
   );
+
+
+CREATE TABLE IF NOT EXISTS `linea_pedido`(
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`pedido_id` int(11) NOT NULL,
+`producto_id` int(11) NOT NULL,
+`cantidad` int(11) NOT NULL,
+`precio` double NOT NULL,
+PRIMARY KEY (id, pedido_id)
+);
+
+CREATE TABLE IF NOT EXISTS `pedidos`(
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`usuario_id` int(11) NOT NULL,
+`fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+`estado` enum ('Confirmado', 'Pagado', 'Preparado', 'Enviado', 'Recibido') NOT NULL DEFAULT 'Confirmado',
+PRIMARY KEY (id)
+);

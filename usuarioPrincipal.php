@@ -39,13 +39,11 @@ if (!$regSistema->getValor('privilegios')['verHome']){
 
 $cats = new Categorias($controlador);
 
-
 // Titulo por defecto de la página
 $regMem->setValor('titulo', 'Mi cuenta');
 
 // Comprobamos que exista un usuario con ese nombre
 $usuario = $usuarios->getUsuarioByNombreBD($regSistema->getValor('nombre'))->getItemByNombre($regSistema->getValor('nombre'));
-
 
 // Si hemos enviado el formulario intentamos aplicar los cambios
 if ($regMem->getValor('accion')=='Editar' && $regMem->getValor('metodo')=='POST') {
@@ -67,7 +65,6 @@ if ($regMem->getValor('accion')=='Editar' && $regMem->getValor('metodo')=='POST'
 	// Comprobamos si se ha cambiado el correo, y si es así si es válido
 	// OJO, la comprobación de cambio no se ha añadido al crear las cuentas por administrador,
 	// (pero si la validación.)
-
 	if ($regMem->getValor('email')!=$usuario->getPropiedad('email')) {
 		if (!filter_var($regMem->getValor('email'), FILTER_VALIDATE_EMAIL)) {
 			$regError->setError('email', 'La dirección de correo electrónico no es válida.');
@@ -80,11 +77,7 @@ if ($regMem->getValor('accion')=='Editar' && $regMem->getValor('metodo')=='POST'
 	// Guardamos los cambios en la base de datos
 	// Ojo, no hemos comprobado si ha habido realmente algún cambio
 	$usuarios->setItemBD($usuario);
-
 }
-
-
-
 
 include 'cabecera.php';
 ?>

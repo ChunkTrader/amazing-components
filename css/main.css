@@ -865,3 +865,63 @@ img.slideshow_disabled {
 td>input[type="checkbox"]{
 	height:12px;
 }
+
+div#main-menu #carrito ul {
+	position: absolute;
+	top: 25px;
+}
+
+div#main-menu #carrito li {
+	position: relative;
+	display: block;
+	float: left;
+	text-align:left;
+	height: 35px;
+}
+
+div#main-menu #carrito_detalle li {
+	border-bottom:1px solid #ddd;
+	width: 99%;
+}
+
+
+div#main-menu #carrito_detalle li b {
+	color:#53a8e9;
+}
+
+div#main-menu #carrito img {
+	position: relative;
+	display: block;
+	float: left;
+	height: 35px;
+}
+
+
+div#main-menu #carrito_detalle{
+	display:none;
+}
+
+
+div#main-menu #carrito_detalle {
+	z-index: 10;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	-webkit-box-shadow: 1px 2px 5px rgba(50, 50, 50, 0.75);
+	-moz-box-shadow:    1px 2px 5px rgba(50, 50, 50, 0.75);
+	box-shadow:         1px 2px 5px rgba(50, 50, 50, 0.75);
+}
+
+ ul#carrito_detalle>li>span {
+ 	padding-top: 10px;
+	display: block;
+	float: left;
+	width:30px;
+	height: 35px;
+	text-align:center;
+}
+
+ul#carrito_detalle>li>span+span {
+	width:50px;
+
+}

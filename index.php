@@ -30,6 +30,7 @@ $controlador -> setRegistro ('errores', $regError);
 $controlador -> setPDO($PDO);
 
 $cats = new Categorias($controlador);
+$prods = new Productos($controlador);
 
 function quitarEspacios($string){
 		$old_pattern = array("/[^a-zA-Z0-9]/", "/_+/", "/_$/");
@@ -39,6 +40,9 @@ function quitarEspacios($string){
 
 // Esta plantilla solo se usa para la página de bienvenida.
 $regMem->setValor('titulo', 'Bienvenido');
+
+$galeria = new Imagenes($controlador);
+$galeria->getItemBD(array('principal' => TRUE));
 
 
 include 'cabecera.php';
@@ -268,6 +272,15 @@ include 'cabecera.php';
 				controlNav : false,
 			});
 		});
+
+		$('#carrito').hover(
+		  function () {
+		    $('#carrito_detalle').show();
+		  }, 
+		  function () {
+		    $('#carrito_detalle').hide();
+		  }
+		);
 	</script>
 
 </body>

@@ -11,6 +11,10 @@ require_once 'classes/Fabricantes.php';
 require_once 'classes/Imagenes.php'; 
 require_once 'classes/Ofertas.php'; 
 
+require_once 'classes/LineaPedido.php';
+require_once 'classes/Pedidos.php';
+
+
 $PDO = new PDOConfig ();
 
 // Incializamos los registros
@@ -48,59 +52,71 @@ if ($regMem->getValor('id')) {
 		$regMem->setValor('cat',$a->getPropiedad('id'));
 		$regMem->setValor('cat_parent_id',$a->getPropiedad('parent_id'));
 	}
+
+
 }
 
 
+if ($producto) {
+	switch ($regMem->getValor('accion')){
+		case 'Comprar':
+			// Comprobamos si ya existe un producto igual en la sesion
+			// Cada linea de pedido es un array: id, cantidad, preciounitario
 
-switch ($regMem->getValor('accion')){
+			// El carrito es un array de lineas de pedidos
+			$a = $regSistema->getValor('carrito');
 
-	case 'Editar':
-	
-	if ($regMem->getValor('metodo')=='POST' && $producto) {
-		$valores = (array_intersect_key($regMem->getValor(), Producto::getListaPropiedades()));
-		$producto = new Producto ($valores);			
-		$prods->setItemBD($producto);
-		$regFeedback->addFeedback("Se ha modificado el producto <b>{$regMem->getValor('nombre')}</b> con éxito.");
-	}
+			$nuevo = TRUE; // Damos por supuesto que es un producto nuevo
+			// $a contiene un array de lineas o está vacio, si esta vacio lo convertimos en un array vacio
 
-	if ($regMem->getValor('principal')) {
-		if ($producto) {
-			$galeria->getItemBD( array ('producto_id' => $producto->getPropiedad('id')));
-
-			$a = $galeria->getItemByProducto($producto->getPropiedad('id'));
-			foreach ($a as $key=>$item) {
-				if ($item->getPropiedad('id') == $regMem->getValor('principal')){
-					$item->setPropiedad('principal', TRUE);
-					$regFeedback->addFeedback('Imagen establecida como principal.');
-				} else {
-					$item->setPropiedad('principal', FALSE);
-				}
-				$galeria->setItemBD($item);
-			}			
-		}
-	}
-
-	if ($regMem->getValor('eliminar_imagen')) {
-		$imagen = $galeria->getItemBD(array('id'=>$regMem->getValor('eliminar_imagen')))->getItemById($regMem->getValor('eliminar_imagen'));
-
-		if ($imagen) {
-			$galeria->delItemBD($regMem->getValor('eliminar_imagen'));				
-			$regFeedback->addFeedback('Se ha eliminado la imagen.');
-			
-			if ($imagen->getPropiedad('principal')) {
-				$a=$galeria->getItemBD( array ('producto_id' => $producto->getPropiedad('id')))->getItemById();
-				if ($a) {
-					$a[0]->setPropiedad('principal', TRUE);
-					$galeria->setItemBD($a[0]);
-					$regFeedback->addFeedback('Se ha cambiado la imagen principal del producto.');
-				}		
+			if (!$a) {
+				$a=array();
 			}
-		} else {
-			$regError->setError('imagen', 'No existe ninguna imagen con esa <b>id</b>.');
-		}
-	}
-	break;
 
+			// Si tiene líneas las recorremos, si encontramos alguna coincidencia 
+			// aumentamos en 1 la cantidad de esa linea
+			foreach ($a as $key => $linea) {
+				if ($linea['id']==$producto->getPropiedad('id')) {
+					
+					$nuevo=FALSE; // Encontrado, no es nuevo
+					// Comprobamos si hay existencias
+					if ($producto->getPropiedad('existencias')<$a[$key]['cantidad']+1) {
+						$regError->setError('General', "En estos momentos no disponemos de suficientes existencias. Solo puede comprar {$producto->getPropiedad('existencias')} unidades.");
+					} else {
+						$a[$key]['cantidad']+=1;
+						$regFeedback->addFeedback("Añadido otro {$producto->getPropiedad('nombre')} al carrito ({$a[$key]['cantidad']})");
+						
+					}
+				}
+			}
+
+			if ($nuevo) {
+					// Comprobamos si hay existencias
+					if ($producto->getPropiedad('existencias')<1) {
+						// No deberia aparecer el link para comprar, pero podria darse el caso que se agotase
+						// Mientras tienes la página abierta.
+						$regError->setError('General', 'El producto está agotado. Disculpe las molestias.');
+					} else {
+
+					// Añadimos una nueva línea de pedido
+					$a[] = array(
+							'id'=>$producto->getPropiedad('id'),
+							'cantidad'=> 1,
+							'precio'=>$producto->getPropiedad('precio_venta')
+						);
+					$regFeedback->addFeedback("Añadido {$producto->getPropiedad('nombre')} al carrito");
+				}
+			}
+
+			// Guardamos el carrito en la sesion
+			$regSistema->setValor('carrito', $a);
+
+			// TEST Mostramos todo el carrito
+			//foreach ($a as $linea) {
+			//	echo "{$linea['id']} - cantidad: {$linea['cantidad']} precio: {$linea['precio']}<br>";
+			//}
+
+	}
 }
 
 // Cargamos todos los productos, las categorias
@@ -124,7 +140,7 @@ include 'cabecera.php';
 
 	<div id="main-content">
 		<h2>Detalle del producto</h2>
-		<h3><?=$producto->getPropiedad('nombre')?></h3>
+
 		<div class="separacion">
 			<?php
 			if ($regError->getError()) {
@@ -141,7 +157,12 @@ include 'cabecera.php';
 				}
 			}
 			?>
-		</div>			<!-- FORMULARIO PARA EDITAR PRODUCTOS -->
+		</div>
+<?php
+if ($producto) {
+?>
+
+		<h3><?=$producto->getPropiedad('nombre')?></h3>
 
 		<div id="imagenes">
 
@@ -225,7 +246,7 @@ include 'cabecera.php';
 			if ($producto->getPropiedad('existencias')<1) {
 				echo "<p class=\"comprar_disabled\">comprar</p>";
 			} else {
-				echo "<p class=\"comprar\"><a href=\"#\">comprar</a></p>";
+				echo "<p class=\"comprar\"><a href=\"{$_SERVER['SCRIPT_NAME']}?id={$producto->getPropiedad('id')}&amp;accion=Comprar\">comprar</a></p>";
 			}
 		?>
 		
@@ -233,7 +254,9 @@ include 'cabecera.php';
 		<p class="separacion">Descripción</b>:</p>
 		<p class="descripcion"><b><?=$a?></b></p>
 	</div>
-
+	<?php
+	}
+	?>
 </div>
 
 

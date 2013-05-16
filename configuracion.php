@@ -18,6 +18,8 @@
 	define ('IMG_BANNER', 'banner.jpg'); // La imagen debe ser de 654x121 pixeles
 	define ('MSG_BANNER', 'Consigue ya tu iPhone 5!!');
 
+	define ('IVA', 0.21); // Valor del IVA general a aplicar
+
 	// Iniciamos la session, nos hace falta en todas las páginas
 	session_start();
 

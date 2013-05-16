@@ -36,6 +36,9 @@ POSIBLES MEJORAS
 	
 	- Se podria añadir una sidebar nueva para el usuario, pero de momento no vale la pena porque no tiene apenas opciones
 	
+	- El IVA esta definido como un valor fijo en configuracion.php, deberia haber un campo en producto para poder establecer impuestos especiales (reducido, etc.) o usar el general si no se especifica nada.
+	
+
 TESTEO PRODUCTOS
 	Categorias generales con más subcategorias: Perifericos y Componentes
 	Categoria general con más productos: Perifericos
