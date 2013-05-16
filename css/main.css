@@ -991,10 +991,53 @@ td>input[type="text"]{
 	float: right;
 	display: block;
 	margin: 26px;
+	width:100px;
+	text-align:center;
 }
 
 .siguiente a:hover{
+	background: #4398d9;
+	text-decoration: none;
+}
+
+.volver a{
+ 	padding: 5px 10px;
+ 	font-size: 20px;
+	border-radius: 5px;
+	background-color: #53a8e9;
+	color:#fff;
+	float: left;
+	display: block;
+	margin: 26px;
+	width:100px;
+	text-align:center;
+}
+
+.volver a:hover{
+	background: #4398d9;
+	text-decoration: none;
+}
+
+
+div#main-content input.siguiente{
+ 	padding: 5px 10px;
+ 	font-size: 20px;
+	border-radius: 5px;
+	background-color: #53a8e9;
+	color:#fff;
+	float: right;
+	display: block;
+	margin: 26px;
+	width:120px;
+	text-align:center;
+	border:none;
+	font-weight: normal;
+	height: 35px;
+}
+
+div#main-content input.siguiente:hover{
 	/*cursor: pointer;*/
 	background: #4398d9;
 	text-decoration: none;
 }
+
