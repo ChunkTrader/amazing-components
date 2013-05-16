@@ -34,6 +34,7 @@ POSIBLES MEJORAS
 
 	- Todas las funciones de graficos deberian ser movidas a una clase o libreria especial, además habría que añadir funciones para reajustar el tamaño de los banners y slideshows en lugar de obligar a que sean subidos en ese tamaño o sean recortados por la aplicación.
 	
+	- Se podria añadir una sidebar nueva para el usuario, pero de momento no vale la pena porque no tiene apenas opciones
 	
 TESTEO PRODUCTOS
 	Categorias generales con más subcategorias: Perifericos y Componentes
@@ -45,3 +46,4 @@ TESTEO PRODUCTOS
 
 !! PHP 5.2 o superior
 
+Para que las funciones de mail funcionen hay que tener correctamente configurado el servidor de correo, el codigo php no tienen ningún misterio.
