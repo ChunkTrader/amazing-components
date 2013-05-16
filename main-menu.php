@@ -29,9 +29,6 @@
 					$total_cantidad += $linea['cantidad'];
 					$total_precio += ($linea['cantidad']*$linea['precio']);
 				}
-				// Asignamos la id carrito para usarlo más adelante con Javascript (si da tiempo)
-				// El enlace tiene que redirigir a la página para procesar el pedido.
-				// En lugar de un enlace usaremos Javascript para dirigir al pedido con onclick.
 
 				echo "<li id=\"carrito\">";
 				echo "<b>{$total_cantidad}</b> productos - <b>" . number_format($total_precio) . "&euro;</b>";
@@ -72,6 +69,9 @@
 					echo "<b>{$p}</b>";
 					echo "</li>";
 				}
+				// Mostramos el total
+				echo "<li class=\"total_carrito\">TOTAL: <span>". number_format($total_precio) . "&euro;</span></li>";
+
 				echo '</ul>';
 
 				echo '</li>';
