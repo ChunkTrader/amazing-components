@@ -82,10 +82,17 @@ if ($regMem->getValor('accion')=='Registrarse') {
 		$correcto=FALSE;
 	}
 
+	if (!filter_var($regMem->getValor('email'), FILTER_VALIDATE_EMAIL)) {
+		$regError->setError('email', 'La dirección de correo electrónico no es válida.');
+		$correcto=FALSE;
+	}
+
+
 	if ($correcto) {
 		$valores = array (
 			'nombre' => $regMem->getValor('nombre'),
-			'password' => SHA1($regMem->getValor('password1'))
+			'password' => SHA1($regMem->getValor('password1')),
+			'email' => $regMem->getValor('email')
 		);
 		$usuario = new Usuario($valores);
 		$usuarios->addItemBD($usuario);
@@ -174,7 +181,7 @@ include 'sidebar-categorias.php';
 				<input type="text" name="nombre"/>
 				
 				<label>e-mail: </label>
-				<input type="text" name="email" disabled/>
+				<input type="text" name="email" />
 
 				<label>Password: </label>
 				<input type="password" name="password1"/>

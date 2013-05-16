@@ -17,6 +17,7 @@ class Usuario extends Item {
 			'password'=>NULL,
 			'activo'=>FILTER_VALIDATE_BOOLEAN,
 			'token'=>NULL,
+			'email'=>FILTER_VALIDATE_EMAIL,
 			);
 	}
 

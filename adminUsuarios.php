@@ -85,13 +85,27 @@ switch ($regMem->getValor('ver')) {
 				$correcto=FALSE;
 			}
 
+			if (!filter_var($regMem->getValor('email'), FILTER_VALIDATE_EMAIL)) {
+				$regError->setError('email', 'La dirección de correo electrónico no es válida.');
+				$correcto=FALSE;
+			}
+
+
 			if ($correcto) {
 				$valores = array (
 					'nombre' => $regMem->getValor('nombre'),
-					'password' => SHA1($regMem->getValor('password1'))
+					'password' => SHA1($regMem->getValor('password1')),
+					'email' => $regMem->getValor('email')
 					);
 				$usuario = new Usuario($valores);
 				$usuarios->addItemBD($usuario);
+
+				// Recuperamos el usuario de la base de datos para obtener la id
+				$usuario = $usuarios->getUsuarioByNombreBD($usuario->getPropiedad('nombre'))->getItemByNombre($usuario->getPropiedad('nombre'));
+
+				// Todos los usuarios creados tienen asignado el rol usuario automáticamente
+				$usuario->setRol('Usuario');
+				$usuarios->setRolesBD($usuario, $roles);
 
 				$regFeedback->addFeedback ('Usuario creado con éxito <b>' . $regMem->getValor('nombre') . '</b>');
 			} else {
@@ -131,8 +145,14 @@ switch ($regMem->getValor('ver')) {
 					} else {
 						// Todo es correcto, actualizamos el password y el usuario
 						$usuario->setPropiedad('password', SHA1($regMem->getValor('password1')));
-
 						$regFeedback->addFeedback('Se ha actualizado el password.');
+					}
+
+					//var_dump(filter_var($regMem->getValor('email'), FILTER_VALIDATE_EMAIL));
+					if (!filter_var($regMem->getValor('email'), FILTER_VALIDATE_EMAIL)) {
+						$regError->setError('email', 'La dirección de correo electrónico no es válida.');
+					} else {
+						$usuario->setPropiedad('email', $regMem->getValor('email'));
 					}
 
 					// Actualizamos el estado activo/inactivo
@@ -255,7 +275,7 @@ switch ($regMem->getValor('ver')) {
 				$correcto=FALSE;
 			}
 
-						// Añadimos el nuevo rol a la base de datos
+			// Añadimos el nuevo rol a la base de datos
 			if ($correcto) {
 				$valores = array (
 					'nombre' => $regMem->getValor('nombre')
@@ -330,10 +350,11 @@ if ($regSistema->getValor('acceso_denegado')) {
 
 	<?php 
 	/*		VER USUARIOS 		*/
-	if ($regMem->getValor('ver')=='usuarios' || !$regMem->getValor('ver')){
+	
+	if ($regMem->getValor('ver')=='usuarios' || !$regMem->getValor('ver')) {
 		$regMem->setValor('ver','usuarios');
 	
-		if (!$regMem->getValor('accion')) {
+		if (!$regMem->getValor('accion') || $regMem->getValor('accion')=='Añadir') {
 
 	?>
 		<div class="separacion">
@@ -342,7 +363,7 @@ if ($regSistema->getValor('acceso_denegado')) {
 			<input type="text" name="nombre"/>
 			
 			<label>e-mail: </label>
-			<input type="text" name="email" disabled/>
+			<input type="text" name="email"/>
 
 			<label>Password: </label>
 			<input type="password" name="password1"/>
@@ -373,7 +394,7 @@ if ($regSistema->getValor('acceso_denegado')) {
 			<input type="password" name="password2"/>
 
 			<label>e-mail:</label>
-			<input type="text" name="email" disabled/>
+			<input type="text" name="email" value="<?=$usuario->getPropiedad('email')?>"/>
 
 			<label>Activo:</label>
 				<input type="checkbox" name="activo"

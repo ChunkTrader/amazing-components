@@ -6,7 +6,7 @@
 	<link rel="shortcut icon" type="image/x-icon"
 	href="http://localhost/practicas/amazing-components/favicon.ico" />
 
-	<script type="text/javascript" src="js/jquery-2.0.0.min.js"></script>
+	<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" src="js/jquery.fancybox.pack.js"></script>
 	<script type="text/javascript" src="js/jquery.flexslider-min.js"></script>
 

@@ -41,3 +41,7 @@ TESTEO PRODUCTOS
 	Subcategoría con más productos: Monitores
 	Producto con más imagenes: Samsung Galaxy S4 I9505 Negro Libre
 	NOTA: Las descripciones las he hecho copiando y pegando a saco, algunas se han copiado con 
+
+
+!! PHP 5.2 o superior
+

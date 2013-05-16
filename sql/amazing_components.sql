@@ -439,7 +439,8 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `nombre` varchar(60) NOT NULL UNIQUE,
   `password` varchar(40) NOT NULL,
   `token` varchar(40),
-  `activo` tinyint(1) DEFAULT '1' NOT NULL
+  `activo` tinyint(1) DEFAULT '1' NOT NULL,
+  `email` varchar(60) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS `roles` (
