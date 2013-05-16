@@ -255,15 +255,6 @@ include 'cabecera.php';
 		</div>
 	</div>
 
-
-	<div id="footer">
-		<p>Esto es una página de prueba, todos los contenidos son ficticios.
-			Usala bajo tu propia responsabilidad.</p>
-		<p>Javier García Rodríguez.</p>
-		<p>Última actualización 25/04/2013</p>
-	</div>
-
-
 	<script>
 		// Can also be used with $(document).ready()
 		$(window).load(function() {
@@ -272,16 +263,15 @@ include 'cabecera.php';
 				controlNav : false,
 			});
 		});
-
-		$('#carrito').hover(
-		  function () {
-		    $('#carrito_detalle').show();
-		  }, 
-		  function () {
-		    $('#carrito_detalle').hide();
-		  }
-		);
 	</script>
+	
+
+<?php
+include 'pie.php';
+?>
+
+</body>
+</html>
 
 </body>
 </html>

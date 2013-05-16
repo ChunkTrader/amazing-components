@@ -879,9 +879,18 @@ div#main-menu #carrito li {
 	height: 35px;
 }
 
+li#carrito:hover {
+	cursor: pointer;
+}
+
+div#main-menu ul#carrito_detalle {
+	width:300px;
+	right:20px;
+}
+
+
 div#main-menu #carrito_detalle li {
 	border-bottom:1px solid #ddd;
-	width: 99%;
 }
 
 

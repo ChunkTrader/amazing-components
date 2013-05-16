@@ -7,8 +7,9 @@ require_once 'classes/Registro.php';
 
 require_once 'classes/Coleccion.php';
 require_once 'classes/Categorias.php';
+require_once 'classes/Productos.php';
 require_once 'classes/Usuarios.php';
-
+require_once 'classes/Imagenes.php';
 
 
 $PDO = new PDOConfig ();

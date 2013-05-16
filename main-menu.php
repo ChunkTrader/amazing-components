@@ -17,6 +17,11 @@
 			$a = $regSistema->getValor('carrito');
 			// Comprobamos si existe el carrito
 			if ($a) {
+
+				$galeria_carrito = new Imagenes($controlador);
+				$galeria_carrito->getItemBD(array('principal' => TRUE));
+
+
 				// Calculamos la cantidad de productos, y el precio total
 				$total_cantidad = 0;
 				$total_precio = 0;
@@ -42,9 +47,9 @@
 					echo '<li>';
 					// Ponemos el thumbnail
 
-					$imagen=$galeria->getItemByProductoFirst($linea['id']);
-					if ($imagen) {
-						$b = $imagen->getPropiedad('imagen');
+					$imagen_carrito=$galeria_carrito->getItemByProductoFirst($linea['id']);
+					if ($imagen_carrito) {
+						$b = $imagen_carrito->getPropiedad('imagen');
 					} else {
 						$b = 'default';
 					}
@@ -59,8 +64,8 @@
 
 
 					// Ponemos el nombre del producto
-
-					$p = $prods->getItemBD(array(
+					$prods_carrito = new Productos($controlador);
+					$p = $prods_carrito->getItemBD(array(
 							'id' => $linea['id']
 					))->getItemById($linea['id'])->getPropiedad('nombre');
 					

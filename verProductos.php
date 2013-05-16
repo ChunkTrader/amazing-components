@@ -26,9 +26,6 @@ if (!isset($offset)){
 }
 
 
-
-
-
 $PDO = new PDOConfig ();
 
 // Incializamos los registros
@@ -201,13 +198,10 @@ include 'cabecera.php';
 	</div>
 
 
-	<div id="footer">
-		<p>Esto es una página de prueba, todos los contenidos son ficticios.
-			Usala bajo tu propia responsabilidad.</p>
-		<p>Javier García Rodríguez.</p>
-		<p>Última actualización 25/04/2013</p>
-	</div>
 
+<?php
+include 'pie.php';
+?>
 
 	<script>
 		// Can also be used with $(document).ready()
