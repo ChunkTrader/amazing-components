@@ -189,8 +189,6 @@ include 'sidebar-categorias.php';
 				<label>Repite pass: </label>
 				<input type="password" name="password2"/>
 				
-				<input type="hidden" name="ver" value="<?=$regMem->getValor('ver')?>"/>
-				
 				<p class="centrado">
 					<input type="submit" name="accion" value="Registrarse"/>
 				</p>
