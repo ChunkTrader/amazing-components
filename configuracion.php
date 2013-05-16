@@ -20,7 +20,5 @@
 
 	define ('IVA', 0.21); // Valor del IVA general a aplicar
 
-	// Iniciamos la session, nos hace falta en todas las páginas
-	session_start();
 
 ?>

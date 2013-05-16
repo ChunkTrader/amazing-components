@@ -1,48 +1,15 @@
 <?php
-require_once 'configuracion.php';
-require_once 'conectar_bd.php';
-
-require_once 'classes/Controlador.php';
-require_once 'classes/Registro.php';
-
-require_once 'classes/Categorias.php';
-require_once 'classes/Productos.php';
+require_once 'inicializacion.php';
 require_once 'classes/Fabricantes.php';
-require_once 'classes/Imagenes.php';
 require_once 'classes/Ofertas.php'; 
 
-$PDO = new PDOConfig ();
-
-// Incializamos los registros
-$regMem = RegistroMemoria::instancia();
-$regError = RegistroErrores::instancia();
-$regFeedback = RegistroFeedback::instancia();
-$regSistema = RegistroSistema::instancia();
-
-
-// El controlador de registros almacena un array con acceso a los registros que le añadamos, este
-// controlador se pasa a las colecciones al crearlo para que puedan mandar mensajes a la aplicación
-// (Sin usar por el momento)
-
-$controlador = new Controlador();
-$controlador -> setRegistro ('feedback', $regFeedback);
-$controlador -> setRegistro ('errores', $regError);
-$controlador -> setPDO($PDO);
-
-$cats = new Categorias($controlador);
 $prods = new Productos($controlador);
-
-function quitarEspacios($string){
-		$old_pattern = array("/[^a-zA-Z0-9]/", "/_+/", "/_$/");
-		$new_pattern = array("_", "_", "");
-		return preg_replace($old_pattern, $new_pattern , $string);
-}
-
-// Esta plantilla solo se usa para la página de bienvenida.
-$regMem->setValor('titulo', 'Bienvenido');
-
 $galeria = new Imagenes($controlador);
+
 $galeria->getItemBD(array('principal' => TRUE));
+
+// Título por defecto de la página
+$regMem->setValor('titulo', 'Bienvenido');
 
 
 include 'cabecera.php';

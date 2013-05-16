@@ -1,18 +1,7 @@
 <?php
-require_once 'configuracion.php';
-require_once 'conectar_bd.php';
-
-require_once 'classes/Controlador.php';
-require_once 'classes/Registro.php';
-require_once 'classes/PageNavigator.php';
-
-require_once 'classes/Categorias.php';
-require_once 'classes/Productos.php';
+require_once 'inicializacion.php';
 require_once 'classes/Fabricantes.php';
-require_once 'classes/Imagenes.php'; 
 require_once 'classes/Ofertas.php';
-
-
 
 /*get query string - name should be same as first parameter name passed to the page navigator class*/
 $offset = @$_GET['offset'];
@@ -25,25 +14,6 @@ if (!isset($offset)){
 	$recordoffset = $offset * PRODUCTOS_PAGINA;
 }
 
-
-$PDO = new PDOConfig ();
-
-// Incializamos los registros
-$regMem = RegistroMemoria::instancia();
-$regError = RegistroErrores::instancia();
-$regFeedback = RegistroFeedback::instancia();
-$regSistema = RegistroSistema::instancia();
-
-// El controlador de registros almacena un array con acceso a los registros que le añadamos, este
-// controlador se pasa a las colecciones al crearlo para que puedan mandar mensajes a la aplicación
-// (Sin usar por el momento)
-
-$controlador = new Controlador();
-$controlador -> setRegistro ('feedback', $regFeedback);
-$controlador -> setRegistro ('errores', $regError);
-$controlador -> setPDO($PDO);
-
-$cats = new Categorias($controlador);
 $prods = new Productos($controlador);
 $ofertas = new Ofertas($controlador);
 
@@ -51,10 +21,8 @@ $opciones = array('recordoffset' => $recordoffset);
 
 
 // Obtenemos los parametros de consulta
-
 $opciones += array('buscar'=>$regMem->getValor('buscar'));
 $parametro ='&amp;buscar=' . $regMem->getValor('buscar');
-
 
 if (!$regMem->getValor('buscar')) {
 	$regError->setError('general', 'Debes introducir un valor de búsqueda.');
@@ -67,16 +35,6 @@ if (!$regMem->getValor('buscar')) {
 }
 
 $regMem->setValor('titulo', 'Buscar -' . $regMem->getValor('buscar'));
-
-
-
-
-function quitarEspacios($string){
-		$old_pattern = array("/[^a-zA-Z0-9]/", "/_+/", "/_$/");
-		$new_pattern = array("_", "_", "");
-		return preg_replace($old_pattern, $new_pattern , $string);
-}
-
 
 include 'cabecera.php';
 ?>
@@ -174,12 +132,9 @@ include 'cabecera.php';
 	</div>
 
 
-	<div id="footer">
-		<p>Esto es una página de prueba, todos los contenidos son ficticios.
-			Usala bajo tu propia responsabilidad.</p>
-		<p>Javier García Rodríguez.</p>
-		<p>Última actualización 25/04/2013</p>
-	</div>
+<?php
+	include 'pie.php';
+?>
 
 
 	<script>

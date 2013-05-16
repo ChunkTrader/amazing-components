@@ -1,30 +1,5 @@
 <?php
-require_once 'configuracion.php';
-require_once 'conectar_bd.php';
-
-require_once 'classes/Controlador.php';
-require_once 'classes/Registro.php';
-
-require_once 'classes/Categorias.php';
-require_once 'classes/Coleccion.php';
-
-$PDO = new PDOConfig ();
-
-// Incializamos los registros
-$regMem = RegistroMemoria::instancia();
-$regError = RegistroErrores::instancia();
-$regFeedback = RegistroFeedback::instancia();
-$regSistema = RegistroSistema::instancia();
-
-
-// El controlador de registros almacena un array con acceso a los registros que le añadamos, este
-// controlador se pasa a las colecciones al crearlo para que puedan mandar mensajes a la aplicación
-$controlador = new Controlador();
-$controlador -> setRegistro ('feedback', $regFeedback);
-$controlador -> setRegistro ('errores', $regError);
-$controlador -> setPDO($PDO);
-
-require_once 'comprobarUsuario.php';
+require_once 'inicializacion.php';
 
 // Comprobamos si tiene privilegio de acceso a la página
 if (!$regSistema->getValor('privilegios')['verAdminCategorias']){
@@ -33,80 +8,77 @@ if (!$regSistema->getValor('privilegios')['verAdminCategorias']){
 	exit;
 }
 
-$cats = new Categorias($controlador);
+// Intentamos recuperar la categoria
+if ($regMem->getValor('id')){
+	$categoria=$cats->getItemBD(array('id'=>$regMem->getValor('id')))->getItemById($regMem->getValor('id'));
+}
+
+// Titulo por defecto de la página
+$regMem->setValor('titulo', 'Añadir Categoría');
 
 
-	// Intentamos recuperar la categoria
-	if ($regMem->getValor('id')){
-		$categoria=$cats->getItemBD(array('id'=>$regMem->getValor('id')))->getItemById($regMem->getValor('id'));
+switch ($regMem->getValor('accion')){
+
+	case 'Cancelar':
+	header("Location: {$_SERVER['SCRIPT_NAME']}");
+	exit;
+	break;
+
+	case 'Añadir':
+	if ($regMem->getValor('nombre')) {
+		$valores = array (
+			'nombre'=>$regMem->getValor('nombre'), 
+			'parent_id' => $regMem->getValor('parent_id'), 
+			'descripcion' => $regMem->getValor('descripcion'));
+		$cats->addItemBD ( new Categoria ( $valores));
+		$regFeedback->addFeedback("Se ha añadido la categoría <b>{$regMem->getValor('nombre')}</b> con éxito.");
+	} else {
+		$regError->setError('general', 'El nombre no puede estar vacío');
+	}
+	break;
+
+	case 'Eliminar':		
+	$regMem->setValor('titulo', 'Eliminar Categoría');
+
+	// Si el método es POST es que hemos enviado la confiramación
+	if ($regMem->getValor('metodo')=='POST' && $categoria) {				
+		$cats->getItemBD();
+		if ($cats->getChildItemsById($categoria->getPropiedad('id'))) {
+			$regError->setError('general' , "No puede eliminarse <b>{$categoria->getPropiedad('nombre')}</b> porque tiene categorias descendientes.");
+		} else {
+			$cats->delItemBD($regMem->getValor('id'));
+			$regFeedback->addFeedback("Se ha eliminado la categoria <b>{$categoria->getPropiedad('nombre')}</b> con éxito.");
+		}
+	} else if ($regMem->getValor('metodo')=='GET' && $categoria) {
+		$regMem->setValor('nombre', $categoria->getPropiedad('nombre'));
+	} else {
+		$regError->setError('general', 'No existe ninguna categoría con esa <b>id</b>.');
 	}
 
-	// Titulo por defecto de la página
-	$regMem->setValor('titulo', 'Añadir Categoría');
+	break;
 
+	case 'Editar':
+	$regMem->setValor('titulo', 'Editar Categoría');
 
-	switch ($regMem->getValor('accion')){
+	if ($regMem->getValor('metodo')=='POST' && $categoria) {
 
-		case 'Cancelar':
-			header("Location: {$_SERVER['SCRIPT_NAME']}");
-			exit;
-			break;
+		$valores = array (
+			'id' =>$regMem->getValor('id'),
+			'nombre'=>$regMem->getValor('nombre'),
+			'parent_id' => $regMem->getValor('parent_id'),
+			'descripcion' => $regMem->getValor('descripcion'),
+			'activa' => (boolean)($regMem->getValor('activa'))
+			);
+		$cats->setItemBD ( new Categoria ( $valores));
+		$regFeedback->addFeedback("Se ha modificado la categoría <b>{$regMem->getValor('nombre')}</b> con éxito.");
+	} else if (!$categoria) {
+		$regError->setError('general', 'No existe ninguna categoría con esa <b>id</b>.');
+	}
+	break;
+}
 
-		case 'Añadir':
-			if ($regMem->getValor('nombre')) {
-				$valores = array (
-					'nombre'=>$regMem->getValor('nombre'), 
-					'parent_id' => $regMem->getValor('parent_id'), 
-					'descripcion' => $regMem->getValor('descripcion'));
-				$cats->addItemBD ( new Categoria ( $valores));
-				$regFeedback->addFeedback("Se ha añadido la categoría <b>{$regMem->getValor('nombre')}</b> con éxito.");
-			} else {
-				$regError->setError('general', 'El nombre no puede estar vacío');
-			}
-			break;
-
-		case 'Eliminar':		
-			$regMem->setValor('titulo', 'Eliminar Categoría');
-
-			// Si el método es POST es que hemos enviado la confiramación
-			if ($regMem->getValor('metodo')=='POST' && $categoria) {				
-					$cats->getItemBD();
-					if ($cats->getChildItemsById($categoria->getPropiedad('id'))) {
-						$regError->setError('general' , "No puede eliminarse <b>{$categoria->getPropiedad('nombre')}</b> porque tiene categorias descendientes.");
-					} else {
-						$cats->delItemBD($regMem->getValor('id'));
-						$regFeedback->addFeedback("Se ha eliminado la categoria <b>{$categoria->getPropiedad('nombre')}</b> con éxito.");
-					}
-			} else if ($regMem->getValor('metodo')=='GET' && $categoria) {
-				$regMem->setValor('nombre', $categoria->getPropiedad('nombre'));
-			} else {
-				$regError->setError('general', 'No existe ninguna categoría con esa <b>id</b>.');
-			}
-			
-			break;
-
-		case 'Editar':
-			$regMem->setValor('titulo', 'Editar Categoría');
-
-			if ($regMem->getValor('metodo')=='POST' && $categoria) {
-
-				$valores = array (
-					'id' =>$regMem->getValor('id'),
-					'nombre'=>$regMem->getValor('nombre'),
-					'parent_id' => $regMem->getValor('parent_id'),
-					'descripcion' => $regMem->getValor('descripcion'),
-					'activa' => (boolean)($regMem->getValor('activa'))
-				);
-				$cats->setItemBD ( new Categoria ( $valores));
-				$regFeedback->addFeedback("Se ha modificado la categoría <b>{$regMem->getValor('nombre')}</b> con éxito.");
-			} else if (!$categoria) {
-				$regError->setError('general', 'No existe ninguna categoría con esa <b>id</b>.');
-			}
-			break;
-		}
-
-	// Cargamos la lista de categorias
-	$cats->getItemBD();
+// Cargamos la lista de categorias
+$cats->getItemBD();
 
 
 include 'cabecera.php';

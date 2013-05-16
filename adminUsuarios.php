@@ -1,44 +1,17 @@
 <?php
-require_once 'configuracion.php';
-require_once 'conectar_bd.php';
-
-require_once 'classes/Controlador.php';
-require_once 'classes/Registro.php';
-
-require_once 'classes/Coleccion.php';
+require_once 'inicializacion.php';
 require_once 'classes/Usuarios.php';
 require_once 'classes/Roles.php';
 require_once 'classes/Privilegios.php';
 
 
-
-$PDO = new PDOConfig ();
-
-// Incializamos los registros
-$regMem = RegistroMemoria::instancia();
-$regError = RegistroErrores::instancia();
-$regFeedback = RegistroFeedback::instancia();
-$regSistema = RegistroSistema::instancia();
-
-
-// El controlador de registros almacena un array con acceso a los registros que le añadamos, este
-// controlador se pasa a las colecciones al crearlo para que puedan mandar mensajes a la aplicación
-$controlador = new Controlador();
-$controlador -> setRegistro ('feedback', $regFeedback);
-$controlador -> setRegistro ('errores', $regError);
-$controlador -> setPDO($PDO);
-
-// Cargamos la comprobación despues de cargar las demás clases e inicializar los registros
-
 $usuarios = new Usuarios($controlador);
 $roles = new Roles($controlador);
 $privilegios = new Privilegios($controlador);
 
-require_once 'comprobarUsuario.php';
 
 if (!$regMem->getValor('ver') && (!$regSistema->getValor('privilegios')['verAdminUsuarios'])) {
 	$regSistema->setValor('acceso_denegado', 'administrar');
-	
 	header('Location: error.php');
 	exit;
 } 
