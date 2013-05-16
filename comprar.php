@@ -2,6 +2,9 @@
 require_once 'inicializacion.php';
 require_once 'classes/Usuarios.php';
 require_once 'classes/DatosUsuarios.php';
+require_once 'classes/Pedidos.php';
+require_once 'classes/LineasPedido.php';
+
 
 $usuarios = new Usuarios($controlador);
 
@@ -25,6 +28,8 @@ $direcciones = new DatosUsuarios($controlador);
 // Si no hay carrito no tiene sentido mostrar ningún paso
 if (!$carrito) {
 	$regMem->setValor('paso',null);
+	$regMem->setValor('accion', null);
+	$regError->setError('general', 'El carrito está vacio.');
 }
 
 switch ($regMem->getValor('accion')) {
@@ -151,14 +156,54 @@ switch ($regMem->getValor('accion')) {
 		break; // Continuar
 
 	case 'Finalizar':
-		
-
-
 		// Generamos el pedido
-		// Lo guardamos en la base de datos
-		// Actualizamos las existencias
-		// Mostramos el mensaje de agradecimiento
+		$pedidos = new Pedidos($controlador);
+		$lineas = new LineasPedido($controlador);
 
+		// Usamos la referencia para poder encontrar el pedido, la id se genera en la base de datos
+		// y no hay manera de recuperarla.
+
+		// OJO, usar solo uniqid no parece bastante seguro.
+		$ref = uniqid();
+		
+		// Valores del pedido
+		$valores = array (
+				'usuario_id' => $regSistema->getValor('id'),
+				'ref' => $ref
+		);
+
+		// Lo guardamos en la base de datos
+		$pedido = new Pedido($valores);
+		$pedidos->addItemBD($pedido);
+
+		// Solo tiene que debe devolver 1
+		$pedido = $pedidos->getPedidoByRefBD($ref)->getItemById()[0];
+
+		// Ahora creamos las líneas de pedido
+		foreach ($carrito as $linea){
+			$valores = array(
+					'pedido_id' => $pedido->getPropiedad('id'),
+					'producto_id' => $linea['id'],
+					'cantidad' => $linea['cantidad'],
+					'precio' => $linea['precio']
+				);
+			$linea_pedido = new LineaPedido($valores);
+			$lineas->addItemBD($linea_pedido);
+			
+			// Actualizamos las existencias
+			$producto = $prods->getItemBD(array('id'=>$linea['id']))->getItemById($linea['id']);
+			$producto->setPropiedad('existencias', $producto->getPropiedad('existencias')-$linea['cantidad']);
+			$prods->setItemBD($producto);
+		}
+
+		// Mostramos el mensaje de confirmación
+		$regFeedback->addFeedback('El pedido ha sido confirmado.');
+
+		// Vaciamos el carrito
+		$carrito = null;
+		$regSistema->setValor('carrito', $carrito);
+		$regMem->setValor('paso',4);
+		break; // Finalizar
 
 } // Fin switch accion
 
@@ -166,9 +211,7 @@ switch ($regMem->getValor('accion')) {
 
 
 
-if (!$carrito){
-	$regError->setError('general', 'El carrito está vacio.');
-}
+
 
 // Asignamos el subtitulo y acciones especiales según el paso
 switch ($regMem->getValor('paso')){
@@ -219,6 +262,11 @@ switch ($regMem->getValor('paso')){
 		break;
 
 
+	case 4:
+		$regMem->setValor('subtitulo', '¡Paso 4: Gracias por su compra!');
+		break;
+
+
 	default:
 		$regMem->setValor('subtitulo', 'Paso 1: Comprobar el pedido');
 		break;
@@ -233,6 +281,9 @@ include 'cabecera.php';
 include 'top-menu.php';
 include 'main-menu.php';
 include 'sidebar-categorias.php';
+
+
+
 ?>
 
 
@@ -261,8 +312,17 @@ include 'sidebar-categorias.php';
 	?>
 	<div class="separacion">
 	<?php	
+		// Si no hay carrito no mostramos nada
+		if (!$carrito && $regMem->getValor('paso')!=4) {
+			?>
+			<div class="separacion centrado">
+				<p><a href="index.php">Volver al inicio</a></p>
+			</div>
+
+		<?php
+
 		//Paso 1
-		if ($regMem->getValor('paso')==1 OR !$regMem->getValor('paso')) {
+		} else if ($regMem->getValor('paso')==1 OR !$regMem->getValor('paso')) {
 
 			?>
 			<form action="<?=$_SERVER['SCRIPT_NAME']?>" method="POST">
@@ -378,8 +438,8 @@ include 'sidebar-categorias.php';
 
 	<?php
 		/* PASO 3  		*/
-		} else if ($regMem->getValor('paso'==3)) {
-			
+		} else if ($regMem->getValor('paso')==3) {
+
 			// Mostramos todos los datos y pedimos confirmación
 		?>
 		<div class="columnas">
@@ -445,6 +505,17 @@ include 'sidebar-categorias.php';
 				<p>
 			</form>
 
+			<?php
+		} else if ($regMem->getValor('paso')==4) {
+			?>
+			<div class="separacion centrado">
+
+				<p>Gracias por su compra. Su pedido será tramitado en cuanto recibamos confirmación del pago.</p>
+				<p>Podrá hacer un seguimiento de su pedido desde el enlace de su cuenta.</p>
+
+				<p><a href="usuarioPrincipal.php">Ir a mi cuenta</a></p>
+				<p><a href="index.php">Volver al inicio</a></p>
+			</div>
 			<?php
 		}
 	
