@@ -480,6 +480,17 @@ CREATE TABLE IF NOT EXISTS `pedidos`(
 `id` int(11) NOT NULL AUTO_INCREMENT,
 `usuario_id` int(11) NOT NULL,
 `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-`estado` enum ('Confirmado', 'Pagado', 'Preparado', 'Enviado', 'Recibido') NOT NULL DEFAULT 'Confirmado',
+`estado` enum ('Confirmado', 'Pagado', 'Preparado', 'Enviado', 'Recibido', 'Cancelado') NOT NULL DEFAULT 'Confirmado',
 PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS `datos_usuarios`(
+`id` int(11) NOT NULL,
+`nombre` varchar(30) NOT NULL,
+`apellido` varchar(60) NOT NULL,
+`direccion` varchar(200) NOT NULL,
+`poblacion` varchar(30) NOT NULL,
+`cp` int(5) NOT NULL,
+PRIMARY KEY (id)
+);
+

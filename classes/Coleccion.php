@@ -79,6 +79,7 @@ abstract class Coleccion {
 		}
 
 		// Eliminamos el id de los valores a actualizar
+		
 		unset ($aux1['id']);
 		unset ($aux2['id']);
 

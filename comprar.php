@@ -1,6 +1,7 @@
 <?php
 require_once 'inicializacion.php';
 require_once 'classes/Usuarios.php';
+require_once 'classes/DatosUsuarios.php';
 
 $usuarios = new Usuarios($controlador);
 
@@ -18,6 +19,13 @@ $regMem->setValor('titulo', 'Comprar');
 
 $carrito = $regSistema->getValor('carrito');
 $prods = new Productos($controlador);
+$direcciones = new DatosUsuarios($controlador);
+
+
+// Si no hay carrito no tiene sentido mostrar ningún paso
+if (!$carrito) {
+	$regMem->setValor('paso',null);
+}
 
 switch ($regMem->getValor('accion')) {
 	case 'Eliminar':
@@ -120,6 +128,19 @@ switch ($regMem->getValor('accion')) {
 			// Si existe la actualizamos
 			// OJO, no comprobamos si los datos han cambiado.
 
+			$direccion = $direcciones->getItemBD(array ('id'=>$regSistema->getValor('id')))->getItemById($regSistema->getValor('id'));
+			if ($direccion) {
+				// Si ya existe una dirección, la sustituimos
+				$a += array ('id' => $regSistema->getValor('id'));
+				$direccion = new DatosUsuario($a);
+				$direcciones->setItemBD($direccion);
+
+			} else {
+				$a += array ('id' => $regSistema->getValor('id'));
+				$direccion = new DatosUsuario($a);
+				$direcciones->addItemBD($direccion);
+			}
+
 
 
 			$regMem->setValor('paso', 3);
@@ -129,6 +150,14 @@ switch ($regMem->getValor('accion')) {
 
 		break; // Continuar
 
+	case 'Finalizar':
+		
+
+
+		// Generamos el pedido
+		// Lo guardamos en la base de datos
+		// Actualizamos las existencias
+		// Mostramos el mensaje de agradecimiento
 
 
 } // Fin switch accion
@@ -151,13 +180,42 @@ switch ($regMem->getValor('paso')){
 		$regMem->setValor('subtitulo', 'Paso 2: Datos del usuario');
 		// Comprobamos si ya existe una dirección de envio para el usuario.
 
+		$direccion = $direcciones->getItemBD(array ('id'=>$regSistema->getValor('id')))->getItemById($regSistema->getValor('id'));
+		if ($direccion) {
+			// Si se han enviado otros datos por el formulario los mantenemos
+			// OJO, esto se puede hacer tambien comparando los arrays, pero al ser pocos datos
+			// no vale la pena mirarlo ahora.
 
+			if (!$regMem->getValor('nombre')) {
+				$regMem->setValor('nombre', $direccion->getPropiedad('nombre'));
+			}
+
+			if (!$regMem->getValor('apellido')) {
+				$regMem->setValor('apellido', $direccion->getPropiedad('apellido'));
+			}
+
+			if (!$regMem->getValor('direccion')) {
+				$regMem->setValor('direccion', $direccion->getPropiedad('direccion'));
+			}
+
+			if (!$regMem->getValor('poblacion')) {
+				$regMem->setValor('poblacion', $direccion->getPropiedad('poblacion'));
+			}
+
+			if (!$regMem->getValor('cp')) {
+				$regMem->setValor('cp', $direccion->getPropiedad('cp'));
+			}
+
+			$regFeedback->addFeedback('Estos son los datos de tu último pedido, si no han cambiado pulsa continuar.');
+		} else {
+			$regFeedback->addFeedback('Por favor, introduce tus datos antes de continuar');
+		}
 
 
 		break;
 
 	case 3:
-		$regMem->setValor('subtitulo', 'Datos bancarios y confirmación');
+		$regMem->setValor('subtitulo', 'Paso 3: Confirmación del pedido');
 		break;
 
 
@@ -235,7 +293,7 @@ include 'sidebar-categorias.php';
 						echo "</td>";
 
 						echo "<td>";
-						echo "<input type=\"text\" size=\"3\" name=\"cantidad[$clave]\" value=\"{$linea['cantidad']}\"/></td>";
+						echo "<input type=\"text\" size=\"3\" name=\"cantidad[$clave]\" value=\"{$linea['cantidad']}\"/>";
 						echo "</td>";
 
 						echo "<td>" . number_format($linea['precio']/(1+IVA),2) . "&euro;</td>";
@@ -318,11 +376,77 @@ include 'sidebar-categorias.php';
 		</form>
 
 
-
-
 	<?php
 		/* PASO 3  		*/
-		} 
+		} else if ($regMem->getValor('paso'==3)) {
+			
+			// Mostramos todos los datos y pedimos confirmación
+		?>
+		<div class="columnas">
+			<p>Nombre: <b><?=$regSistema->getValor('datos_envio')['nombre']?></b></p>
+			<p>Apellido: <b><?=$regSistema->getValor('datos_envio')['apellido']?></b></p>
+			<p>Dirección: <b><?=$regSistema->getValor('datos_envio')['direccion']?></b></p>
+			<p>Población: <b><?=$regSistema->getValor('datos_envio')['poblacion']?></b></p>
+			<p>Código Postal: <b><?=$regSistema->getValor('datos_envio')['cp']?></b></p>
+		</div>
+
+		<div class="separacion"></div>
+				<table>
+					<tr>
+						<th>Producto</th>
+						<th>Unidades</th>
+						<th>Precio</th>
+						<th>Subtotal</th>
+					</tr>
+				<?php
+
+			$total_precio = 0;
+			foreach ($carrito as $clave => $linea) {
+				echo "<tr>";
+							
+				echo "<td>";
+				$producto = $prods->getItemBD(array('id' => $linea['id']))->getItemById($linea['id']);
+				echo $producto->getPropiedad('nombre');
+				echo "</td>";
+
+				echo "<td>{$linea['cantidad']}</td>";
+				echo "</td>";
+
+				echo "<td>" . number_format($linea['precio']/(1+IVA),2) . "&euro;</td>";
+				echo "<td>" . number_format($linea['precio']*$linea['cantidad']/(1+IVA),2) . "&euro;</td>";
+				echo "</td>";
+				echo "</tr>";
+				$total_precio += $linea['precio']*$linea['cantidad'];
+			}
+
+
+				?>
+				<tr>
+					<th>IVA <?=(IVA*100)?>%</th>
+					<th></th>
+					<th></th>
+					<th><?=number_format($total_precio*IVA,2)?>&euro;</th>
+					
+				</tr>
+				<tr>
+					<th>TOTAL</th>
+					<th></th>
+					<th></th>
+					<th><?=number_format($total_precio,2)?>&euro;</th>
+					
+				</tr>
+
+				</table>
+			<form action="<?=$_SERVER['SCRIPT_NAME']?>" method="POST">
+
+				<p class="separacion"></p>
+					<input class="siguiente" type="submit" name="accion" value="Finalizar" />
+					<p class="volver"><a href="<?=$_SERVER['SCRIPT_NAME']?>?paso=2">Volver</a></p>
+				<p>
+			</form>
+
+			<?php
+		}
 	
 	?>
 

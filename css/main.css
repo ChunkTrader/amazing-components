@@ -1041,3 +1041,14 @@ div#main-content input.siguiente:hover{
 	text-decoration: none;
 }
 
+div.columnas>p{
+	width: 345px;
+	font-size: 20px;
+	float: left;
+}
+
+div.columnas>p>b{
+	float: right;
+	text-align: right;
+	color: #53a8e9;
+}
