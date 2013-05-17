@@ -35,11 +35,14 @@ switch ($regMem->getValor('ver')) {
 			$pedidos->getItemBD();
 
 		}
+
+		if (!$pedidos->getTotal()) {
+			$regFeedback->addFeedback('No se ha encontrado ningún pedido.');
+		}
 		break; // ver = lista
 
 
 	case 'lista pagados':
-
 		if ($regMem->getValor('accion')=='Enviar') {
 			$regMem->setValor('titulo', 'Pedidos para enviar');
 			// Intentamos recuperar el pedido
@@ -64,6 +67,40 @@ switch ($regMem->getValor('ver')) {
 
 		// Recuperamos todos los pedidos pagados
 		$pedidos->getItemBD(array ('estado'=>'Pagado'));
+		if (!$pedidos->getTotal()) {
+			$regFeedback->addFeedback('No hay ningún pedido pendiente de preparar ni enviar.');
+		}
+		break; // ver = lista pagados
+
+
+	case 'lista enviados':
+		if ($regMem->getValor('accion')=='Recibido') {
+			$regMem->setValor('titulo', 'Confirmar recepción');
+			// Intentamos recuperar el pedido
+			if (!$regMem->getValor('id')) {
+				$regError->setError('general', 'No existe ningún pedido con esa <b>referencia</b>');
+				
+			} else {
+				$pedido = $pedidos->getItemBD(array ('id' =>$regMem->getValor('id')))->getItemById($regMem->getValor('id'));
+				if (!$pedido) {
+					// Error, el pedido no existe
+					$regError->setError('general', 'No existe ningún pedido con esa <b>referencia</b>');
+				} else if ($pedido->getPropiedad('estado')!='Enviado'){
+					$regError->setError('general', 'Ese pedido no ha sido enviado.');
+				} else {
+					// Cambiamos el estado
+					$pedido->setPropiedad('estado', 'Recibido');
+					$pedidos->setItemBD($pedido);
+					$regFeedback->addFeedback ('Se ha confirmado la recepción del pedido con referencia ' . $pedido->getPropiedad('ref') . '.');
+				}
+			}
+		}
+
+		// Recuperamos todos los pedidos enviados
+		$pedidos->getItemBD(array ('estado'=>'Enviado'));
+		if (!$pedidos->getTotal()) {
+			$regFeedback->addFeedback('No hay ningún pedido pendiente de recepción.');
+		}
 		break; // ver = lista pagados
 
 
@@ -396,10 +433,11 @@ if ($regSistema->getValor('acceso_denegado')) {
 		</form>
 
 	<?php
-	}else if ($regMem->getValor('ver')=='lista pagados') {
+	} else if ($regMem->getValor('ver')=='lista pagados') {
+	
+	if ($pedidos->getTotal()) {
 	?>
-	<p class="centrado separacion">Estos son los pedidos para preparar y enviar.</p>
-
+	<p class="centrado separacion">Estos son los pedidos pendientes de ser preparados y enviados.</p>
 
 	<table>
 		<tr>
@@ -433,17 +471,69 @@ if ($regSistema->getValor('acceso_denegado')) {
 					
 				echo "</tr>";
 			}
+		?>
+	</table>
+		<?php
+		} else {
+			// La lista está vacía
+		?>	
+			<p class="separacion centrado"><a href="<?=$_SERVER['SCRIPT_NAME']?>">Volver a la lista completa</a></p>
 
+		<?php
+		}
+
+	} else if ($regMem->getValor('ver')=='lista enviados') {
+	if ($pedidos->getTotal()) {
+	?>
+	<p class="centrado separacion">Estos son los pedidos enviados, esperando a recibir la confirmación de recepción.</p>
+
+
+	<table>
+		<tr>
+			<th>Ref</th>
+			<th>Nombre</th>
+			<th>Fecha</th>
+			<th>Estado</th>
+			<th></th>
+		</tr>
+
+		<?php
+			$a = $pedidos->getItemById();
+			foreach ($a as $pedido) {
+				echo "<tr>";
+					echo "<td><a href=\"{$_SERVER['SCRIPT_NAME']}?ver=detalle&amp;id={$pedido->getPropiedad('id')}\">";
+					echo "{$pedido->getPropiedad('ref')}";
+					echo "</a></td>";
+					
+					// Recuperamos el nombre y apellido del usuario
+					$usuario = $datos_usuarios->getItemBD(array('id'=>$pedido->getPropiedad('usuario_id')))->getItemById($pedido->getPropiedad('usuario_id'));
+					echo "<td><a href={$_SERVER['SCRIPT_NAME']}?ver=lista&amp;usuario={$pedido->getPropiedad('usuario_id')}>";
+					echo "{$usuario->getPropiedad('nombre')} {$usuario->getPropiedad('apellido')}";
+					echo "</a></td>";
+
+					echo "<td>{$pedido->getPropiedad('fecha')}</td>";
+
+					echo "<td class=\"" . quitarEspacios($pedido->getPropiedad('estado')) . "\">{$pedido->getPropiedad('estado')}</td>";
+
+					echo "<td><a href=\"{$_SERVER['SCRIPT_NAME']}?id={$pedido->getPropiedad('id')}&amp;ver=lista+enviados&amp;accion=Recibido\">Recibido</a></td>";
+				echo "</tr>";
+			}
 
 		?>
 
 
 	</table>
-	<?php
-		} // Else final de las vistas
-		?>
+		<?php
+		} else {
+			// La lista está vacía
+		?>	
+			<p class="separacion centrado"><a href="<?=$_SERVER['SCRIPT_NAME']?>">Volver a la lista completa</a></p>
 
-	</div>
+		<?php
+	}
+} // Else final de las vistas
+?>
+</div>
 </div>
 
 <?php

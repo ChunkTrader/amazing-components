@@ -31,6 +31,7 @@
 					if (isset($regSistema->getValor('privilegios')['verAdminPedidos'])) {
 						echo "<li><a href=\"adminPedidos.php\">Ver pedidos</a></li>";
 						echo "<li><a href=\"adminPedidos.php?ver=lista+pagados\">Pedidos para enviar</a></li>";
+						echo "<li><a href=\"adminPedidos.php?ver=lista+enviados\">Confirmar recepción</a></li>";
 					}
 				?>
 				
