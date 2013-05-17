@@ -31,7 +31,7 @@ if ($regMem->getValor('metodo')!='POST') {
 	$regMem->setValor('accion', NULL);
 }
 
-if ($producto) {
+if (isset($producto)) {
 	switch ($regMem->getValor('accion')){
 		case 'Comprar':
 			// Comprobamos si ya existe un producto igual en la sesion
@@ -84,6 +84,9 @@ if ($producto) {
 
 			// Guardamos el carrito en la sesion
 			$regSistema->setValor('carrito', $a);
+			
+			// Guardamos el carrito en la cookie
+			setcookie('carrito', serialize($a), time()+3600*24*14); // Lo guardamos durante dos semanas;
 
 
 	}
@@ -95,6 +98,8 @@ $cats->getItemBD();
 
 if (isset($producto)) {
 	$galeria->getItemBD( array ('producto_id' => $producto->getPropiedad('id')));
+} else {
+	$regError->setError('general', 'No existe ningún producto con esa <b>id</b>');
 }
 
 include 'cabecera.php';
@@ -129,7 +134,7 @@ include 'cabecera.php';
 			?>
 		</div>
 <?php
-if ($producto) {
+if (isset($producto)) {
 ?>
 
 		<h3><?=$producto->getPropiedad('nombre')?></h3>
@@ -218,8 +223,7 @@ if ($producto) {
 			} else {
 				echo "<form action=\"{$_SERVER['SCRIPT_NAME']}\" method=\"POST\">";
 				echo "<input type=\"hidden\" name=\"id\" value=\"{$producto->getPropiedad('id')}\">";
-				echo "<input type=\"submit\" name=\"accion\" value=\"Comprar\" class=\"comprar\"/>";
-				// echo "<p class=\"comprar\"><a href=\"{$_SERVER['SCRIPT_NAME']}?id={$producto->getPropiedad('id')}&amp;accion=Comprar\">comprar</a></p>";
+				echo "<input type=\"submit\" name=\"accion\" value=\"Comprar\" class=\"comprar\"/>";				
 				echo "</form>";
 			}
 		?>
@@ -228,6 +232,12 @@ if ($producto) {
 		<p class="separacion">Descripción</b>:</p>
 		<p class="descripcion"><b><?=$a?></b></p>
 	</div>
+	<?php
+	} else {
+	?>
+		<p class="centrado separacion">
+			<a href="verProductos.php">Volver a la lista de productos</a>
+		</p>
 	<?php
 	}
 	?>

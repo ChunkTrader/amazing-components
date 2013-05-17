@@ -17,7 +17,6 @@ if (1!=1) {
 	// Recuperamos los datos
 	if (!empty($_COOKIE['login'])) {
 		$recuperar = unserialize($_COOKIE['login']);
-
 		
 		//echo "user id: {$recuperar['id']}<br>";
 		//echo "token: {$recuperar['token']}<br>";
@@ -64,5 +63,19 @@ if (1!=1) {
 	}
 
 }
+
+// Si el carrito esta vacio comprobamos si hay una cookie para recargarlo
+// Si no hay es que se ha vaciado el carrito o se ha desconectado
+if (!empty($_COOKIE['carrito'])) {
+	// Comprobamos si ya existe el carrito en la sesion
+	if ($regSistema->getValor('carrito')) {
+		// Hay un carrito en memoria, no hacemos nada
+		
+	} else {
+		// No hay carrito, recuperamos el de la cookie
+		$regSistema->setValor('carrito', unserialize($_COOKIE['carrito']));
+	}
+}
+	
 	
 ?>
