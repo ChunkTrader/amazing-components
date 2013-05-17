@@ -45,7 +45,7 @@ include 'sidebar-administrar.php';
 
 	<div class="separacion centrado">
 		<p>Esta es la página principal de administración.</p>
-		<p>Por el momento está vacía.</p>
+
 	</div>
 </div>
 
