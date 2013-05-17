@@ -315,6 +315,32 @@ if ($regSistema->getValor('acceso_denegado')) {
 
 		</table>
 	</div>
+		<form action="<?=$_SERVER['SCRIPT_NAME']?>" method="POST">
+			<input type="hidden" name="id" value="<?=$pedido->getPropiedad('id')?>"/>
+			<input type="hidden" name="ver" value="cancelar"/>
+			<p class="separacion centrado">
+				<input type="submit" value="Cancelar" name="accion" />
+				
+				<input type="submit" value="Cancelar Pedido" name="accion"
+				<?php
+				if ($pedido->getPropiedad('estado')=='Confirmado' || $pedido->getPropiedad('estado')=='Cancelado') {
+					echo ' disabled ';
+				}
+				?>
+				/>
+				
+
+				<input type="submit" value="Confirmar Pago" name="accion"
+				<?php
+				if ($pedido->getPropiedad('estado')!='Confirmado') {
+					echo ' disabled ';
+				}
+				?>
+				/>
+			</p>
+
+		</form>
+
 	<?php
 	} // Elfse final de las vistas
 	

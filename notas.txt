@@ -38,6 +38,9 @@ POSIBLES MEJORAS
 	
 	- El IVA esta definido como un valor fijo en configuracion.php, deberia haber un campo en producto para poder establecer impuestos especiales (reducido, etc.) o usar el general si no se especifica nada.
 	
+	- OJO, no estamos almacenando la dirección de envio, mostramos siempre la última dirección del usuario. Habría que almacenar a parte los datos de envio para cada pedido.
+
+
 
 TESTEO PRODUCTOS
 	Categorias generales con más subcategorias: Perifericos y Componentes
@@ -49,4 +52,4 @@ TESTEO PRODUCTOS
 
 !! PHP 5.2 o superior
 
-Para que las funciones de mail funcionen hay que tener correctamente configurado el servidor de correo, el codigo php no tienen ningún misterio.
+Para que las funciones de mail funcionen hay que tener correctamente configurado el servidor de correo, aunque no he añadido ninguna por falta de tiempo debería ser obligatorio que el servidor soporte el envio de mails.

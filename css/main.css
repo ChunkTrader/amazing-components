@@ -1043,7 +1043,7 @@ div#main-content input.siguiente:hover{
 
 div.columnas>p{
 	width: 345px;
-	font-size: 20px;
+	font-size: 16px;
 	float: left;
 }
 
@@ -1095,4 +1095,12 @@ div#main-content input.comprar:hover{
 .Recibido {
 	color:green  !important;
 	font-weight: bold  !important;
+}
+
+input[disabled=""]{
+	background:#ddd;
+}
+input[disabled=""]:hover{
+	background:#ddd;
+	cursor:default;
 }
