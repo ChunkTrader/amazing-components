@@ -344,7 +344,7 @@ include 'sidebar-categorias.php';
 					// En esta tabla mostramos los precios sin IVA y el total desglosado al final
 
 					$total_precio = 0;
-					foreach ($carrito as $clave => $linea) {
+					foreach ($carrito as $linea) {
 						echo "<tr>";
 						
 						echo "<td>";

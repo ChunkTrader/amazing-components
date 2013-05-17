@@ -1076,23 +1076,23 @@ div#main-content input.comprar:hover{
 }
 
 .Cancelado {
-	color:red;
+	color:red !important;
 }
 
 .Pagado {
-	color:green;
+	color:green  !important;
 }
 
 .Preparado {
-	color:blue;
+	color:blue  !important;
 }
 
 .Enviado {
-	color:blue;
-	font-style:italic;
+	color:blue  !important;
+	font-style:italic  !important;
 }
 
 .Recibido {
-	color:green;
-	font-weight: bold;
+	color:green  !important;
+	font-weight: bold  !important;
 }
