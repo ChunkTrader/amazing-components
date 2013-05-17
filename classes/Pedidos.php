@@ -41,6 +41,8 @@ class Pedidos extends Coleccion{
 			$stmt = $this->controlador->getPDO()->prepare($prepare);
 			$stmt->execute(array(':id'=>$opciones['id']));
 		} else if (isset($opciones['usuario_id'])){
+			// Vaciamos la colección antes de cargar la tabla de la base de datos
+			$this->coleccion = array();
 			// Cargamos solo los pedidos del usuario
 			$prepare = 'SELECT * FROM ' . $this->tabla . ' WHERE usuario_id = :usuario_id';
 			$stmt = $this->controlador->getPDO()->prepare($prepare);

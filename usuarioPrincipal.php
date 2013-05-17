@@ -2,7 +2,16 @@
 require_once 'inicializacion.php';
 require_once 'classes/Usuarios.php';
 
+require_once 'classes/DatosUsuarios.php';
+require_once 'classes/Pedidos.php';
+require_once 'classes/LineasPedido.php';
+
+
 $usuarios = new Usuarios($controlador);
+$prods= new Productos($controlador);
+$datos_usuarios = new DatosUsuarios($controlador);
+$pedidos = new Pedidos($controlador);
+$lineas = new LineasPedido($controlador);
 
 // Comprobamos si tiene privilegio de acceso a la página
 if (!$regSistema->getValor('privilegios')['verHome']){
@@ -49,6 +58,24 @@ if ($regMem->getValor('accion')=='Editar' && $regMem->getValor('metodo')=='POST'
 	// Guardamos los cambios en la base de datos
 	// Ojo, no hemos comprobado si ha habido realmente algún cambio
 	$usuarios->setItemBD($usuario);
+}
+
+if ($regMem->getValor('ver')=='detalle') {
+	if (!$regMem->getValor('id')) {
+		$regError->setError('general', 'No existe ningún pedido con esa <b>referencia</b>');
+		$regMem->setValor('titulo', 'Error. No existe el pedido.');
+		$regMem->setValor('ver', 'lista');
+	} else {
+		$pedido = $pedidos->getItemBD(array ('id' =>$regMem->getValor('id')))->getItemById($regMem->getValor('id'));
+		if (!$pedido) {
+			// Error, el pedido no existe
+			$regError->setError('general', 'No existe ningún pedido con esa <b>referencia</b>');
+			$regMem->setValor('titulo', 'Error. No existe el pedido.');
+			$regMem->setValor('ver', 'lista');
+		} else {
+			$regMem->setValor('titulo', 'Ver detalle del pedido');
+		}
+	}
 }
 
 include 'cabecera.php';
@@ -104,12 +131,114 @@ include 'sidebar-categorias.php';
 			</p>
 		
 		</form>
+	<?php
+	if ($regMem->getValor('ver')=='detalle') {
+	?>
+	<h2 class="separacion">Detalle del pedido <?=$pedido->getPropiedad('ref')?></h2>
+
+	<?php
+		// Mostramos la cabecera del pedido (el pedido lo recuperamos en el switch del principio)
+		echo "<p>Referencia: <b>" . $pedido->getPropiedad('ref') . "</b></p>";
+		echo "<p>Fecha: <b>" . $pedido->getPropiedad('fecha') . "</b></p>";
+		echo "<p>Estado: <b class=" . quitarEspacios($pedido->getPropiedad('estado')) . ">" . $pedido->getPropiedad('estado') . "</b></p>";
+		echo "</div>";
+
+		// Recuperamos las lineas de pedido
+		$lineas->getItemBD(array('pedido_id'=>$pedido->getPropiedad('id')));
+		$a=$lineas->getItemById();
+		?>
+		<table class="separacion">
+			<tr>
+				<th>Producto</th>
+				<th>Unidades</th>
+				<th>Precio</th>
+				<th>Subtotal</th>
+			</tr>
+		<?php
+
+		$total_precio = 0;
+		foreach ($a as $linea) {
+			echo "<tr>";
+			
+			echo "<td>";
+			$producto = $prods->getItemBD(array('id'=>$linea->getPropiedad('producto_id')))->getItemById($linea->getPropiedad('producto_id'));
+			echo $producto->getPropiedad('nombre');
+			echo "</td>";
+
+			echo "<td>" . $linea->getPropiedad('cantidad') . "</td>";
+
+			echo "<td>" . number_format($linea->getPropiedad('precio')/(1+IVA),2) . "&euro;</td>";
+			echo "<td>" . number_format($linea->getPropiedad('precio')*$linea->getPropiedad('cantidad')/(1+IVA),2) . "&euro;</td>";
+			echo "</tr>";
+			$total_precio += $linea->getPropiedad('precio')*$linea->getPropiedad('cantidad');
+		}
+
+		?>
+			<tr>
+				<th>IVA <?=(IVA*100)?>%</th>
+				<th></th>
+				<th></th>
+				<th><?=number_format($total_precio*IVA,2)?>&euro;</th>
+			</tr>
+			<tr>
+				<th>TOTAL</th>
+				<th></th>
+				<th></th>
+				<th><?=number_format($total_precio,2)?>&euro;</th>
+			</tr>
+
+		</table>
 
 
 
+	<?php
+	} // Fin if ver = detalle
 
+?>
 
 		<h2 class="separacion">Mis pedidos</h2>
+	<table>
+		<tr>
+			<th>Ref</th>
+			<th>Fecha</th>
+			<th>Estado</th>
+			<th></th>
+		</tr>
+
+		<?php
+			$pedidos->getItemBD(array('usuario_id'=>$regSistema->getValor('id')));
+			$a = $pedidos->getItemById();
+			foreach ($a as $pedido) {
+				echo "<tr>";
+					echo "<td><a href=\"{$_SERVER['SCRIPT_NAME']}?ver=detalle&amp;id={$pedido->getPropiedad('id')}\">";
+					echo "{$pedido->getPropiedad('ref')}";
+					echo "</a></td>";
+					
+					// Recuperamos el nombre y apellido del usuario
+					$usuario = $datos_usuarios->getItemBD(array('id'=>$pedido->getPropiedad('usuario_id')))->getItemById($pedido->getPropiedad('usuario_id'));
+
+					echo "<td>{$pedido->getPropiedad('fecha')}</td>";
+
+					echo "<td class=\"" . quitarEspacios($pedido->getpropiedad('estado')) . "\">{$pedido->getpropiedad('estado')}</td>";
+
+					// Cancelar pedido
+					if ($pedido->getPropiedad('estado')!='Cancelado' && $pedido->getPropiedad('estado')!='Recibido') {
+						echo "<td>";
+						echo "<a href=\"{$_SERVER['SCRIPT_NAME']}?ver=cancelar&amp;accion=Cancelar+Pedido&amp;id={$pedido->getPropiedad('id')}\" title=\"Cancelar pedido\"><img src=\"images/icon_delete.gif\"/></a>";
+						echo "</td>";	
+					} else {
+						echo "<td></td>";
+					}
+					
+				echo "</tr>";
+			}
+
+		?>
+
+
+	</table>
+
+
 
 
 	</div>

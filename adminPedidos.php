@@ -119,7 +119,15 @@ switch ($regMem->getValor('ver')) {
 					}
 			
 				}
-				break;
+				break; // Confirmación cancelar
+
+			case 'Confirmar Pago':
+				// Deberiamos cambiar el nombre del valor ver porque es confunso, reutilizado por ahora
+
+				echo "Confirmando el pago!";
+				exit;
+
+				break; // Confirmar pago
 		} // Fin switch acciones cancelar
 		
 
@@ -323,7 +331,7 @@ if ($regSistema->getValor('acceso_denegado')) {
 				
 				<input type="submit" value="Cancelar Pedido" name="accion"
 				<?php
-				if ($pedido->getPropiedad('estado')=='Confirmado' || $pedido->getPropiedad('estado')=='Cancelado') {
+				if ($pedido->getPropiedad('estado')=='Recibido' || $pedido->getPropiedad('estado')=='Cancelado') {
 					echo ' disabled ';
 				}
 				?>
