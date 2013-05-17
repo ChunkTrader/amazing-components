@@ -41,7 +41,8 @@ POSIBLES MEJORAS
 	- OJO, no estamos almacenando la dirección de envio, mostramos siempre la última dirección del usuario. Habría que almacenar a parte los datos de envio para cada pedido.
 
 	- Como mínimo en una cookie se pueden guardar 4096 caracteres, da para almacenar más de 50 pedidos en la cookies del carrito, pero habría que controlarlo de todas formas.
-	
+
+	- En las páginas con paginación si manualmente se pone un offset mayor que la cantidad de páginas muestra un número de página incorrecto, habria que cambiarlo para que pase siempre a la primera o a la última.
 
 TESTEO PRODUCTOS
 	Categorias generales con más subcategorias: Perifericos y Componentes

@@ -30,7 +30,34 @@ if (!$carrito) {
 	$regMem->setValor('paso',null);
 	$regMem->setValor('accion', null);
 	$regError->setError('general', 'El carrito está vacio.');
+} else {
+	// Comprobamos que haya suficientes existencias
+	foreach ($carrito as $clave=>$linea) {
+		$producto = $prods->getItemBD(array('id'=>$linea['id']))->getItemById($linea['id']);
+		if ($producto->getPropiedad('existencias')<$linea['cantidad']) {
+			$regError->setError('General', "En estos momentos no disponemos de suficientes existencias de {$producto->getPropiedad('nombre')}. La cantidad ha sido ajustada.");
+			$carrito[$clave]['cantidad'] = $producto->getPropiedad('existencias');
+			$regMem->setValor('paso',null);
+			$regMem->setValor('accion', null);
+		}
+
+		if ($carrito[$clave]['cantidad']<=0) {
+			unset($carrito[$clave]);
+		}
+		
+	}
+	// Actualizamos el carrito en la sesion y en la cookie
+	if (!$carrito) {
+		// No hay ningún producto en el carrito
+		$regMem->setValor('paso',null);
+		$regMem->setValor('accion', null);
+		$regError->setError('general', 'El carrito está vacio.');
+	}
+	$regSistema->setValor('carrito', $carrito);
+	setcookie('carrito', serialize($carrito), time()+3600*24*14); // Lo guardamos durante dos semanas;
 }
+
+
 
 switch ($regMem->getValor('accion')) {
 	case 'Eliminar':
@@ -62,22 +89,21 @@ switch ($regMem->getValor('accion')) {
 					$regError->setError('General', "En estos momentos no disponemos de suficientes existencias. Solo disponemos de {$producto->getPropiedad('existencias')} unidades de {$producto->getPropiedad('nombre')}.");
 				} else {
 					// Si hay suficientes ajustamos la cantidad
-						if ($carrito[$clave]['cantidad']!=$regMem->getValor('cantidad')[$clave]) {
-							$regFeedback->addFeedback('Se ha modificado la cantidad');
-						}
-						$carrito[$clave]['cantidad']=$regMem->getValor('cantidad')[$clave];
+					if ($carrito[$clave]['cantidad']!=$regMem->getValor('cantidad')[$clave]) {
+						$regFeedback->addFeedback('Se ha modificado la cantidad');
+					}
+					$carrito[$clave]['cantidad']=$regMem->getValor('cantidad')[$clave];
 				}
 			}
 		}
 
 		// Actualizamos el carrito
 		$regSistema->setValor('carrito', $carrito);
+		setcookie('carrito', serialize($carrito), time()+3600*24*14); // Lo guardamos durante dos semanas;
 		break; // Guardar cambios
 
 	case 'Continuar':
 		$correcto = TRUE;
-		
-
 
 		// Validamos los datos del paso 2
 		$regexp = "/[\^<,\"@\/\{\}\(\)\*\$%\?=>:\|;#]+/i";
@@ -202,6 +228,7 @@ switch ($regMem->getValor('accion')) {
 		// Vaciamos el carrito
 		$carrito = null;
 		$regSistema->setValor('carrito', $carrito);
+		setcookie('carrito', '', time()-3600);
 		$regMem->setValor('paso',4);
 		break; // Finalizar
 

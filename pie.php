@@ -23,4 +23,8 @@
 	$('#carrito').click(function(){
   		window.location = 'comprar.php';
 	}); 
+
+	$(document).ready(function() {
+		$('#carrito_detalle').hide();
+	});
 </script>

@@ -31,10 +31,16 @@
 				}
 
 				echo "<li id=\"carrito\">";
-				echo "<b>{$total_cantidad}</b> productos - <b>" . number_format($total_precio) . "&euro;</b>";
+				echo "<a href=\"comprar.php\"><b>{$total_cantidad}</b> productos - <b>" . number_format($total_precio) . "&euro;</b></a>";
 				
 				// Creamos el detalle del carrito, deberia estar escondido y ser visible con hover.
 				// Deberia prepararse al mismo tiempo que los totales para tener que recorrerlo solo una vez
+
+				// Test para mostrar el carrito sin javascript
+				echo "<noscript>";
+				echo "</li>";
+				echo "</noscript>";
+
 
 				echo "<ul id=\"carrito_detalle\">";
 				
@@ -76,13 +82,14 @@
 
 				echo '</li>';
 
-				
+			echo "<li id=\"vaciar\"><a href=\"vaciarCarrito.php\"><b>Vaciar</b></a></li>";
 
 			} else {
 				echo "<li>El carrito está vacío.</li>";
 			}
 
 			?>
+
 
 	</ul>
 </div>

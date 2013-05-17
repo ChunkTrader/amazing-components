@@ -1,12 +1,8 @@
 <?php
 
 
-// comentada para testeo de cookies
-// if ($regSistema->getValor('autenticado')) {
-
-
-if (1!=1) {
-	// Estamos autenticados
+if ($regSistema->getValor('autenticado')) {
+	// Estamos autenticados no hace falta recuperar los datos.
 
 } else {
 	// 1. Comprobar si hay cookie
@@ -72,8 +68,22 @@ if (!empty($_COOKIE['carrito'])) {
 		// Hay un carrito en memoria, no hacemos nada
 		
 	} else {
-		// No hay carrito, recuperamos el de la cookie
-		$regSistema->setValor('carrito', unserialize($_COOKIE['carrito']));
+		// No hay carrito, recuperamos el de la cookie 
+		$carrito = unserialize($_COOKIE['carrito']);
+
+		// Actualizamos el precio de todas las líneas
+		foreach ($carrito as $clave => $linea) {
+			// $carrito[$clave]['precio'] = 0; // TEST
+
+			//Obtenemos el producto actualizado
+			$prods = new Productos($controlador);
+			$producto = $prods->getItemBD(array ('id'=>$linea['id']))->getItemById($linea['id']);
+			//$carrito[$clave]['precio'] = $producto->getPropiedad('precio_venta');
+
+		}
+		
+		// Guardamos el carrito en la sesion
+		$regSistema->setValor('carrito', $carrito);
 	}
 }
 	

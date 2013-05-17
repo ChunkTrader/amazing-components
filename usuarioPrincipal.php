@@ -320,6 +320,7 @@ include 'sidebar-usuarios.php';
 				<th>Ref</th>
 				<th>Fecha</th>
 				<th>Estado</th>
+				<th></th>
 			</tr>
 
 			<?php
@@ -327,18 +328,20 @@ include 'sidebar-usuarios.php';
 				$a = $pedidos->getItemById();
 				foreach ($a as $pedido) {
 					echo "<tr>";
-						echo "<td><a href=\"{$_SERVER['SCRIPT_NAME']}?ver=detalle&amp;id={$pedido->getPropiedad('id')}\">";
-						echo "{$pedido->getPropiedad('ref')}";
-						echo "</a></td>";
+					echo "<td><a href=\"{$_SERVER['SCRIPT_NAME']}?ver=detalle&amp;id={$pedido->getPropiedad('id')}\">";
+					echo "{$pedido->getPropiedad('ref')}";
+					echo "</a></td>";
 						
-						// Recuperamos el nombre y apellido del usuario
-						$usuario = $direcciones->getItemBD(array('id'=>$pedido->getPropiedad('usuario_id')))->getItemById($pedido->getPropiedad('usuario_id'));
+					// Recuperamos el nombre y apellido del usuario
+					$usuario = $direcciones->getItemBD(array('id'=>$pedido->getPropiedad('usuario_id')))->getItemById($pedido->getPropiedad('usuario_id'));
 
-						echo "<td>{$pedido->getPropiedad('fecha')}</td>";
+					echo "<td>{$pedido->getPropiedad('fecha')}</td>";
 
-						echo "<td class=\"" . quitarEspacios($pedido->getpropiedad('estado')) . "\">{$pedido->getpropiedad('estado')}</td>";
-						
+					echo "<td class=\"" . quitarEspacios($pedido->getpropiedad('estado')) . "\">{$pedido->getpropiedad('estado')}</td>";
+					
+					echo "<td></td>";	
 					echo "</tr>";
+
 				}
 
 			?>

@@ -872,25 +872,40 @@ td>input[type="checkbox"]{
 }
 
 
-div#main-menu li#carrito {
+div#main-menu li#carrito,
+div#main-menu li#vaciar {
 	background-color:#53a8e9;
 	padding: 2px 10px;
 	color: #fff;
 	margin-right: 10px;
 	border: 1px solid #ddd;
 	border-radius: 5px;
+	text-align: center;
 }
 
-div#main-menu li#carrito:hover {
+div#main-menu li#carrito a,
+div#main-menu li#vaciar a {
+	color: #fff;
+}
+
+div#main-menu li#carrito a:hover,
+div#main-menu li#vaciar a:hover {
+	text-decoration: none;
+}
+
+div#main-menu li#carrito:hover,
+div#main-menu li#vaciar:hover {
 	background: #4398d9;
 }
 
-div#main-menu li#carrito>b {
+div#main-menu li#carrito>a>b,
+div#main-menu li#vaciar>a>b {
 	font-size:15px;
 }
 
+
 div#main-menu #carrito ul {
-	position: absolute;
+	position: absolute; 	
 	top: 25px;
 }
 
@@ -933,7 +948,8 @@ div#main-menu #carrito img {
 
 
 div#main-menu #carrito_detalle{
-	display:none;
+	/* Usado por si se muestra la página sin Javascript activado */
+	float: right;
 }
 
 
