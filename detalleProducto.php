@@ -25,6 +25,12 @@ if ($regMem->getValor('id')) {
 	}
 }
 
+
+if ($regMem->getValor('metodo')!='POST') {
+	// Si el metodo no es post nos aseguramos que no se produce ninguna acción
+	$regMem->setValor('accion', NULL);
+}
+
 if ($producto) {
 	switch ($regMem->getValor('accion')){
 		case 'Comprar':
@@ -79,10 +85,6 @@ if ($producto) {
 			// Guardamos el carrito en la sesion
 			$regSistema->setValor('carrito', $a);
 
-			// TEST Mostramos todo el carrito
-			//foreach ($a as $linea) {
-			//	echo "{$linea['id']} - cantidad: {$linea['cantidad']} precio: {$linea['precio']}<br>";
-			//}
 
 	}
 }
@@ -214,7 +216,11 @@ if ($producto) {
 			if ($producto->getPropiedad('existencias')<1) {
 				echo "<p class=\"comprar_disabled\">comprar</p>";
 			} else {
-				echo "<p class=\"comprar\"><a href=\"{$_SERVER['SCRIPT_NAME']}?id={$producto->getPropiedad('id')}&amp;accion=Comprar\">comprar</a></p>";
+				echo "<form action=\"{$_SERVER['SCRIPT_NAME']}\" method=\"POST\">";
+				echo "<input type=\"hidden\" name=\"id\" value=\"{$producto->getPropiedad('id')}\">";
+				echo "<input type=\"submit\" name=\"accion\" value=\"Comprar\" class=\"comprar\"/>";
+				// echo "<p class=\"comprar\"><a href=\"{$_SERVER['SCRIPT_NAME']}?id={$producto->getPropiedad('id')}&amp;accion=Comprar\">comprar</a></p>";
+				echo "</form>";
 			}
 		?>
 		

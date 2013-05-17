@@ -466,7 +466,6 @@ CREATE TABLE IF NOT EXISTS `usuarios_roles`(
   PRIMARY KEY (usuario_id, rol_id)
   );
 
-
 CREATE TABLE IF NOT EXISTS `linea_pedido`(
 `id` int(11) NOT NULL AUTO_INCREMENT,
 `pedido_id` int(11) NOT NULL,
@@ -481,6 +480,7 @@ CREATE TABLE IF NOT EXISTS `pedidos`(
 `usuario_id` int(11) NOT NULL,
 `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 `estado` enum ('Confirmado', 'Pagado', 'Preparado', 'Enviado', 'Recibido', 'Cancelado') NOT NULL DEFAULT 'Confirmado',
+`ref` varchar(20),
 PRIMARY KEY (id)
 );
 
