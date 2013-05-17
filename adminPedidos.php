@@ -1,6 +1,5 @@
 <?php
 require_once 'inicializacion.php';
-require_once 'classes/Usuarios.php';
 require_once 'classes/DatosUsuarios.php';
 require_once 'classes/Pedidos.php';
 require_once 'classes/LineasPedido.php';
@@ -27,7 +26,6 @@ if (!$regMem->getValor('ver')) {
 }
 
 switch ($regMem->getValor('ver')) {
-
 	case 'lista':
 		if ($regMem->getValor('usuario')) {
 			// Si hay un usuario recuperamos los pedidos de ese usuario
@@ -37,8 +35,37 @@ switch ($regMem->getValor('ver')) {
 			$pedidos->getItemBD();
 
 		}
-
 		break; // ver = lista
+
+
+	case 'lista pagados':
+
+		if ($regMem->getValor('accion')=='Enviar') {
+			$regMem->setValor('titulo', 'Pedidos para enviar');
+			// Intentamos recuperar el pedido
+			if (!$regMem->getValor('id')) {
+				$regError->setError('general', 'No existe ningún pedido con esa <b>referencia</b>');
+				
+			} else {
+				$pedido = $pedidos->getItemBD(array ('id' =>$regMem->getValor('id')))->getItemById($regMem->getValor('id'));
+				if (!$pedido) {
+					// Error, el pedido no existe
+					$regError->setError('general', 'No existe ningún pedido con esa <b>referencia</b>');
+				} else if ($pedido->getPropiedad('estado')!='Pagado'){
+					$regError->setError('general', 'Ese pedido no está listo para enviar.');
+				} else {
+					// Cambiamos el estado
+					$pedido->setPropiedad('estado', 'Enviado');
+					$pedidos->setItemBD($pedido);
+					$regFeedback->addFeedback ('El pedido con referencia ' . $pedido->getPropiedad('ref') . ' ha sido enviado.');
+				}
+			}
+		}
+
+		// Recuperamos todos los pedidos pagados
+		$pedidos->getItemBD(array ('estado'=>'Pagado'));
+		break; // ver = lista pagados
+
 
 	case 'detalle':
 		if (!$regMem->getValor('id')) {
@@ -123,9 +150,27 @@ switch ($regMem->getValor('ver')) {
 
 			case 'Confirmar Pago':
 				// Deberiamos cambiar el nombre del valor ver porque es confunso, reutilizado por ahora
-
-				echo "Confirmando el pago!";
-				exit;
+				if (!$regMem->getValor('id')) {
+					$regError->setError('general', 'No existe ningún pedido con esa <b>referencia</b>');
+					$regMem->setValor('titulo', 'Error. No existe el pedido.');
+					$regMem->setValor('ver', 'lista');
+				} else if ($regMem->getValor('metodo')=='POST') {
+					// Se ha confirmado la cancelación del pedido
+					$pedido = $pedidos->getItemBD(array ('id' =>$regMem->getValor('id')))->getItemById($regMem->getValor('id'));
+					
+					// Comprobamos que el pedido no esté ya cancelado o recibido.
+					if (!$pedido) {
+						// Error, el pedido no existe
+						$regError->setError('general', 'No existe ningún pedido con esa <b>referencia</b>');
+						$regMem->setValor('titulo', 'Error. No existe el pedido.');
+						$regMem->setValor('ver', 'lista');
+					} else if ($pedido->getPropiedad('estado')!='Cancelado' && $pedido->getPropiedad('estado')!='Recibido') {
+						$pedido->setPropiedad('estado', 'Pagado');
+						$pedidos->setItemBD($pedido);
+						$regFeedback->addFeedback("Pago confirmado.");
+						$regMem->setValor('ver', 'detalle');
+					}
+				}
 
 				break; // Confirmar pago
 		} // Fin switch acciones cancelar
@@ -261,9 +306,10 @@ if ($regSistema->getValor('acceso_denegado')) {
 	</form>
 
 <?php
-	} else if ($regMem->getValor('ver'=='detalle')) {
+	} else if ($regMem->getValor('ver')=='detalle') {
 
 		// Mostramos los datos del usuario
+		
 		$usuario = $datos_usuarios->getItemBD(array('id'=>$pedido->getPropiedad('usuario_id')))->getItemById($pedido->getPropiedad('usuario_id'));
 		echo "<div class= \"columnas\">";
 		echo "<p>Nombre: <b>" . $usuario->getPropiedad('nombre') . " " . $usuario->getPropiedad('apellido') . '</b></p>';
@@ -350,9 +396,53 @@ if ($regSistema->getValor('acceso_denegado')) {
 		</form>
 
 	<?php
-	} // Elfse final de las vistas
-	
+	}else if ($regMem->getValor('ver')=='lista pagados') {
 	?>
+	<p class="centrado separacion">Estos son los pedidos para preparar y enviar.</p>
+
+
+	<table>
+		<tr>
+			<th>Ref</th>
+			<th>Nombre</th>
+			<th>Fecha</th>
+			<th>Estado</th>
+			<th></th>
+		</tr>
+
+		<?php
+			$a = $pedidos->getItemById();
+			foreach ($a as $pedido) {
+				echo "<tr>";
+					echo "<td><a href=\"{$_SERVER['SCRIPT_NAME']}?ver=detalle&amp;id={$pedido->getPropiedad('id')}\">";
+					echo "{$pedido->getPropiedad('ref')}";
+					echo "</a></td>";
+					
+					// Recuperamos el nombre y apellido del usuario
+					$usuario = $datos_usuarios->getItemBD(array('id'=>$pedido->getPropiedad('usuario_id')))->getItemById($pedido->getPropiedad('usuario_id'));
+					echo "<td><a href={$_SERVER['SCRIPT_NAME']}?ver=lista&amp;usuario={$pedido->getPropiedad('usuario_id')}>";
+					echo "{$usuario->getPropiedad('nombre')} {$usuario->getPropiedad('apellido')}";
+					echo "</a></td>";
+
+					echo "<td>{$pedido->getPropiedad('fecha')}</td>";
+
+					echo "<td class=\"" . quitarEspacios($pedido->getPropiedad('estado')) . "\">{$pedido->getPropiedad('estado')}</td>";
+
+					echo "<td><a href=\"{$_SERVER['SCRIPT_NAME']}?id={$pedido->getPropiedad('id')}&amp;ver=lista+pagados&amp;accion=Enviar\">Enviar</a></td>";
+					
+					
+				echo "</tr>";
+			}
+
+
+		?>
+
+
+	</table>
+	<?php
+		} // Else final de las vistas
+		?>
+
 	</div>
 </div>
 

@@ -44,6 +44,8 @@ POSIBLES MEJORAS
 
 	- En las páginas con paginación si manualmente se pone un offset mayor que la cantidad de páginas muestra un número de página incorrecto, habria que cambiarlo para que pase siempre a la primera o a la última.
 
+	- En la administación de pedidos nos hemos saltado el paso de preparar el pedido por falta de tiempo, aunque sería practicamente igual que el de envio y recepción.
+
 TESTEO PRODUCTOS
 	Categorias generales con más subcategorias: Perifericos y Componentes
 	Categoria general con más productos: Perifericos

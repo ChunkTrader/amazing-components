@@ -48,6 +48,14 @@ class Pedidos extends Coleccion{
 			$stmt = $this->controlador->getPDO()->prepare($prepare);
 			$stmt->execute(array(':usuario_id'=>$opciones['usuario_id']));
 
+		} else if (isset($opciones['estado'])){
+			// Vaciamos la colección antes de cargar la tabla de la base de datos
+			$this->coleccion = array();
+			// Cargamos solo los pedidos correspondientes al estado
+			$prepare = 'SELECT * FROM ' . $this->tabla . ' WHERE estado = :estado';
+			$stmt = $this->controlador->getPDO()->prepare($prepare);
+			$stmt->execute(array(':estado'=>$opciones['estado']));
+
 
 		} else {
 			// Vaciamos la colección antes de cargar la tabla de la base de datos
