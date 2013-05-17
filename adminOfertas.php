@@ -528,7 +528,7 @@ include 'cabecera.php';
 					<th>Precio Normal</th>
 					<th>Descuento</th>
 					<th>Activa</th>
-					<th> </th>
+					<th class="icons"> </th>
 				</tr>
 				<?php
 				try {
@@ -554,9 +554,14 @@ include 'cabecera.php';
 							echo "{$descuento}%</td>";
 
 							echo "<td>" . ($oferta->getPropiedad('activa')?'Sí':'No') ."</td>";
-							
-						// Añadimos el icono de eliminar
-							echo "<td>";
+
+							echo "<td class=\"icons\">";
+							// Si hay una imagen de slideshow mostramos el icono
+							if ($oferta->getPropiedad('slideshow_url')) {
+								echo "<img src=\"images/" . ($oferta->getPropiedad('slideshow_activo')? 'slide-on.png':'slide-off.png') . "\" alt=\"\" />";
+							}
+
+							// Añadimos el icono de eliminar
 							echo "<a href=\"{$_SERVER['SCRIPT_NAME']}?id={$oferta->getPropiedad('id')}&accion=Eliminar&producto_id={$b->getPropiedad('id')}\" title=\"Eliminar Oferta: {$b->getPropiedad('nombre')}\"><img src=\"images/icon_delete.gif\"/></a>";
 							echo "</td>";
 							echo "</tr>";	

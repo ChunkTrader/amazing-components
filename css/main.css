@@ -775,6 +775,11 @@ td, th {
 	font-size: 12px;
 }
 
+td:last-child, th:last-child {
+	min-width: 26px;
+	text-align: right;
+
+}
 
 td+td {
 	text-align: center;
