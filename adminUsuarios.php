@@ -261,6 +261,9 @@ switch ($regMem->getValor('ver')) {
 			}
 
 			break;
+
+			case 'Editar':
+				$regError->setError('general', 'Actualmente no es posible editar los privilegios.');
 		}
 	} else {
 		$regSistema->setValor('acceso_denegado', 'administrar');

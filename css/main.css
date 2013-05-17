@@ -1074,3 +1074,11 @@ div#main-content input.comprar:hover{
 	background: #4398d9;
 	text-decoration: none;
 }
+
+.Cancelado {
+	color:red;
+}
+
+.Pagado {
+	color:green;
+}

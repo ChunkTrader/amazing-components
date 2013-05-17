@@ -25,6 +25,17 @@
 				
 			</ul>
 		</li>
+		<li>Administrar Pedidos
+			<ul>
+				<?php
+					if (isset($regSistema->getValor('privilegios')['verAdminPedidos'])) {
+						echo "<li><a href=\"adminPedidos.php\">Ver pedidos</a></li>";
+					}
+				?>
+				
+			</ul>
+		</li>
+
 		<li>Administrar Usuarios
 			<ul>
 				<?php
@@ -41,10 +52,7 @@
 				}
 
 				?>
-				
-				
-				
-			</ul>
+			</ul>			
 		</li>
 	</ul>
 </div>
