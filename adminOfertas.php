@@ -528,10 +528,9 @@ include 'cabecera.php';
 					<th>Precio Normal</th>
 					<th>Descuento</th>
 					<th>Activa</th>
-					<th class="icons"> </th>
+					<th> </th>
 				</tr>
 				<?php
-				try {
 					foreach ($a as $oferta) {
 						$b = $prods->getItemById($oferta->getPropiedad('producto_id'));
 						$c = $cats->getItemById($b->getPropiedad('categoria_id'));
@@ -555,7 +554,7 @@ include 'cabecera.php';
 
 							echo "<td>" . ($oferta->getPropiedad('activa')?'Sí':'No') ."</td>";
 
-							echo "<td class=\"icons\">";
+							echo "<td>";
 							// Si hay una imagen de slideshow mostramos el icono
 							if ($oferta->getPropiedad('slideshow_url')) {
 								echo "<img src=\"images/" . ($oferta->getPropiedad('slideshow_activo')? 'slide-on.png':'slide-off.png') . "\" alt=\"\" />";
@@ -568,17 +567,7 @@ include 'cabecera.php';
 						}
 						
 					}
-				} catch (Exception $e) {
-					echo ($e->getMessage()) . "<br>";
-					echo "<br>";
-					print_r($e);
-					echo "<br>";
-					echo "<br>";
-					print_r(Oferta::getListaPropiedades());
-					echo "<br>";
-					echo "<br>";
-					print_r($b);
-				}
+	
 			?>
 			</table>
 		<?php

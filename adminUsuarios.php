@@ -1,6 +1,5 @@
 <?php
 require_once 'inicializacion.php';
-require_once 'classes/Usuarios.php';
 require_once 'classes/Roles.php';
 require_once 'classes/Privilegios.php';
 

@@ -114,5 +114,43 @@ class Usuarios extends Coleccion{
 
 	}
 
+	/*
+	 * Método para comprobar si el id y el token recuperados de la cookie siguen siendo válidos.	
+	 * @param $id 		id del usuario almacenado en la cookie
+	 * @param $token 	token almacenado en la cookie
+	 * @return Usuario o Null. Devuelve el objeto Usuario corresponiente a la id o null si no concuerda 
+	 * el token.
+	 */
+
+	public function checkToken($id, $token){
+		// Este método una vez arreglado el getItemDB debería llamarlo 
+		// prepararar la consulta.
+		$prepare = "SELECT * FROM {$this->tabla} WHERE id = :id AND token = :token";
+		$stmt = $this->controlador->getPDO()->prepare($prepare);
+		
+		$stmt->execute(array (
+			':id' => $id,
+			':token' => $token
+		));
+
+		$row=$stmt->fetch();
+
+		if ($row) {
+			$clase = $this->miembro;
+			$propiedades = call_user_func($clase.'::getListaPropiedades');
+
+			$campos = array();
+			foreach ($propiedades as $propiedad=>$tipo) {
+				$campos[$propiedad] = $this->sanitize($row[$propiedad], $tipo);
+			}
+			$usuario = new $clase ($campos);	
+		} else {
+			$usuario = NULL;
+		}
+		
+		
+		return $usuario;
+	}
+
 }
 ?>

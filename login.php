@@ -1,6 +1,6 @@
 <?php
 require_once 'inicializacion.php';
-require_once 'classes/Usuarios.php';
+
 
 $usuarios = new Usuarios($controlador);
 
@@ -35,26 +35,34 @@ switch ($regMem->getValor('accion')){
 				$usuario->setPropiedad('id', $usuario_id);
 				$usuario->setToken();
 
-					// Almacenamos el token en la base de datos, de momento guardamos todo el usuario entero
-					// Esto habria que optimizarlo.				
+				// Almacenamos el token en la base de datos, de momento guardamos todo el usuario entero
+				// Esto habria que optimizarlo.				
 				$usuarios->setItemBD($usuario);
 
-					// Aqui hay que poner el código para almacenar los datos en la session y en las cookies
+				// Aqui hay que poner el código para almacenar los datos en la session y en las cookies
 				$regSistema->setValor('autenticado', TRUE);
 				$regSistema->setValor('nombre', $usuario->getPropiedad('nombre'));
 				$regSistema->setValor('id', $usuario->getPropiedad('id'));
 
-					// Recuperamos los roles y los privilegios
+				// Recuperamos los roles y los privilegios
 				$usuarios->getRolesBD($usuario);
 
-					// Obtenemos la lista de privilegios del usuario
+				// Obtenemos la lista de privilegios del usuario
 				$usuarios->getPrivilegiosUsuarioBD($usuario);
 
-					// Guardamos los privilegios en la sesion
+				// Guardamos los privilegios en la sesion
 				$regSistema->setValor('privilegios', $usuario->getPrivilegios());
 
+				// Guardamos los datos en la cookie
+				// id del usuario, token
 
+				setcookie('login', serialize(array(
+						'id'=> $usuario->getPropiedad('id'),
+						'token' => $usuario->getPropiedad('token')
+					)),time()+3600*24*14); // Expira en 2 semanas
 
+				
+				
 
 			} else {
 				$regError->setError('usuario', 'Este usuario está desactivado, pongase en contacto con un administrador.');
@@ -72,9 +80,9 @@ switch ($regMem->getValor('accion')){
 
 	case 'Desconectar':
 		// Cerramos la sesión:
-	$regSistema->limpiar();
-	$usuario=null;
-	$regFeedback->addFeedback('Ahora estas desconectado.');
+		$regSistema->limpiar();
+		$usuario=null;
+		$regFeedback->addFeedback('Ahora estas desconectado.');
 
 
 }

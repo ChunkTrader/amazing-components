@@ -9,6 +9,9 @@ require_once 'classes/PageNavigator.php';
 require_once 'classes/Categorias.php';
 require_once 'classes/Productos.php';
 require_once 'classes/Imagenes.php';
+require_once 'classes/Usuarios.php';
+
+
 
 // Iniciamos la session, nos hace falta en todas las páginas
 session_start();
@@ -29,6 +32,7 @@ $controlador -> setRegistro ('errores', $regError);
 $controlador -> setPDO($PDO);
 
 $cats = new Categorias($controlador);
+$usuarios = new Usuarios($controlador);
 
 // Cargamos la comprobación despues de cargar las demás clases e inicializar los registros
 require_once 'comprobarUsuario.php';

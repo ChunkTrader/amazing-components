@@ -155,6 +155,9 @@ class RegistroSistema extends Registro {
 		$this->valores = null;
 		session_unset();
 		session_destroy();
+		setcookie('login', '', time()-3600);
+		setcookie('carrito', '', time()-3600);
+
 	}
 }
 
