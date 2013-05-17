@@ -133,12 +133,7 @@ abstract class Coleccion {
 		return $this->totalBD;
 	}
 
-	protected function sanitize($valor, $tipo){
-		// Por el momento no se utiliza el $tipo
-		//return htmlentities(trim($valor), ENT_NOQUOTES, 'UTF-8');
-		return htmlentities(trim($valor), ENT_NOQUOTES, 'ISO-8859-1');
-		
-	}
+
 
 	public function getItemByNombre($nombre){
 		$a=$this->coleccion;
@@ -150,6 +145,14 @@ abstract class Coleccion {
 		return null;
 	}
 
+	protected function sanitize($valor, $tipo){
+		// Por el momento no se utiliza el $tipo, se usará para validar
+		// OJO - Desactivado el uso de htmlentities porque está haciendo que al actualizar los datos
+		// se corrompan las descripciones.
 
+		return trim($valor);
+		//return htmlentities(trim($valor), ENT_NOQUOTES, 'ISO-8859-1');
+		
+	}
 }
 ?>
