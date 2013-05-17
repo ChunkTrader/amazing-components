@@ -1082,3 +1082,17 @@ div#main-content input.comprar:hover{
 .Pagado {
 	color:green;
 }
+
+.Preparado {
+	color:blue;
+}
+
+.Enviado {
+	color:blue;
+	font-style:italic;
+}
+
+.Recibido {
+	color:green;
+	font-weight: bold;
+}

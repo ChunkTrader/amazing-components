@@ -472,7 +472,7 @@ CREATE TABLE IF NOT EXISTS `linea_pedido`(
 `producto_id` int(11) NOT NULL,
 `cantidad` int(11) NOT NULL,
 `precio` double NOT NULL,
-PRIMARY KEY (id, pedido_id)
+PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS `pedidos`(

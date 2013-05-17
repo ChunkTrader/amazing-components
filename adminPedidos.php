@@ -6,9 +6,11 @@ require_once 'classes/Pedidos.php';
 require_once 'classes/LineasPedido.php';
 
 
+$prods= new Productos($controlador);
 $datos_usuarios = new DatosUsuarios($controlador);
 $pedidos = new Pedidos($controlador);
 $lineas = new LineasPedido($controlador);
+
 
 
 if (!$regMem->getValor('ver') && (!$regSistema->getValor('privilegios')['verAdminPedidos'])) {
@@ -52,14 +54,36 @@ switch ($regMem->getValor('ver')) {
 					$regMem->setValor('ver', 'lista');
 				} else if ($regMem->getValor('metodo')=='POST') {
 					// Se ha confirmado la cancelación del pedido
-					
-
 					$pedido = $pedidos->getItemBD(array ('id' =>$regMem->getValor('id')))->getItemById($regMem->getValor('id'));
-					$pedido->setPropiedad('estado', 'Cancelado');
-					$pedidos->setItemBD($pedido);
-					$regMem->setValor('titulo', 'Pedido cancelado');
-					$regFeedback->addFeedback('Se ha cancelado el pedido');
-					$regMem->setValor('ver', 'lista');
+					
+					// Comprobamos que el pedido no esté ya cancelado o recibido.
+					if ($pedido->getPropiedad('estado')!='Cancelado' && $pedido->getPropiedad('estado')!='Recibido') {
+						$pedido->setPropiedad('estado', 'Cancelado');
+						$pedidos->setItemBD($pedido);
+
+						// Restauramos las existencias de los productos
+
+						// Recuperamos las lineas de pedido
+						$lineas->getItemBD(array('pedido_id'=>$pedido->getPropiedad('id')));
+						$a=$lineas->getItemById();
+
+
+						foreach ($a as $linea) {
+							$producto = $prods->getItemBD(array('id'=>$linea->getPropiedad('producto_id')))->getItemById($linea->getPropiedad('producto_id'));
+							$producto->setPropiedad('existencias', $producto->getPropiedad('existencias')+$linea->getPropiedad('cantidad'));
+							echo "suma: " . $producto->getPropiedad('existencias')+$linea->getPropiedad('cantidad');
+							$prods->setItemBD($producto);
+							$regFeedback->addFeedback('Actualizadas las existencias de ' . $producto->getPropiedad('nombre') . ' en ' . $linea->getPropiedad('cantidad') . ' unidades.');
+						}
+
+						$regMem->setValor('titulo', 'Pedido cancelado');
+						$regFeedback->addFeedback('Se ha cancelado el pedido');
+						$regMem->setValor('ver', 'lista');
+					} else {
+						$regError->setError('general', 'No es posible cancelar el pedido porque ya ha sido <b>' . $pedido->getPropiedad('estado') . '</b>.');
+						$regMem->setValor('ver', 'lista');
+
+					}
 				} else {
 					$pedido = $pedidos->getItemBD(array ('id' =>$regMem->getValor('id')))->getItemById($regMem->getValor('id'));
 					if ($pedido) {
@@ -124,7 +148,7 @@ if ($regSistema->getValor('acceso_denegado')) {
 		?>
 	</div>
 
-	<div>
+	<div class="separacion">
 	<?php 
 	/*		VER LISTA PEDIDOS 		*/
 	if ($regMem->getValor('ver')=='lista') {
