@@ -1128,3 +1128,23 @@ input[disabled=""]:hover{
 	background:#ddd;
 	cursor:default;
 }
+
+
+ul.texto { 
+    list-style: disc inside;
+}
+
+ul.texto li{
+	padding: 5px;
+
+}
+
+.menu-pie li{
+	display: inline;
+	margin: 0 25px;
+	text-align: center;
+
+}
+
+ul.menu-pie{
+}

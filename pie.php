@@ -5,9 +5,17 @@
 		}
 ?>
 <div id="footer">
-	<p>Esto es una página de prueba, todos los contenidos son ficticios. Usala bajo tu propia responsabilidad.</p>
-	<p>Javier García Rodríguez.</p>
-	<p>Última actualización 10/05/2013</p>
+	<ul class="menu-pie">
+		<li><a href="estaticaCondicionesCompra.php">Condiciones de compra</a></li>
+		<li><a href="estaticaFormaPago.php">Formas de pago</a></li>
+		<li><a href="estaticaQuienesSomos.php">¿Quienes somos?</a></li>
+		<li><a href="estaticaGarantia.php">Garantía</a></li>
+	
+	</ul>
+	<p class="separacion">Esto es una página de prueba desarrollada para la asignatura <b>Desarrollo de aplicaciones web en entorno servidor</b> para el CFGS Desarrollo de aplicaciones WEB.</p>
+	<p class="separacion"><em>Javier García. Última actualización 10/05/2013</em></p>
+
+</p>
 </div>
 
 <script>
