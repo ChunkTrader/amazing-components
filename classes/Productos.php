@@ -97,6 +97,16 @@ class Productos extends Coleccion{
 				$prepare = $this->getSearch($opciones['buscar']);
 				$countPrepare = str_replace('SELECT pr.* FROM', 'SELECT COUNT(*) FROM', $prepare);
 
+			} else if (isset($opciones['disponibilidad'])) {
+				$prepare = 'SELECT * FROM ' . $this->tabla . ' WHERE disponibilidad = \'' . $opciones['disponibilidad'] . '\' ORDER BY ' . $this->orden;
+
+			} else if (isset($opciones['existencias'])) {
+				// No mostramos los productos agotados ni los desactivados.
+				$prepare = "SELECT * FROM " . $this->tabla . " WHERE existencias <= '" . $opciones['existencias'] . "' AND existencias>'0' AND activo = '1' ORDER BY existencias";
+
+			} else if (isset($opciones['activo'])) {
+				// Mostramos solo  los activos o inactivos según el valor pasado
+				$prepare = "SELECT * FROM " . $this->tabla ." WHERE ACTIVO = '" . $opciones['activo'] . "' ORDER BY  " . $this->orden;
 
 			} else {
 				// Default, los mostramos según lo establecido en el constructor.

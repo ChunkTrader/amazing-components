@@ -518,7 +518,7 @@ div#galeria{
 }
 
 .Descatalogado{
-	color: #ddd;	
+	color: #bbb;	
 }
 
 .Pr_xima_reposici_n {
@@ -776,9 +776,12 @@ td, th {
 }
 
 td:last-child, th:last-child {
-	min-width: 26px;
+	min-width: 30px;
 	text-align: right;
+}
 
+td:last-child>img {
+padding: 0 2px;
 }
 
 td+td {

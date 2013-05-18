@@ -12,6 +12,7 @@
 	define ('MAIN_THUMB_SIZE', 227); // Tamaño para 3 columnas
 	define ('PRODUCTOS_PAGINA', 6); // Ponemos una cantidad baja para testear las paginas
 	define ('DESCRIPCION_CORTA', 400); // Número de caracteres a mostrar en las descripciones fuera del detalle.
+	define ('STOCK_MINIMO', 5); // Define la cantidad mínima de productos para mostrar en las listas de mínimos.
 	
 	//Configuración Banner
 	define ('URL_BANNER', 'detalleProducto.php?id=55'); // La url puede ser cualquier dirección: de un producto, de una sección, otro sitio, etc.

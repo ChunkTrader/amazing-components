@@ -355,7 +355,7 @@ CREATE TABLE IF NOT EXISTS `productos` (
   `nombre` varchar(60) DEFAULT NULL,
   `descripcion` text,
   `categoria_id` int(11) NOT NULL,
-  `fabricante_id` int(11) DEFAULT NULL,
+  `fabricante_id` int(11) DEFAULT 1,
   `precio_venta` double NOT NULL,
   `precio_compra` double DEFAULT NULL,
   `disponibilidad` enum('En stock','Próxima reposición','Agotado','Descatalogado','Outlet') NOT NULL DEFAULT 'Agotado',

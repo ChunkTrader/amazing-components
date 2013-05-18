@@ -14,6 +14,7 @@
 				
 			</ul>
 		</li>
+
 		<li>Administrar Ofertas
 			<ul>
 				<?php
@@ -25,6 +26,7 @@
 				
 			</ul>
 		</li>
+
 		<li>Administrar Pedidos
 			<ul>
 				<?php
@@ -37,6 +39,21 @@
 				
 			</ul>
 		</li>
+
+		<li>Control de Stocks
+			<ul>
+				<?php
+					if (isset($regSistema->getValor('privilegios')['verAdminPedidos'])) {
+						echo "<li><a href=\"adminStocks.php\">Lista de productos activos</a></li>";
+						echo "<li><a href=\"adminStocks.php?ver=agotados\">Productos agotados</a></li>";
+						echo "<li><a href=\"adminStocks.php?ver=minimos\">Productos bajo mínimos</a></li>";
+						echo "<li><a href=\"adminStocks.php?ver=descatalogados\">Productos descatalogados</a></li>";
+					}
+				?>
+				
+			</ul>
+		</li>
+
 
 		<li>Administrar Usuarios
 			<ul>
