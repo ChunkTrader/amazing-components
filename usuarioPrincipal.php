@@ -368,7 +368,7 @@ include 'sidebar-usuarios.php';
 			<input type="text" name="nombre" value="<?=$direccion->getPropiedad('nombre')?>"/>
 
 			<label>Apellido:</label>
-			<input type="apellido" name="apellido" value="<?=$direccion->getPropiedad('apellido')?>"/>
+			<input type="text" name="apellido" value="<?=$direccion->getPropiedad('apellido')?>"/>
 
 			<label>Dirección:</label>
 			<input type="text" name="direccion" value="<?=$direccion->getPropiedad('direccion')?>"/>

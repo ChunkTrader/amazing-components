@@ -143,7 +143,7 @@ if (isset($producto)) {
 
 			<?php
 			$a = $galeria->getItemById();
-			$a_actual=0;
+			$a_actual= 1;
 			$a_total = count($a);
 
 				// Imagen Principal
@@ -165,11 +165,12 @@ if (isset($producto)) {
 
 
 		$size = 94; // Tamaño del Thumbnail 
-
 		foreach ($a as $key=>$imagen){
-			$a_actual += 1;
 			if ($imagen->getPropiedad('principal')) {
 				continue;
+			} else {
+				$a_actual += 1;
+
 			}
 
 			echo "<a class=\"fancybox\" rel=\"gallery1\" href=\"images/products/{$imagen->getPropiedad('imagen')}.jpeg\" ";

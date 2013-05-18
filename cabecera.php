@@ -16,11 +16,12 @@
 
 </head>
 <body>
-	<div id="header">
-		<div>
-			<a href="index.php"><img src="images/logo1.png" alt="Logo amazing-components.com" /></a>
+	<div id="wrapper">
+		<div id="header">
+			<div>
+				<a href="index.php"><img src="images/logo1.png" alt="Logo amazing-components.com" /></a>
+			</div>
+			<div>
+				<a href="<?=URL_BANNER?>"><img src="images/banners/<?=IMG_BANNER?>" title="<?=MSG_BANNER?>" alt="<?=MSG_BANNER?>" /></a>
+			</div>
 		</div>
-		<div>
-			<a href="<?=URL_BANNER?>"><img src="images/banners/<?=IMG_BANNER?>" title="<?=MSG_BANNER?>" alt="<?=MSG_BANNER?>" /></a>
-		</div>
-	</div>

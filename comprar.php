@@ -441,7 +441,7 @@ include 'sidebar-categorias.php';
 			<input type="text" name="nombre" value="<?=$regMem->getValor('nombre')?>"/>
 
 			<label>Apellido:</label>
-			<input type="apellido" name="apellido" value="<?=$regMem->getValor('apellido')?>"/>
+			<input type="text" name="apellido" value="<?=$regMem->getValor('apellido')?>"/>
 
 			<label>Dirección:</label>
 			<input type="text" name="direccion" value="<?=$regMem->getValor('direccion')?>"/>
