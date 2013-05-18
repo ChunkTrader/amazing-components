@@ -5,7 +5,7 @@ require_once 'classes/Ofertas.php';
 
 
 // Comprobamos si tiene privilegio de acceso a la página
-if (!$regSistema->getValor('privilegios')['verAdminOfertas']){
+if (!$privilegios['verAdminOfertas']){
 	$regSistema->setValor('acceso_denegado', 'administrar');
 	header('Location: error.php');
 	exit;

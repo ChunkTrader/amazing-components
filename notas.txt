@@ -53,7 +53,36 @@ TESTEO PRODUCTOS
 	Producto con más imagenes: Samsung Galaxy S4 I9505 Negro Libre
 	NOTA: Las descripciones las he hecho copiando y pegando a saco, algunas se han copiado con 
 
+BUSQUEDA:
+	La busqueda se hace por cada palabra introducida en el nombre del producto, el fabricante y la descripción. 
+
+	Palabra de testeo: NAVARRABA0 -> descripción del logitech wireless keyboard k340.
+
+
 
 !! PHP 5.2 o superior
 
 Para que las funciones de mail funcionen hay que tener correctamente configurado el servidor de correo, aunque no he añadido ninguna por falta de tiempo debería ser obligatorio que el servidor soporte el envio de mails.
+
+
+Usuarios de prueba:
+	developer:developer123
+	admin:admin123
+	comercial:comercial123
+	empleado:empleado123
+	luisito:luisito123
+	juanito:juanito123
+	paquito:paquito123 (desactivado);
+
+Datos de envio: No son necesarios, solo hay que introducirlos al hacer el primer pedido.
+
+Roles:
+	Desarrollador: Todo.
+	Administrador: Todo excepto administrar Privilegios (uso interno de la aplicación).
+	Empleado: Administrar categorias, productos y stocks
+	Comercial: Administrar ofertas y pedidos
+	Usuario: Comprar, ver 'Mi cuenta', ocultar los botones de conectar y registrar.
+
+	- Todos los usuarios creados tienen asignado el rol 'Usuario' automáticamente.
+	- Se pueden crear nuevos roles asignando los privilegios que se quiera.
+	- Un usuario puede tener cualquier cantidad de roles y se le aplican los privilegios de todos los roles que  inactivos.

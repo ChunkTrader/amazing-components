@@ -3,11 +3,11 @@
 		<li>Administrar Productos
 			<ul>
 				<?php
-				if (isset($regSistema->getValor('privilegios')['verAdminCategorias'])) {
+				if (isset($privilegios['verAdminCategorias'])) {
 					echo "<li><a href=\"adminCategorias.php\">Categorias</a></li>";
 				}
 				
-				if (isset($regSistema->getValor('privilegios')['verAdminProductos'])) {
+				if (isset($privilegios['verAdminProductos'])) {
 					echo "<li><a href=\"adminProductos.php\">Productos</a></li>";
 				}
 				?>
@@ -18,7 +18,7 @@
 		<li>Administrar Ofertas
 			<ul>
 				<?php
-					if (isset($regSistema->getValor('privilegios')['verAdminOfertas'])) {
+					if (isset($privilegios['verAdminOfertas'])) {
 						echo "<li><a href=\"adminOfertas.php\">Ofertas</a></li>";
 						echo "<li><a href=\"#\">Banner (no implementado)</a></li>";
 					}
@@ -30,7 +30,7 @@
 		<li>Administrar Pedidos
 			<ul>
 				<?php
-					if (isset($regSistema->getValor('privilegios')['verAdminPedidos'])) {
+					if (isset($privilegios['verAdminPedidos'])) {
 						echo "<li><a href=\"adminPedidos.php\">Ver pedidos</a></li>";
 						echo "<li><a href=\"adminPedidos.php?ver=lista+pagados\">Pedidos para enviar</a></li>";
 						echo "<li><a href=\"adminPedidos.php?ver=lista+enviados\">Confirmar recepción</a></li>";
@@ -43,7 +43,7 @@
 		<li>Control de Stocks
 			<ul>
 				<?php
-					if (isset($regSistema->getValor('privilegios')['verAdminPedidos'])) {
+					if (isset($privilegios['verAdminStocks'])) {
 						echo "<li><a href=\"adminStocks.php\">Lista de productos activos</a></li>";
 						echo "<li><a href=\"adminStocks.php?ver=agotados\">Productos agotados</a></li>";
 						echo "<li><a href=\"adminStocks.php?ver=minimos\">Productos bajo mínimos</a></li>";
@@ -58,15 +58,15 @@
 		<li>Administrar Usuarios
 			<ul>
 				<?php
-				if (isset($regSistema->getValor('privilegios')['verAdminUsuarios'])) {
+				if (isset($privilegios['verAdminUsuarios'])) {
 					echo "<li><a href=\"adminUsuarios.php?ver=usuarios\">Usuarios</a></li>";
 				}
 
-				if (isset($regSistema->getValor('privilegios')['verAdminRoles'])) {
+				if (isset($privilegios['verAdminRoles'])) {
 					echo "<li><a href=\"adminUsuarios.php?ver=roles\">Roles</a></li>";
 				}
 
-				if (isset($regSistema->getValor('privilegios')['verAdminPrivilegios'])){
+				if (isset($privilegios['verAdminPrivilegios'])){
 					echo "<li><a href=\"adminUsuarios.php?ver=privilegios\">Privilegios</a></li>";
 				}
 

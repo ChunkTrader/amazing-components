@@ -12,7 +12,7 @@ $lineas = new LineasPedido($controlador);
 
 
 
-if (!$regMem->getValor('ver') && (!$regSistema->getValor('privilegios')['verAdminPedidos'])) {
+if (!$regMem->getValor('ver') && (!$privilegios['verAdminPedidos'])) {
 	$regSistema->setValor('acceso_denegado', 'administrar');
 	header('Location: error.php');
 	exit;

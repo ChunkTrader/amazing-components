@@ -7,7 +7,7 @@ class Categorias extends Coleccion{
 
 	public function __construct(Controlador $controlador) {
 		$this->controlador = $controlador;
-		$this->tabla = 'Categorias';
+		$this->tabla = 'categorias';
 		$this->orden = 'nombre';
 		$this->miembro = 'Categoria';
 	}

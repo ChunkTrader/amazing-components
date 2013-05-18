@@ -14,7 +14,7 @@ $pedidos = new Pedidos($controlador);
 $lineas = new LineasPedido($controlador);
 
 // Comprobamos si tiene privilegio de acceso a la página
-if (!$regSistema->getValor('privilegios')['verHome']){
+if (!$privilegios['verHome']){
 	$regSistema->setValor('acceso_denegado', 'principal');
 	header('Location: error.php');
 	exit;

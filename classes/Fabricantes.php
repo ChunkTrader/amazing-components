@@ -7,7 +7,7 @@ class Fabricantes extends Coleccion{
 
 	public function __construct(Controlador $controlador) {
 		$this->controlador = $controlador;
-		$this->tabla = 'Fabricantes';
+		$this->tabla = 'fabricantes';
 		$this->orden = 'nombre';
 		$this->miembro = 'Fabricante';
 	}

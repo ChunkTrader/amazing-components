@@ -8,7 +8,7 @@ require_once 'classes/LineasPedido.php';
 
 $usuarios = new Usuarios($controlador);
 
-if (!$regMem->getValor('ver') && (!isset($regSistema->getValor('privilegios')['comprar']))) {
+if (!$regMem->getValor('ver') && (!isset($privilegios['comprar']))) {
 	$regSistema->setValor('acceso_denegado', 'autenticar');
 	$regSistema->setValor('forward', $_SERVER['SCRIPT_NAME']);
 	header('Location: error.php');
@@ -70,14 +70,15 @@ switch ($regMem->getValor('accion')) {
 		// Recorremos las lineas de pedido y modificamos las cantidades
 		foreach ($carrito as $clave => $linea){
 
-			if ($regMem->getValor('cantidad')[$clave]==0) {
+			$cantidad = $regMem->getValor('cantidad');
+			if ($cantidad[$clave]==0) {
 				unset($carrito[$clave]);
 				$regFeedback->addFeedback("Se ha eliminado el producto eliminado del carrito.");		
 
-			} else if (!filter_var($regMem->getValor('cantidad')[$clave], FILTER_VALIDATE_INT))  {
+			} else if (!filter_var($cantidad[$clave], FILTER_VALIDATE_INT))  {
 				$regError->setError('general', 'La cantidad introducida no es válida.');
 			
-			} else if ($regMem->getValor('cantidad')[$clave]<0) {
+			} else if ($cantidad[$clave]<0) {
 				// OJO, hay que comprobar si hay existencias
 				$regError->setError('general', 'La cantidad introducida no puede ser menor de 0.');
 			
@@ -85,14 +86,14 @@ switch ($regMem->getValor('accion')) {
 				// Se ha introducido una cantidad, comprobamos existencias
 				$producto = $prods->getItemBD(array('id'=>$linea['id']))->getItemById($linea['id']);
 
-				if ($producto->getPropiedad('existencias')<$regMem->getValor('cantidad')[$clave]) {
+				if ($producto->getPropiedad('existencias')<$cantidad[$clave]) {
 					$regError->setError('General', "En estos momentos no disponemos de suficientes existencias. Solo disponemos de {$producto->getPropiedad('existencias')} unidades de {$producto->getPropiedad('nombre')}.");
 				} else {
 					// Si hay suficientes ajustamos la cantidad
-					if ($carrito[$clave]['cantidad']!=$regMem->getValor('cantidad')[$clave]) {
+					if ($carrito[$clave]['cantidad']!=$cantidad[$clave]) {
 						$regFeedback->addFeedback('Se ha modificado la cantidad');
 					}
-					$carrito[$clave]['cantidad']=$regMem->getValor('cantidad')[$clave];
+					$carrito[$clave]['cantidad']=$cantidad[$clave];
 				}
 			}
 		}
@@ -203,7 +204,8 @@ switch ($regMem->getValor('accion')) {
 		$pedidos->addItemBD($pedido);
 
 		// Solo tiene que debe devolver 1
-		$pedido = $pedidos->getPedidoByRefBD($ref)->getItemById()[0];
+		$pedido = $pedidos->getPedidoByRefBD($ref)->getItemById();
+		$pedido = $pedido[0];
 
 		// Ahora creamos las líneas de pedido
 		foreach ($carrito as $linea){
@@ -468,13 +470,14 @@ include 'sidebar-categorias.php';
 		} else if ($regMem->getValor('paso')==3) {
 
 			// Mostramos todos los datos y pedimos confirmación
+			$datos_envio = $regSistema->getValor('datos_envio');
 		?>
 		<div class="columnas">
-			<p>Nombre: <b><?=$regSistema->getValor('datos_envio')['nombre']?></b></p>
-			<p>Apellido: <b><?=$regSistema->getValor('datos_envio')['apellido']?></b></p>
-			<p>Dirección: <b><?=$regSistema->getValor('datos_envio')['direccion']?></b></p>
-			<p>Población: <b><?=$regSistema->getValor('datos_envio')['poblacion']?></b></p>
-			<p>Código Postal: <b><?=$regSistema->getValor('datos_envio')['cp']?></b></p>
+			<p>Nombre: <b><?=$datos_envio['nombre']?></b></p>
+			<p>Apellido: <b><?=$datos_envio['apellido']?></b></p>
+			<p>Dirección: <b><?=$datos_envio['direccion']?></b></p>
+			<p>Población: <b><?=$datos_envio['poblacion']?></b></p>
+			<p>Código Postal: <b><?=$datos_envio['cp']?></b></p>
 		</div>
 
 		<div class="separacion"></div>

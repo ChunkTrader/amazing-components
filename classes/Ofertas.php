@@ -7,7 +7,7 @@ class Ofertas extends Coleccion{
 
 	public function __construct(Controlador $controlador) {
 		$this->controlador = $controlador;
-		$this->tabla = 'Ofertas';
+		$this->tabla = 'ofertas';
 		$this->orden = 'id';
 		$this->miembro = 'Oferta';
 	}

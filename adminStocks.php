@@ -6,7 +6,7 @@ $prods = new Productos($controlador);
 $fabs = new Fabricantes($controlador);
 
 
-if (!$regMem->getValor('ver') && (!$regSistema->getValor('privilegios')['verAdminStocks'])) {
+if (!$regMem->getValor('ver') && (!$privilegios['verAdminStocks'])) {
 	$regSistema->setValor('acceso_denegado', 'administrar');
 	header('Location: error.php');
 	exit;

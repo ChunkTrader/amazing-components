@@ -100,7 +100,7 @@ div#footer {
 	padding: 3px;	
 	padding-top: 25px;
 	text-align: center;
-
+	border: 1px solid #ddd;
 }
 
 /* Header CSS */

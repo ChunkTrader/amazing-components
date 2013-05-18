@@ -6,10 +6,10 @@ require_once 'classes/Privilegios.php';
 
 $usuarios = new Usuarios($controlador);
 $roles = new Roles($controlador);
-$privilegios = new Privilegios($controlador);
+$privs = new Privilegios($controlador);
 
 
-if (!$regMem->getValor('ver') && (!$regSistema->getValor('privilegios')['verAdminUsuarios'])) {
+if (!$regMem->getValor('ver') && (!$privilegios['verAdminUsuarios'])) {
 	$regSistema->setValor('acceso_denegado', 'administrar');
 	header('Location: error.php');
 	exit;
@@ -22,14 +22,14 @@ $regMem->setValor('titulo', 'Añadir usuarios');
 // Cargamos las listas
 $usuarios->getItemBD();
 $roles->getItemBD();
-$privilegios->getItemBD();
+$privs->getItemBD();
 
 //print_r($regMem->getValor()); echo '<br>';
 
 switch ($regMem->getValor('ver')) {
 
 	case 'usuarios':
-	if ($regSistema->getValor('privilegios')['verAdminUsuarios']){
+	if ($privilegios['verAdminUsuarios']){
 
 		switch ($regMem->getValor('accion')){
 			case 'Añadir':
@@ -151,7 +151,7 @@ switch ($regMem->getValor('ver')) {
 	break;
 
 	case 'roles':
-	if ($regSistema->getValor('privilegios')['verAdminRoles']){
+	if ($privilegios['verAdminRoles']){
 		$regMem->setValor('titulo', 'Añadir roles');
 
 		switch ($regMem->getValor('accion')){
@@ -199,7 +199,7 @@ switch ($regMem->getValor('ver')) {
 
 				if ($regMem->getValor('metodo')=='POST') {
 					// Hemos enviado el formulario, actualizamos los privilegios
-					$roles->setPrivilegiosBD($privilegios, $rol);
+					$roles->setPrivilegiosBD($privs, $rol);
 					$regFeedback->addFeedback('Privilegios actualizados.');	
 
 					// Actualizamos el estado activo/inactivo
@@ -230,7 +230,7 @@ switch ($regMem->getValor('ver')) {
 	break;
 
 	case 'privilegios':
-	if ($regSistema->getValor('privilegios')['verAdminPrivilegios']){
+	if ($privilegios['verAdminPrivilegios']){
 		$regMem->setValor('titulo', 'Añadir privilegios');
 
 		switch ($regMem->getValor('accion')){
@@ -253,7 +253,7 @@ switch ($regMem->getValor('ver')) {
 					'nombre' => $regMem->getValor('nombre')
 					);
 				$privilegio = new Privilegio($valores);
-				$privilegios->addItemBD($privilegio);
+				$privs->addItemBD($privilegio);
 				$regFeedback->addFeedback ('El privilegio <b>' . $regMem->getValor('nombre') . '</b> ha sido creado con éxito');
 			} else {
 				$regError->setError('general', 'No se ha creado el privilegio.');
@@ -280,7 +280,7 @@ switch ($regMem->getValor('ver')) {
 // Reargamos las listas para asegurarnos que todos los valores estan actualizados.
 $usuarios->getItemBD();
 $roles->getItemBD();
-$privilegios->getItemBD();
+$privs->getItemBD();
 
 
 include 'cabecera.php';
@@ -567,7 +567,7 @@ if ($regSistema->getValor('acceso_denegado')) {
 		<?php
 
 		
-		$a = $privilegios->getItemById();
+		$a = $privs->getItemById();
 
 
 		foreach ($a as $privilegio) {
@@ -660,7 +660,7 @@ if ($regSistema->getValor('acceso_denegado')) {
 				<th> </th>
 			</tr>
 	<?php
-	$a = $privilegios->getItemById();
+	$a = $privs->getItemById();
 	
 	foreach ($a as $privilegio) {
 		echo "<tr>";

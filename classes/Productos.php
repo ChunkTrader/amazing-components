@@ -7,7 +7,7 @@ class Productos extends Coleccion{
 
 	public function __construct(Controlador $controlador) {
 		$this->controlador = $controlador;
-		$this->tabla = 'Productos';
+		$this->tabla = 'productos';
 		$this->orden = 'nombre';
 		$this->miembro = 'Producto';
 	}

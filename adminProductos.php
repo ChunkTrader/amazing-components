@@ -4,7 +4,7 @@ require_once 'classes/Fabricantes.php';
 require_once 'classes/Ofertas.php';
 
 // Comprobamos si tiene privilegio de acceso a la página
-if (!$regSistema->getValor('privilegios')['verAdminProductos']){
+if (!$privilegios['verAdminProductos']){
 	$regSistema->setValor('acceso_denegado', 'administrar');
 	header('Location: error.php');
 	exit;
@@ -44,6 +44,16 @@ switch ($regMem->getValor('accion')){
 		$correcto = FALSE;
 	}
 
+	if ($regMem->getValor('existencias') && (!filter_var($regMem->getValor('existencias'), FILTER_VALIDATE_INT) || $regMem->getValor('existencias')<0)){
+		$regError->setError('existencias', 'Las <b>existencias</b> deben ser un número entero igual o mayor que 0.');
+		$correcto = FALSE;	
+	}
+
+	if ($regMem->getValor('precio_venta') && (!filter_var($regMem->getValor('precio_venta'), FILTER_VALIDATE_FLOAT) || $regMem->getValor('precio_venta')<0)){
+		$regError->setError('precio_venta', 'El <b>precio</b> deben ser un número igual o mayor que 0.');
+		$correcto = FALSE;	
+	}
+
 	if ($correcto) {
 		$valores = (array_intersect_key($regMem->getValor(), Producto::getListaPropiedades()));
 		$producto = new Producto ($valores);
@@ -59,7 +69,7 @@ switch ($regMem->getValor('accion')){
 	break;
 
 	case 'Editar':
-
+	$correcto=TRUE;
 
 	// Buscamos si hay alguna oferta relacionada
 	$oferta = $ofertas->getItemBD()->getItemByProducto($producto->getPropiedad('id'));
@@ -79,27 +89,41 @@ switch ($regMem->getValor('accion')){
 			$valores['activo'] = 0;
 		}
 
-		$producto = new Producto ($valores);			
-		$prods->setItemBD($producto);
-		$regFeedback->addFeedback("Se ha modificado el producto <b>{$regMem->getValor('nombre')}</b> con éxito.");
 
-		if ($oferta) {
-			$regFeedback->addFeedback ("Se ha desactivado la oferta relacionada con este producto.");
-
-			// Si hemos modificado el precio lo actualizamos en la oferta y la desactivamos.
-			if ($oferta->getPropiedad('precio_anterior')!=$producto->getPropiedad('precio_venta')) {
-				$oferta->setPropiedad('precio_anterior', $producto->getPropiedad('precio_venta'));
-				$oferta->setPropiedad('activa', 0);
-				$ofertas->setItemBD($oferta);
-			}
-		} else {
-			$regFeedback->addFeedback ("No hay ninguna oferta relacionada");			
+		if ($regMem->getValor('existencias') && (!filter_var($regMem->getValor('existencias'), FILTER_VALIDATE_INT) || $regMem->getValor('existencias')<0)){
+			$regError->setError('existencias', 'Las <b>existencias</b> deben ser un número entero igual o mayor que 0.');
+			$correcto = FALSE;	
 		}
 
-		// Recargamos el producto de la base de datos
-		$prods->delItem($producto->getPropiedad('id'));
-		$prods->getItemBD(array ('id' => $producto->getPropiedad('id')));
-		$producto = $prods->getItemById($producto->getPropiedad('id'));
+		if ($regMem->getValor('precio_venta') && (!filter_var($regMem->getValor('precio_venta'), FILTER_VALIDATE_FLOAT) || $regMem->getValor('precio_venta')<0)){
+			$regError->setError('precio_venta', 'El <b>precio</b> deben ser un número igual o mayor que 0.');
+			$correcto = FALSE;	
+		}
+
+		if ($correcto) {
+			$producto = new Producto ($valores);			
+			$prods->setItemBD($producto);
+			$regFeedback->addFeedback("Se ha modificado el producto <b>{$regMem->getValor('nombre')}</b> con éxito.");
+
+			if ($oferta) {
+				$regFeedback->addFeedback ("Se ha desactivado la oferta relacionada con este producto.");
+
+				// Si hemos modificado el precio lo actualizamos en la oferta y la desactivamos.
+				if ($oferta->getPropiedad('precio_anterior')!=$producto->getPropiedad('precio_venta')) {
+					$oferta->setPropiedad('precio_anterior', $producto->getPropiedad('precio_venta'));
+					$oferta->setPropiedad('activa', 0);
+					$ofertas->setItemBD($oferta);
+				}
+			} else {
+				$regFeedback->addFeedback ("No hay ninguna oferta relacionada");			
+			}
+
+			// Recargamos el producto de la base de datos
+			$prods->delItem($producto->getPropiedad('id'));
+			$prods->getItemBD(array ('id' => $producto->getPropiedad('id')));
+			$producto = $prods->getItemById($producto->getPropiedad('id'));
+		}
+			
 	}
 
 	if ($regMem->getValor('principal')) {
@@ -314,7 +338,7 @@ include 'cabecera.php';
 						$fabs->getItemBD();
 						$a = $fabs->getItemById();
 						
-						echo "<option value=\"0\"";
+						echo "<option value=\"1\"";
 						if (!$regMem->getValor('fabricante_id')) {
 							echo " selected ";
 						}

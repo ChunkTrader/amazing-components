@@ -2,7 +2,7 @@
 require_once 'inicializacion.php';
 
 // Comprobamos si tiene privilegio de acceso a la página
-if (!$regSistema->getValor('privilegios')['verAdminCategorias']){
+if (!$privilegios['verAdminCategorias']){
 	$regSistema->setValor('acceso_denegado', 'administrar');
 	header('Location: error.php');
 	exit;
